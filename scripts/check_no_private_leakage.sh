@@ -31,6 +31,21 @@ DENIED_PATH_FRAGMENTS=(
   'scrub_private_leakage'
 )
 
+rg_capture() {
+  # Run rg; treat exit 1 as no-match (ok). Fail on exit >1 (bad pattern, I/O).
+  local out=""
+  set +e
+  out="$(rg "$@" 2>/dev/null)"
+  local status=$?
+  set -e
+  if [[ "$status" -gt 1 ]]; then
+    echo "ripgrep failed with status $status (pattern or I/O error)" >&2
+    return 2
+  fi
+  printf '%s' "$out"
+  return 0
+}
+
 if [[ ! -f "$PATTERNS_FILE" ]]; then
   echo "Missing $PATTERNS_FILE" >&2
   exit 2
@@ -67,7 +82,10 @@ while IFS= read -r -d '' path; do
 done < <(find . -type f -print0 2>/dev/null)
 
 echo "== content pattern gate (full tree) =="
-hits="$(rg -n --pcre2 "${RG_GLOBS[@]}" -e "$PATTERN" . 2>/dev/null || true)"
+hits=""
+if ! hits="$(rg_capture -n --hidden --no-ignore --pcre2 "${RG_GLOBS[@]}" -e "$PATTERN" .)"; then
+  fail=1
+fi
 if [[ -n "${hits}" ]]; then
   echo "Disallowed content patterns found:" >&2
   echo "${hits}" >&2
@@ -81,8 +99,11 @@ if [[ -f scripts/scrub_private_leakage.py ]]; then
 fi
 
 echo "== promotion-marker gate =="
-promo="$(rg -n -i --glob '!.git/**' --glob '!scripts/check_no_private_leakage.sh' --glob '!scripts/privacy-patterns.pcre' \
-  'promoted from.*(private skill|private catalogue)|copied from private' . 2>/dev/null || true)"
+promo=""
+if ! promo="$(rg_capture -n -i --glob '!.git/**' --glob '!scripts/check_no_private_leakage.sh' --glob '!scripts/privacy-patterns.pcre' \
+  'promoted from.*(private skill|private catalogue)|copied from private' .)"; then
+  fail=1
+fi
 if [[ -n "${promo}" ]]; then
   echo "Promotion markers found:" >&2
   echo "${promo}" >&2
@@ -90,8 +111,15 @@ if [[ -n "${promo}" ]]; then
 fi
 
 echo "== recent commit-message scan =="
-msg_hits="$(git log -n 80 --pretty=%B | rg -n --pcre2 "$PATTERN" || true)"
-if [[ -n "${msg_hits}" ]]; then
+msg_hits=""
+set +e
+msg_hits="$(git log -n 80 --pretty=%B | rg -n --pcre2 "$PATTERN")"
+msg_status=$?
+set -e
+if [[ "$msg_status" -gt 1 ]]; then
+  echo "ripgrep failed on commit-message scan (status $msg_status)" >&2
+  fail=1
+elif [[ "$msg_status" -eq 0 && -n "${msg_hits}" ]]; then
   echo "Disallowed patterns in recent commit messages:" >&2
   echo "${msg_hits}" >&2
   fail=1

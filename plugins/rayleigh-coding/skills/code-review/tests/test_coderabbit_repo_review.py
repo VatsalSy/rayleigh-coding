@@ -54,6 +54,11 @@ class ResolveOrgTests(unittest.TestCase):
             else:
                 os.environ["CODERABBIT_ORG"] = old
 
+    def test_rejects_separated_token_flag(self):
+        with self.assertRaises(SystemExit) as ctx:
+            MODULE._reject_credential_args(["coderabbit", "review", "--token", "secret"])
+        self.assertEqual(ctx.exception.code, 30)
+
 
 if __name__ == "__main__":
     unittest.main()

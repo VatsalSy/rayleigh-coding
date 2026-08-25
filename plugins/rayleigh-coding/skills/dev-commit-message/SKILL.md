@@ -15,15 +15,16 @@ commit message", "what should the commit say"):**
 1. Inspect `git status` / `git diff` (and `git log --oneline -5` for style).
 2. Propose subject (+ optional body) in the reply.
 3. **Do not** `git add`, `git commit`, or `git push` unless the user explicitly
-   asked to commit or push in the same request.
+   asked to commit, stage, or push in the same request.
 
-**Mutating (only when the user explicitly says commit / save / push / ship):**
+**Mutating (only when the user explicitly says commit, stage, or push):**
 
 1. Assess state: `git status --porcelain`, `git diff --cached --stat`
 2. Match style: `git log --oneline -5`
 3. Stage only files in scope; honour exclusions; split unrelated changes
 4. Optional CodeRabbit pass via `code-review` when shipping behavioural code on
-   a GitHub workshop and the CLI is available
+   a GitHub workshop and the CLI is available — inspect the outgoing diff first
+   and skip the review if it would send secrets or clearly unpublished material
 5. Commit with `git commit -m "…"`; never AI trailers / `--trailer`
 6. Push only if requested
 7. Re-check `git status --porcelain`

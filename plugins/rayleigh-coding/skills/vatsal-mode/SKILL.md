@@ -59,7 +59,7 @@ receipt helps).
 
 | Situation | Skill |
 |---|---|
-| Local quality/security pass before push | `code-review` (thin CodeRabbit CLI wrapper when available) or `dev-review-ultra` |
+| Local quality/security pass before push | `code-review` (thin CodeRabbit CLI wrapper when available; inspect the outgoing diff first and skip if it would send secrets) or `dev-review-ultra` |
 | Security-focused pass | `security-best-practices` / `security-threat-model` / `security-gitleaks` |
 | Open a GitHub PR | `gh-pr-create` |
 | Make Actions green | `gh-fix-ci` |

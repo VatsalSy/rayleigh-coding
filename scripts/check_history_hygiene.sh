@@ -5,6 +5,11 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 
 BASE="${HISTORY_HYGIENE_BASE:-origin/main}"
+# GitHub push events use all-zero before SHA for new branches.
+if [[ "$BASE" == "0000000000000000000000000000000000000000" || -z "$BASE" ]]; then
+  BASE="origin/main"
+fi
+
 if git rev-parse --verify "$BASE" >/dev/null 2>&1; then
   range="${BASE}..HEAD"
   count="$(git rev-list --count "$range" 2>/dev/null || echo 0)"
@@ -16,8 +21,15 @@ else
   subjects="$(git log --pretty=%s)"
 fi
 
-bad="$(printf '%s\n' "$subjects" | rg -n -i 'batch [0-9]+|canary|probe-|stub commit|restore [0-9]+|jquery|golang [0-9]+' || true)"
-if [[ -n "$bad" ]]; then
+set +e
+bad="$(printf '%s\n' "$subjects" | rg -n -i 'batch [0-9]+|canary|probe-|stub commit|restore [0-9]+|jquery|golang [0-9]+')"
+rg_status=$?
+set -e
+if [[ "$rg_status" -gt 1 ]]; then
+  echo "history hygiene ripgrep failed (status $rg_status)" >&2
+  exit 1
+fi
+if [[ "$rg_status" -eq 0 && -n "$bad" ]]; then
   echo "History hygiene failed — export/canary subjects still present:" >&2
   echo "$bad" >&2
   exit 1

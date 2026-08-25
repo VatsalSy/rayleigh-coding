@@ -1,13 +1,9 @@
 #!/usr/bin/env python3
-"""Thin public CodeRabbit CLI wrapper for rayleigh-coding.
-
-This is intentionally small. It does not implement private org-routing
-receipts, cadence locks, or secret-diff redaction. Those belong in a private
-guard if needed.
+"""Thin CodeRabbit CLI wrapper for rayleigh-coding.
 
 Organisation hint:
   export CODERABBIT_ORG=<org>
-  export CODERABBIT_REQUIRE_ORG=1  # refuse when unset on private repos
+  export CODERABBIT_REQUIRE_ORG=1  # refuse when unset
 
 Examples:
   python3 coderabbit_repo_review.py -- --base main
@@ -23,13 +19,21 @@ import subprocess
 import sys
 from urllib.parse import urlparse
 
+_CRED_FLAGS = {
+    "--token",
+    "--api-key",
+    "--apikey",
+    "--password",
+    "--secret",
+    "-t",
+}
+
 
 def parse_github_remote(raw: str) -> tuple[str, str] | None:
     raw = raw.strip()
     if not raw:
         return None
     if raw.startswith("git@"):
-        # git@github.com:owner/repo.git
         if "github.com:" not in raw:
             return None
         path = raw.split(":", 1)[1]
@@ -74,9 +78,30 @@ def resolve_org() -> str | None:
     return owner
 
 
+def _reject_credential_args(argv: list[str]) -> None:
+    joined = " ".join(argv)
+    if re.search(r"(api[_-]?key|token|password|secret)=", joined, re.I):
+        print("Refusing credential-like name=value arguments.", file=sys.stderr)
+        raise SystemExit(30)
+    i = 0
+    while i < len(argv):
+        arg = argv[i]
+        key = arg.split("=", 1)[0].lower() if arg.startswith("-") else arg.lower()
+        if key in _CRED_FLAGS or key.lstrip("-") in {
+            "token",
+            "api-key",
+            "apikey",
+            "password",
+            "secret",
+        }:
+            print("Refusing credential-like CLI arguments.", file=sys.stderr)
+            raise SystemExit(30)
+        i += 1
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        description="Thin CodeRabbit review wrapper (public)"
+        description="Thin CodeRabbit review wrapper"
     )
     parser.add_argument("--uncommitted", action="store_true")
     parser.add_argument(
@@ -85,7 +110,11 @@ def main(argv: list[str] | None = None) -> int:
         help="Accepted for compatibility; org comes from env/remote",
     )
     parser.add_argument("--base", default="main")
-    parser.add_argument("--light", action="store_true")
+    parser.add_argument(
+        "--light",
+        action="store_true",
+        help="Accepted for compatibility; forwarded when supported by the CLI",
+    )
     parser.add_argument("--follow-up", action="store_true")
     args, passthrough = parser.parse_known_args(argv)
 
@@ -101,23 +130,16 @@ def main(argv: list[str] | None = None) -> int:
 
     org = resolve_org()
     if org:
+        # Make the resolved hint visible to the child process.
+        os.environ["CODERABBIT_ORG"] = org
         print(f"Using CodeRabbit organisation hint: {org}")
 
-    cmd = ["coderabbit", "review", "--plain"]
-    if args.uncommitted:
-        cmd += ["--base", args.base]
-    else:
-        cmd += ["--base", args.base]
+    cmd = ["coderabbit", "review", "--plain", "--base", args.base]
     if args.light:
-        # Best-effort; older CLIs may ignore unknown flags after --plain path.
-        pass
+        cmd.append("--light")
     cmd += passthrough
 
-    # Refuse obviously secret-looking CLI args.
-    joined = " ".join(cmd)
-    if re.search(r"(api[_-]?key|token|password|secret)=", joined, re.I):
-        print("Refusing to invoke CodeRabbit with credential-like arguments.", file=sys.stderr)
-        return 30
+    _reject_credential_args(cmd)
 
     print("Running:", " ".join(cmd))
     try:

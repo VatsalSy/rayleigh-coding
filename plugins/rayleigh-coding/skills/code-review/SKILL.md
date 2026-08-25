@@ -22,7 +22,8 @@ locks.
 1. `coderabbit` CLI installed and authenticated
    (<https://www.coderabbit.ai/cli>).
 2. A GitHub remote when you want organisation hints from the repo owner.
-3. Never pass secrets into the review diff. Inspect the outgoing change first.
+3. Never pass secrets into the review diff. Inspect the outgoing change first
+   and skip the review if it would transmit unpublished or sensitive material.
 
 If the CLI is missing, say so and stop. Do not invent another review backend.
 

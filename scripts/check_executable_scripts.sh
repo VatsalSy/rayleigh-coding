@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Fail if skill scripts that agents invoke directly are non-executable.
+# Fail if directly-invoked skill scripts are non-executable.
+# .swift / .ps1 are invoked via swift/pwsh and are not required to be +x.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
@@ -9,7 +10,7 @@ while IFS= read -r -d '' f; do
   case "$f" in
     */__pycache__/*) continue ;;
     *.pyc) continue ;;
-    *.py|*.sh|*.js|*.mjs|*.swift|*.ps1)
+    *.py|*.sh|*.js|*.mjs)
       if [[ ! -x "$f" ]]; then
         echo "non-executable: $f" >&2
         fail=1
