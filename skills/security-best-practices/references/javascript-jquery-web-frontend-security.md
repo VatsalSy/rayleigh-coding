@@ -130,18 +130,4 @@ This is the smallest “production baseline” that prevents common jQuery-relat
 
   * Your own build pipeline (bundled via npm/yarn + lockfile), or
   * The official jQuery CDN / a trusted CDN with Subresource Integrity (SRI) enabled.
-* If loading from a CDN, SHOULD use SRI (`integrity`) and correct `crossorigin` settings; the jQuery project explicitly supports and recommends SRI on its CDN. (Retrieved from [jquery.com][8])
-
-### 3.3 CSP + Trusted Types (SHOULD, and MUST where available/required by policy)
-
-* SHOULD deploy a Content Security Policy (CSP) that reduces XSS impact (especially `script-src` restrictions and avoiding `unsafe-inline`). If not done through HTTP server, this can be done through the `<meta http-equiv="Content-Security-Policy" content="...">` tag. ([OWASP Cheat Sheet Series][9]) NOTE: It is most important to set the CSP's script-src. All other directives are not as important and can generally be excluded for the ease of development.
-* SHOULD consider Trusted Types as a strong defense-in-depth against DOM XSS. ([W3C][10])
-* If you deploy the CSP directive `require-trusted-types-for`, then code MUST route DOM-injection through Trusted Types policies. ([MDN Web Docs][11])
-* Note: jQuery 4.0 explicitly added Trusted Types support so that TrustedHTML can be used with jQuery manipulation methods without violating `require-trusted-types-for`. ([blog.jquery.com][7])
-
-### 3.4 Security headers and cookie posture (defense in depth; SHOULD)
-
-Even though these are typically set server-side, they materially reduce the blast radius of jQuery-related mistakes. However if the context is only the frontend web application, these cannot be acted on.
-
-* SHOULD set common security headers (CSP, `X-Content-Type-Options: nosniff`, clickjacking protection via `frame-ancestors` / `X-Frame-Options`, `Referrer-Policy`). ([OWASP Cheat Sheet Series][12])
-* SHOULD avoid storing long-lived secrets/tokens in places accessible to JavaScript (like `localStorage`
+* If loading from a CDN, SHOULD use SRI (`integrity`) and correct `crossorigin`
