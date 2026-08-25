@@ -14,6 +14,11 @@ SRC="$(python3 -c 'import os,sys; print(os.path.abspath(os.path.expanduser(sys.a
 mkdir -p "${PLUGIN_LOCAL}"
 
 if git -C "${SRC}" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+  TOPLEVEL="$(python3 -c 'import os,sys; print(os.path.abspath(sys.argv[1]))' "$(git -C "${SRC}" rev-parse --show-toplevel)")"
+  if [[ "${TOPLEVEL}" != "${SRC}" ]]; then
+    echo "error: ${SRC} is inside git work tree ${TOPLEVEL}; set RAYLEIGH_CODING_SRC to the rayleigh-coding clone root" >&2
+    exit 1
+  fi
   if ! git -C "${SRC}" pull --ff-only; then
     echo "warning: git pull --ff-only failed in ${SRC}; continuing with existing tree" >&2
   fi
