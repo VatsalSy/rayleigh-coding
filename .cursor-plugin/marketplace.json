@@ -5,14 +5,14 @@
     "email": "plugins@example.com"
   },
   "metadata": {
-    "description": "Cursor marketplace for coding skills: /vatsal-mode, verification, git/PR workflows, security helpers, and UI craft.",
+    "description": "Cursor marketplace for coding skills: /setup-rayleigh, /vatsal-mode, verification, git/PR workflows, security helpers, and UI craft.",
     "version": "0.3.0"
   },
   "plugins": [
     {
       "name": "rayleigh-coding",
       "source": "./plugins/rayleigh-coding",
-      "description": "Coding skills and /vatsal-mode for Cursor Cloud Agents and local Cursor"
+      "description": "Coding skills, /setup-rayleigh, and /vatsal-mode for Cursor Cloud Agents and local Cursor"
     }
   ]
 }

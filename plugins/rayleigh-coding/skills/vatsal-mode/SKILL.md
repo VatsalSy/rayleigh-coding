@@ -4,7 +4,7 @@ description: >
   Concise coding-agent style: ask only load-bearing decisions, verify with
   real-path evidence, and ship through disciplined git/PR workflows. Use for
   /vatsal-mode or requests to work in this style.
-disable-model-invocation: false
+disable-model-invocation: true
 mode: true
 icon: rocket
 color: blue
@@ -26,6 +26,14 @@ plugin by path. Do not invent undeclared host topology or credential stores.
 - Prefer the smallest change that solves the problem. Delete before adding.
 - Every coding reply stays concrete. Lead with the outcome, then only the
   detail needed to act.
+
+## Models
+
+For every `Task` / subagent call, use **`auto`** (omit the `model` field) unless
+`~/.cursor/rules/rayleigh-models.mdc` or the workspace
+`.cursor/rules/rayleigh-models.mdc` names a different slug for that role, or
+the human / this mode explicitly pins a model for the turn. First-time install
+and reset: `/setup-rayleigh` (always writes `auto`).
 
 ## Understand first
 

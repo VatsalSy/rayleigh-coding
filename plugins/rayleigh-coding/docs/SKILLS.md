@@ -1,6 +1,6 @@
 # Skill inventory
 
-56 skills in this plugin.
+57 skills in this plugin.
 
 | Skill |
 |---|
@@ -54,6 +54,7 @@
 | `security-gitleaks` |
 | `security-threat-model` |
 | `sentry` |
+| `setup-rayleigh` |
 | `skill-creator` |
 | `swarm-planner` |
 | `vatsal-mode` |
