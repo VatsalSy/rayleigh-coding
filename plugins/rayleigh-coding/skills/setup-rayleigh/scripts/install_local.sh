@@ -48,5 +48,5 @@ fi
 
 ln -sfn "${PLUGIN_SRC}" "${DEST}"
 
-echo "installed: ${DEST} -> ${PLUGIN_SRC}"
 test -f "${DEST}/.cursor-plugin/plugin.json"
+echo "installed: ${DEST} -> ${PLUGIN_SRC}"

@@ -56,6 +56,7 @@ bash <path-to-setup-rayleigh>/scripts/install_local.sh
 resolve that path, run the equivalent:
 
 ```bash
+set -euo pipefail
 mkdir -p ~/.cursor/plugins/local
 SRC_RAW="${RAYLEIGH_CODING_SRC:-$HOME/.cursor/plugins/local/rayleigh-coding-src}"
 SRC="$(python3 -c 'import os,sys; print(os.path.abspath(os.path.expanduser(sys.argv[1])))' "$SRC_RAW")"
@@ -66,6 +67,9 @@ elif [ -e "$SRC" ]; then
 else
   git clone https://github.com/VatsalSy/rayleigh-coding.git "$SRC"
 fi
+if [ ! -f "$SRC/scripts/validate_marketplace.py" ] || [ ! -f "$SRC/scripts/validate_skills.py" ]; then
+  echo "error: missing validators under $SRC/scripts" >&2; exit 1
+fi
 python3 "$SRC/scripts/validate_marketplace.py"
 python3 "$SRC/scripts/validate_skills.py"
 DEST="$HOME/.cursor/plugins/local/rayleigh-coding"
@@ -74,6 +78,7 @@ if [ -e "$DEST" ] && [ ! -L "$DEST" ]; then
 fi
 ln -sfn "$SRC/plugins/rayleigh-coding" "$DEST"
 test -f "$DEST/.cursor-plugin/plugin.json"
+echo "installed: $DEST -> $SRC/plugins/rayleigh-coding"
 ```
 
 Optional override: set `RAYLEIGH_CODING_SRC` to an existing clone or worktree
