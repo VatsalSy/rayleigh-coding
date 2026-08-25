@@ -171,3 +171,91 @@ Notes:
 ---
 
 ### GO-CONFIG-001: Secrets must be externalized and never logged or committed
+Severity: High (Critical if credentials are committed)
+
+Required:
+- MUST load secrets from environment variables, secret managers, or secure config files with restricted permissions.
+- MUST NOT hard-code secrets in Go source, test fixtures that may reach production, or build args.
+- MUST NOT log secrets or full credential-bearing connection strings.
+- SHOULD fail closed in production if required secrets are missing.
+
+Insecure patterns:
+- String constants containing tokens/keys/passwords.
+- `.env` files or config files with secrets committed to repo.
+- Logging `os.Environ()`, dumping full configs, or printing DSNs.
+
+Detection hints:
+- Search for suspicious literals (`API_KEY`, `SECRET`, `PASSWORD`, `Authorization:`).
+- Inspect config loaders and logging statements.
+- Inspect CI logs or debug print paths.
+
+Fix:
+- Move secrets to a secret store / environment variables.
+- Redact sensitive fields in logs.
+- Add secret scanning to CI and pre-commit.
+
+---
+
+### GO-HTTP-001: HTTP servers MUST set timeouts and MaxHeaderBytes
+Severity: High (DoS risk)
+
+Required:
+- MUST set: `ReadHeaderTimeout`, and SHOULD set `ReadTimeout`, `WriteTimeout`, `IdleTimeout` as appropriate for the service.
+- MUST set `MaxHeaderBytes` to a justified limit for your application.
+- MUST NOT rely on default zero-values for timeouts in production for internet-facing servers.
+
+Insecure patterns:
+- `http.ListenAndServe(":8080", handler)` with a default `http.Server` (no explicit timeouts).
+- `&http.Server{}` with timeouts left at zero.
+- Missing `MaxHeaderBytes`.
+
+Detection hints:
+- Search for `http.ListenAndServe(`, `ListenAndServeTLS(`, `Server{` and inspect configured fields.
+- Check for reverse proxies; even with a proxy, app-level timeouts still matter.
+
+Fix:
+- Use `http.Server{ReadHeaderTimeout: ..., ReadTimeout: ..., WriteTimeout: ..., IdleTimeout: ..., MaxHeaderBytes: ...}`.
+- Calibrate timeouts per endpoint type (streaming vs JSON APIs).
+
+Notes:
+- Net/http documents that these timeouts exist and that zero/negative values mean “no timeout”; production services should choose explicit values.
+
+---
+
+### GO-HTTP-002: Request body and multipart parsing MUST be size-bounded
+Severity: Medium (DoS risk; can be High for upload-heavy apps)
+
+Required:
+- MUST enforce a global maximum request body size for endpoints that accept bodies.
+- MUST enforce strict multipart upload limits and avoid unbounded form parsing.
+- SHOULD enforce per-route limits when some endpoints legitimately need larger bodies.
+- SHOULD set upstream (proxy) limits as defense-in-depth.
+
+Insecure patterns:
+- Reading `r.Body` with `io.ReadAll(r.Body)` without a size cap.
+- Calling `r.ParseMultipartForm(...)` with overly large limits (or forgetting size controls).
+- Accepting file uploads with no limits on file size, number of parts, or total body size.
+
+Detection hints:
+- Search for `io.ReadAll(r.Body)`, `json.NewDecoder(r.Body)`, `ParseMultipartForm`, `FormFile`, `multipart`.
+- Look for missing `http.MaxBytesReader` or equivalent per-handler limiting.
+- Look for “upload” endpoints and check limits.
+
+Fix:
+- Wrap request bodies with `http.MaxBytesReader(w, r.Body, maxBytes)` before parsing.
+- For multipart, set conservative limits and validate file sizes/part counts explicitly.
+- Set proxy limits (e.g., at ingress) in addition to app limits.
+
+Notes:
+- There are known vulnerability classes and advisories related to excessive resource consumption in multipart/form parsing; treat unbounded parsing as a security issue.
+
+---
+
+### GO-DEPLOY-002: Diagnostic endpoints (pprof/expvar/metrics) MUST NOT be publicly exposed
+Severity: High
+
+NOTE: This only applies to production configurations. These endpoints are often used for debug or dev endpoints. If found, confirm that it would be reachable from the actual production deployment.
+
+Required:
+- MUST NOT expose `net/http/pprof` handlers on a public internet-facing listener without strong access controls.
+- SHOULD run diagnostics on a separate, internal-only listener 
