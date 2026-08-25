@@ -1,1 +1,1 @@
-PLACEHOLDER_LOAD_FROM_FILE
+@/tmp/rc-upload/01.content
