@@ -304,4 +304,136 @@ Insecure patterns:
 * `const $node = $(untrusted);`
 * `$.parseHTML(untrusted, /* context */, true)` (scripts preserved)
 
-Detection hin
+Detection hints:
+
+* Search for `$(` calls where the argument is not a static selector or static markup.
+* Search for `$.parseHTML(` and inspect the `keepScripts` argument.
+
+Fix:
+
+* Use DOM creation with constant tag names and `.text()` for untrusted values.
+* If parsing HTML is necessary, sanitize first (JQ-XSS-002) and keep scripts disabled.
+
+---
+
+### JQ-XSS-004: `.load()` MUST be treated as an HTML+script injection surface
+
+Severity: Medium (High if URL/content is attacker-controlled)
+
+Required:
+
+* MUST NOT use `.load()` with attacker-controlled URLs or attacker-controlled HTML fragments.
+* MUST understand jQuery `.load()` script behavior:
+
+  * Without a selector in the URL, content is passed to `.html()` before scripts are removed, which can execute scripts. ([jQuery API][3])
+* SHOULD prefer `fetch()`/XHR to retrieve data, then render with safe DOM creation or sanitize explicitly.
+
+Insecure patterns:
+
+* `$("#target").load(untrustedUrl)`
+* `$("#target").load("/path?param=" + untrusted)`
+
+Detection hints:
+
+* Search for `.load(` across JS/TS files.
+* Identify whether a selector is appended to the URL (the behavior differs). ([jQuery API][3])
+* Trace whether the URL can be influenced by user input.
+
+Fix:
+
+* Replace `.load()` with:
+
+  * `fetch()` to retrieve JSON, then render via `.text()` / node construction, or
+  * `fetch()` to retrieve HTML, sanitize it, then inject.
+* If `.load()` must remain, ensure the URL is constant or strictly allowlisted and the returned content is trusted.
+
+---
+
+### JQ-EXEC-001: Dynamic script execution and script fetching MUST NOT be reachable from untrusted input
+
+Severity: High
+
+Required:
+
+* MUST NOT fetch-and-execute scripts from untrusted or user-influenced URLs.
+* MUST treat these as code execution primitives:
+
+  * `$.getScript(url)` executes the fetched script in the global context. ([jQuery API][4])
+  * `$.ajax({ dataType: "script" })` and other script-typed requests that execute responses.
+* SHOULD remove these patterns unless there is a strong, reviewed justification.
+
+Insecure patterns:
+
+* `$.getScript(untrustedUrl)`
+* `$.ajax({ url: untrustedUrl, dataType: "script" })`
+* Dynamic `<script src=...>` injection where `src` is derived from untrusted input.
+
+Detection hints:
+
+* Search for `getScript(`, `dataType: "script"`, `globalEval`, `eval`, `new Function`.
+* Look for “plugin loader” or “theme loader” features that accept URLs.
+
+Fix:
+
+* Bundle scripts at build time.
+* If runtime-loading is required, restrict to allowlisted, versioned, integrity-checked assets (and ideally still avoid runtime code loading).
+
+---
+
+### JQ-AJAX-001: JSONP MUST be disabled unless the endpoint is fully trusted (and even then, avoid)
+
+Severity: Medium (High if attacker can influence URL/endpoint)
+
+Required:
+
+* MUST NOT use JSONP for untrusted endpoints because it executes JavaScript responses.
+* When using `$.ajax`, MUST explicitly disable JSONP for non-fully-trusted targets; jQuery’s own docs recommend setting `jsonp: false` “for security reasons” if you don’t trust the target. ([jQuery API][5])
+* SHOULD prefer CORS with JSON (`dataType: "json"`) and explicit origin allowlists server-side.
+
+Insecure patterns:
+
+* `dataType: "jsonp"`
+* URLs containing `callback=?` or patterns that trigger JSONP behavior. callback arguments are historically XSS vectors.
+* `$.get(untrustedUrl)` without pinning `dataType` and disabling JSONP (risk depends on options and jQuery behavior)
+
+Detection hints:
+
+* Search for `jsonp`, `dataType: "jsonp"`, `callback=?`.
+* Search for cross-domain AJAX where the URL is not hard-coded or allowlisted.
+
+Fix:
+
+* Use JSON over HTTPS with CORS configured server-side.
+* Set:
+
+  * `dataType: "json"`
+  * `jsonp: false` (defense in depth when URL might be ambiguous) ([jQuery API][5])
+
+---
+
+### JQ-AJAX-002: State-changing AJAX requests using cookie auth MUST be CSRF-protected
+
+Severity: High
+
+NOTE: This only matters when using cookie based auth. If the request use Authorization header, there is no CSRF potential.
+
+Required:
+
+* If authentication uses cookies, MUST protect state-changing requests (POST/PUT/PATCH/DELETE) against CSRF.
+* SHOULD use server-verified CSRF tokens; for AJAX calls, tokens are commonly sent in a custom header. ([OWASP Cheat Sheet Series][19])
+* MUST NOT treat “it’s an AJAX request” as CSRF protection by itself.
+
+Insecure patterns:
+
+* `$.post("/transfer", {...})` or `$.ajax({ method: "POST", ... })` with cookie auth and no CSRF token/header.
+* “CSRF protection” that only checks for `X-Requested-With` (defense-in-depth only, not primary).
+
+Detection hints:
+
+* Enumerate state-changing AJAX calls and locate whether they include CSRF tokens.
+* Identify how the server expects CSRF validation (meta tag, cookie-to-header double submit, synchronizer token, etc.).
+
+Fix:
+
+* Add CSRF token inclusion in a centralized place, e.g., `$.ajaxSetup({ headers: { "X-CSRF-Token": token } })`, and ensure server verifies.
+* Follow OWASP CSRF guidance for token properties and validation. ([OWASP Cheat 
