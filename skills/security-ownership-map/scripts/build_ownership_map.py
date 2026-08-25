@@ -1,0 +1,1 @@
+@file:///tmp/rc-build-content-only.txt
