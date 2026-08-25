@@ -118,4 +118,50 @@ Practical baseline goals:
 
 * Avoid script sources `unsafe-inline` and `unsafe-eval` (they significantly weaken CSP’s value against XSS). ([MDN Web Docs][10])
 * Prefer nonce- or hash-based script policies if you need inline scripts. ([MDN Web Docs][10])
-* Consider enabling Trusted Types enforcement where
+* Consider enabling Trusted Types enforcement where feasible. ([MDN Web Docs][11])
+
+### 3.2 Third-party scripts baseline (SHOULD)
+
+* SHOULD minimize third-party script execution and treat it as equivalent privilege to first-party JS (it runs with your origin’s privileges). ([OWASP Cheat Sheet Series][7])
+* SHOULD use Subresource Integrity (SRI) for third-party scripts/styles loaded from CDNs. ([MDN Web Docs][12])
+
+### 3.3 Cross-window communication baseline (SHOULD)
+
+* SHOULD restrict `postMessage` communications to explicit origins, and validate both origin and message shape. ([MDN Web Docs][5])
+
+---
+
+## 4) Rules (generation + audit)
+
+Each rule contains: required practice, insecure patterns, detection hints, and remediation.
+
+### JS-XSS-001: Do not inject untrusted HTML into the DOM (avoid `innerHTML` and friends)
+
+Severity: Critical if you can prove attacker-controlled input can reach these APIs; otherwise Medium
+
+
+Required:
+
+* MUST treat `innerHTML`, `outerHTML`, and `insertAdjacentHTML` as dangerous sinks when their input can contain untrusted data. ([OWASP Cheat Sheet Series][2])
+* MUST prefer safe DOM APIs that do not parse HTML:
+
+  * `textContent` for text. ([OWASP Cheat Sheet Series][2])
+  * `document.createElement`, `appendChild`, `setAttribute` for non-event-handler attributes. ([OWASP Cheat Sheet Series][2])
+* If HTML insertion is truly required, SHOULD sanitize with a well-reviewed HTML sanitizer and strongly consider enforcing Trusted Types to confine usage to audited code paths. ([MDN Web Docs][11])
+
+Insecure patterns:
+
+* `el.innerHTML = userInput`
+* `el.insertAdjacentHTML('beforeend', userInput)`
+* `el.outerHTML = userInput`
+
+Detection hints:
+
+* Search for: `.innerHTML`, `.outerHTML`, `insertAdjacentHTML(`.
+* Trace the origin of inserted string: URL params/hash, postMessage, storage, API responses, DOM attributes. ([OWASP Cheat Sheet Series][2])
+
+Fix:
+
+* Replace with `textContent` for plain text. ([OWASP Cheat Sheet Series][2])
+* For structured UI, build DOM nodes explicitly.
+* For “rich text” require
