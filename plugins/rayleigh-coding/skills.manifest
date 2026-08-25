@@ -39,6 +39,7 @@ dev-commit-message
 dev-docstring
 dev-frontend-design
 dev-readme-writer
+unslop
 html-explainer
 playwright
 screenshot
