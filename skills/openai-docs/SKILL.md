@@ -50,7 +50,7 @@ If MCP tools fail or no OpenAI docs resources are available:
 - Treat OpenAI docs as the source of truth; avoid speculation.
 - Keep quotes short and within policy limits; prefer paraphrase with citations.
 - If multiple pages differ, call out the difference and cite both.
-- If docs do not cover the user’s need, say so and offer next steps.
+- If docs do not cover the user's need, say so and offer next steps.
 
 ## Tooling notes
 
