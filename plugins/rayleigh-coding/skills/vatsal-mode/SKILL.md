@@ -29,11 +29,16 @@ plugin by path. Do not invent undeclared host topology or credential stores.
 
 ## Models
 
-For every `Task` / subagent call, use **`auto`** (omit the `model` field) unless
-`~/.cursor/rules/rayleigh-models.mdc` or the workspace
-`.cursor/rules/rayleigh-models.mdc` names a different slug for that role, or
-the human / this mode explicitly pins a model for the turn. First-time install
-and reset: `/setup-rayleigh` (always writes `auto`).
+For every `Task` / subagent call, use **`auto`** (omit the `model` field)
+unless a higher-priority pin applies. Precedence, highest first:
+
+1. Explicit human or `/vatsal-mode` pin for this turn
+2. Workspace `.cursor/rules/rayleigh-models.mdc` (role line)
+3. User-global `~/.cursor/rules/rayleigh-models.mdc` (role line)
+4. Default: `auto`
+
+First-time install and explicit reset: `/setup-rayleigh` (writes / upserts
+`auto`; full overwrite only on reset).
 
 ## Understand first
 

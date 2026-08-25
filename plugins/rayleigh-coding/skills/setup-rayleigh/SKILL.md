@@ -44,7 +44,8 @@ Ensure Cursor can load the plugin from the documented local path. The loaded
 directory itself must contain `.cursor-plugin/plugin.json` (nested marketplace
 layout → symlink the nested plugin folder).
 
-Run the bundled installer when you can resolve this skill on disk:
+Prefer the bundled installer (handles absolute paths, git worktrees, dest
+guards, and manifest validation):
 
 ```bash
 bash <path-to-setup-rayleigh>/scripts/install_local.sh
@@ -56,18 +57,27 @@ resolve that path, run the equivalent:
 
 ```bash
 mkdir -p ~/.cursor/plugins/local
-SRC="${RAYLEIGH_CODING_SRC:-$HOME/.cursor/plugins/local/rayleigh-coding-src}"
-if [ ! -d "$SRC/.git" ]; then
-  git clone https://github.com/VatsalSy/rayleigh-coding.git "$SRC"
+SRC_RAW="${RAYLEIGH_CODING_SRC:-$HOME/.cursor/plugins/local/rayleigh-coding-src}"
+SRC="$(python3 -c 'import os,sys; print(os.path.abspath(os.path.expanduser(sys.argv[1])))' "$SRC_RAW")"
+if git -C "$SRC" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+  git -C "$SRC" pull --ff-only || echo "warning: pull failed; using existing tree"
+elif [ -e "$SRC" ]; then
+  echo "error: $SRC is not a git work tree" >&2; exit 1
 else
-  git -C "$SRC" pull --ff-only
+  git clone https://github.com/VatsalSy/rayleigh-coding.git "$SRC"
 fi
-ln -sfn "$SRC/plugins/rayleigh-coding" ~/.cursor/plugins/local/rayleigh-coding
-test -f ~/.cursor/plugins/local/rayleigh-coding/.cursor-plugin/plugin.json
+python3 "$SRC/scripts/validate_marketplace.py"
+python3 "$SRC/scripts/validate_skills.py"
+DEST="$HOME/.cursor/plugins/local/rayleigh-coding"
+if [ -e "$DEST" ] && [ ! -L "$DEST" ]; then
+  echo "error: $DEST exists and is not a symlink; remove or rename it" >&2; exit 1
+fi
+ln -sfn "$SRC/plugins/rayleigh-coding" "$DEST"
+test -f "$DEST/.cursor-plugin/plugin.json"
 ```
 
-Optional override: set `RAYLEIGH_CODING_SRC` to an existing clone (for example a
-workshop checkout) instead of cloning into `~/.cursor/plugins/local/`.
+Optional override: set `RAYLEIGH_CODING_SRC` to an existing clone or worktree
+(absolute or relative to the current working directory).
 
 ### 3. Marketplace / Cloud Agent environment
 
@@ -88,13 +98,37 @@ or this skill / `/vatsal-mode` resolving after reload).
 Default policy for rayleigh-coding: **every Task / subagent role uses `auto`**
 (omit the Task `model` field so the child inherits the parent chat / Auto).
 
-Write **both** when writable:
+Touch **only** these two files when writable (never other `.cursor/rules`
+files):
 
 1. User-global: `~/.cursor/rules/rayleigh-models.mdc`
 2. This workspace / env: `.cursor/rules/rayleigh-models.mdc`
 
-Create parent directories as needed. Overwrite the whole file so re-runs stay
-idempotent. Shape:
+Create parent directories as needed.
+
+Managed role labels (one line each):
+
+```text
+default
+code
+judgment
+review
+swarm workers
+parallel-task
+```
+
+**Normal install / re-run (not an explicit reset):**
+
+- If the file is missing, create it with the shape below (all managed roles
+  `auto`).
+- If it exists, upsert only missing managed-role lines as `auto`. Keep any
+  existing non-`auto` values and any extra lines or comments. Do not wipe the
+  file.
+
+**Explicit reset** ("reset to auto", "fresh model defaults"): overwrite the
+whole file with the shape below.
+
+Shape (new file or explicit reset):
 
 ```markdown
 ---
@@ -120,19 +154,15 @@ asks, or when an agent already operating under rayleigh-coding /
 file over scattering one-off Task `model` arguments. After an override, say
 which roles changed.
 
-If a prior rule has non-`auto` values and the user asked for a fresh setup
-(or "reset to auto"), overwrite back to the shape above. If they only asked
-to install and the file already has intentional overrides, keep those lines
-and report them — still fill any missing roles with `auto`.
-
 ### 5. Confirm
 
 Tell the user:
 
 - Local plugin path (if installed) and whether marketplace enablement is still needed
-- That both model rule paths were written (or which one was skipped and why)
+- That both model rule paths were written or updated (or which one was skipped and why)
+- Whether intentional non-`auto` overrides were preserved
 - New chats / reloaded windows pick up the rule
 - Next command: `/vatsal-mode`
 
-Re-running `/setup-rayleigh` is safe: pull + relink + rewrite `auto` defaults
-(respecting the override rule in step 4).
+Re-running `/setup-rayleigh` is safe: pull + relink + upsert `auto` defaults
+(respecting the merge/reset rules in step 4).

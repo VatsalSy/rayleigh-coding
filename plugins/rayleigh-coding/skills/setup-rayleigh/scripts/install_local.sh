@@ -4,15 +4,21 @@
 set -euo pipefail
 
 PLUGIN_LOCAL="${HOME}/.cursor/plugins/local"
-SRC="${RAYLEIGH_CODING_SRC:-${PLUGIN_LOCAL}/rayleigh-coding-src}"
 REPO_URL="${RAYLEIGH_CODING_REPO:-https://github.com/VatsalSy/rayleigh-coding.git}"
+SRC_RAW="${RAYLEIGH_CODING_SRC:-${PLUGIN_LOCAL}/rayleigh-coding-src}"
+
+# Absolute path: relative RAYLEIGH_CODING_SRC must not become a symlink
+# resolved from PLUGIN_LOCAL.
+SRC="$(python3 -c 'import os,sys; print(os.path.abspath(os.path.expanduser(sys.argv[1])))' "${SRC_RAW}")"
 
 mkdir -p "${PLUGIN_LOCAL}"
 
-if [[ -d "${SRC}/.git" ]]; then
-  git -C "${SRC}" pull --ff-only
-elif [[ -d "${SRC}" ]]; then
-  echo "error: ${SRC} exists but is not a git clone; set RAYLEIGH_CODING_SRC" >&2
+if git -C "${SRC}" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+  if ! git -C "${SRC}" pull --ff-only; then
+    echo "warning: git pull --ff-only failed in ${SRC}; continuing with existing tree" >&2
+  fi
+elif [[ -e "${SRC}" ]]; then
+  echo "error: ${SRC} exists but is not a git work tree; set RAYLEIGH_CODING_SRC" >&2
   exit 1
 else
   git clone "${REPO_URL}" "${SRC}"
@@ -24,7 +30,23 @@ if [[ ! -f "${PLUGIN_SRC}/.cursor-plugin/plugin.json" ]]; then
   exit 1
 fi
 
-ln -sfn "${PLUGIN_SRC}" "${PLUGIN_LOCAL}/rayleigh-coding"
+if [[ -f "${SRC}/scripts/validate_marketplace.py" && -f "${SRC}/scripts/validate_skills.py" ]]; then
+  python3 "${SRC}/scripts/validate_marketplace.py"
+  python3 "${SRC}/scripts/validate_skills.py"
+else
+  echo "error: missing validators under ${SRC}/scripts" >&2
+  exit 1
+fi
 
-echo "installed: ${PLUGIN_LOCAL}/rayleigh-coding -> ${PLUGIN_SRC}"
-test -f "${PLUGIN_LOCAL}/rayleigh-coding/.cursor-plugin/plugin.json"
+DEST="${PLUGIN_LOCAL}/rayleigh-coding"
+if [[ -e "${DEST}" || -L "${DEST}" ]]; then
+  if [[ ! -L "${DEST}" ]]; then
+    echo "error: ${DEST} exists and is not a symlink. Remove or rename it, then re-run." >&2
+    exit 1
+  fi
+fi
+
+ln -sfn "${PLUGIN_SRC}" "${DEST}"
+
+echo "installed: ${DEST} -> ${PLUGIN_SRC}"
+test -f "${DEST}/.cursor-plugin/plugin.json"
