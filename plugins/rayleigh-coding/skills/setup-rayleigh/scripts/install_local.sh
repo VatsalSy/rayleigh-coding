@@ -7,18 +7,21 @@ PLUGIN_LOCAL="${HOME}/.cursor/plugins/local"
 REPO_URL="${RAYLEIGH_CODING_REPO:-https://github.com/VatsalSy/rayleigh-coding.git}"
 SRC_RAW="${RAYLEIGH_CODING_SRC:-${PLUGIN_LOCAL}/rayleigh-coding-src}"
 
-# Physical absolute path so symlink/case forms of the same clone root match
-# git rev-parse --show-toplevel.
+# Resolve to a stable absolute path before linking (relative SRC must not be
+# stored relative to PLUGIN_LOCAL).
 SRC="$(python3 -c 'import os,sys; print(os.path.realpath(os.path.expanduser(sys.argv[1])))' "${SRC_RAW}")"
 
 mkdir -p "${PLUGIN_LOCAL}"
 
 if git -C "${SRC}" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-  TOPLEVEL="$(python3 -c 'import os,sys; print(os.path.realpath(sys.argv[1]))' "$(git -C "${SRC}" rev-parse --show-toplevel)")"
-  if [[ "${TOPLEVEL}" != "${SRC}" ]]; then
+  # samefile handles symlinks and case-insensitive roots; string compare of
+  # abspath/realpath alone can still false-reject equivalent paths.
+  TOPLEVEL="$(git -C "${SRC}" rev-parse --show-toplevel)"
+  if ! python3 -c 'import os,sys; raise SystemExit(0 if os.path.samefile(sys.argv[1], sys.argv[2]) else 1)' "${SRC}" "${TOPLEVEL}"; then
     echo "error: ${SRC} is inside git work tree ${TOPLEVEL}; set RAYLEIGH_CODING_SRC to the rayleigh-coding clone root" >&2
     exit 1
   fi
+  SRC="$(python3 -c 'import os,sys; print(os.path.realpath(sys.argv[1]))' "${TOPLEVEL}")"
   if ! git -C "${SRC}" pull --ff-only; then
     echo "warning: git pull --ff-only failed in ${SRC}; continuing with existing tree" >&2
   fi

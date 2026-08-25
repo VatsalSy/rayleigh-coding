@@ -61,10 +61,11 @@ mkdir -p ~/.cursor/plugins/local
 SRC_RAW="${RAYLEIGH_CODING_SRC:-$HOME/.cursor/plugins/local/rayleigh-coding-src}"
 SRC="$(python3 -c 'import os,sys; print(os.path.realpath(os.path.expanduser(sys.argv[1])))' "$SRC_RAW")"
 if git -C "$SRC" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-  TOPLEVEL="$(python3 -c 'import os,sys; print(os.path.realpath(sys.argv[1]))' "$(git -C "$SRC" rev-parse --show-toplevel)")"
-  if [ "$TOPLEVEL" != "$SRC" ]; then
+  TOPLEVEL="$(git -C "$SRC" rev-parse --show-toplevel)"
+  if ! python3 -c 'import os,sys; raise SystemExit(0 if os.path.samefile(sys.argv[1], sys.argv[2]) else 1)' "$SRC" "$TOPLEVEL"; then
     echo "error: $SRC is inside git work tree $TOPLEVEL; set RAYLEIGH_CODING_SRC to the clone root" >&2; exit 1
   fi
+  SRC="$(python3 -c 'import os,sys; print(os.path.realpath(sys.argv[1]))' "$TOPLEVEL")"
   git -C "$SRC" pull --ff-only || echo "warning: pull failed; using existing tree"
 elif [ -e "$SRC" ]; then
   echo "error: $SRC is not a git work tree" >&2; exit 1
