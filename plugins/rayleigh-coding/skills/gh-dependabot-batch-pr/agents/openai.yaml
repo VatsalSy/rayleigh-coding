@@ -1,0 +1,4 @@
+interface:
+  display_name: "Dependabot Batch PR"
+  short_description: "Batch Dependabot bumps into one tested PR"
+  default_prompt: "Use $dependabot-batch-pr to combine Dependabot bumps, run checks, open one PR with $gh-pr-create, then close superseded Dependabot PRs."
