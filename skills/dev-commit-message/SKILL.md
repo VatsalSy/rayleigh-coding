@@ -64,7 +64,7 @@ relying on wrappers:
      `git branch --show-current`, then name that confirmed remote and branch in
      its first `git push -u`; use `git push` for subsequent pushes.
 8. **Verify cleanliness**: Re-run `git status --porcelain` to confirm no staged/unstaged changes remain unless the user asked to leave some files out
-9. **tracker checkpoint** (see [Tracker checkpoint after commit](#tracker-checkpoint-after-commit)): resolve the project by walking to `project.yaml` and matching the repository's normalised remote, then fire `project-tracker update <slug>` with a commit-linked note. Skip only unprofiled workspace hygiene.
+9. **Tracker checkpoint** (see [Tracker checkpoint after commit](#tracker-checkpoint-after-commit)): resolve the project by walking to `project.yaml` and matching the repository's normalised remote, then fire `project-tracker update <slug>` with a commit-linked note. Skip only unprofiled workspace hygiene.
 
 ## Exclusions
 
