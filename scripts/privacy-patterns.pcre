@@ -1,25 +1,6 @@
 # One PCRE pattern per line. Comments (#) and blank lines ignored.
-# Keep personal inventory values out of git. Optional CI injection:
-# PRIVACY_EXTRA_PATTERN (repo secret).
-(?i)jarvis-skills
-(?i)Projects-cowork
-(?i)\bopenclaw\b
-(?i)\bsecond-brain\b
-(?i)\bcomphy-state\b
-(?i)\bsgit\b
-(?i)stokes-ts
-(?i)dual-sync-main
-(?i)medical-record
-(?i)durham-expenses
-(?i)\bSynosync\b
-(?i)\bireminder\b
-(?i)\bcalcli\b
-(?i)\bzoteroctl\b
-(?i)\bcomphy-bot\b
-(?i)Worthington
-(?i)Kelvin/Stokes
-(?i)\bRayleigh\b(?!-coding)
-(?i)~/jarvis/
-(?i)project-tracker update
-(?i)project-lock
+# Do not put named private catalogues or personal inventory here.
+# Inject those via PRIVACY_EXTRA_PATTERN (repo secret).
+#
+# Public structural shapes only:
 prj_[A-Za-z0-9]{8,}

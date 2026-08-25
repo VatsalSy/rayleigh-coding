@@ -27,6 +27,7 @@ _CRED_FLAGS = {
     "--secret",
     "-t",
 }
+_CRED_NAMES = {"token", "api-key", "apikey", "password", "secret"}
 
 
 def parse_github_remote(raw: str) -> tuple[str, str] | None:
@@ -86,16 +87,12 @@ def _reject_credential_args(argv: list[str]) -> None:
     i = 0
     while i < len(argv):
         arg = argv[i]
-        key = arg.split("=", 1)[0].lower() if arg.startswith("-") else arg.lower()
-        if key in _CRED_FLAGS or key.lstrip("-") in {
-            "token",
-            "api-key",
-            "apikey",
-            "password",
-            "secret",
-        }:
-            print("Refusing credential-like CLI arguments.", file=sys.stderr)
-            raise SystemExit(30)
+        if arg.startswith("-"):
+            key = arg.split("=", 1)[0].lower()
+            bare = key.lstrip("-")
+            if key in _CRED_FLAGS or bare in _CRED_NAMES:
+                print("Refusing credential-like CLI arguments.", file=sys.stderr)
+                raise SystemExit(30)
         i += 1
 
 
@@ -130,11 +127,13 @@ def main(argv: list[str] | None = None) -> int:
 
     org = resolve_org()
     if org:
-        # Make the resolved hint visible to the child process.
         os.environ["CODERABBIT_ORG"] = org
         print(f"Using CodeRabbit organisation hint: {org}")
 
-    cmd = ["coderabbit", "review", "--plain", "--base", args.base]
+    cmd = ["coderabbit", "review", "--plain"]
+    if args.uncommitted:
+        cmd.append("--uncommitted")
+    cmd += ["--base", args.base]
     if args.light:
         cmd.append("--light")
     cmd += passthrough

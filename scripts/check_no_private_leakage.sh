@@ -20,19 +20,12 @@ RG_GLOBS=(
   --glob '!scripts/check_no_private_leakage.sh'
 )
 
+# Path fragments only — no named private catalogues here.
 DENIED_PATH_FRAGMENTS=(
-  'jarvis-skills'
-  'second-brain'
-  'Projects-cowork'
-  'comphy-state'
-  'openclaw'
-  'medical-record'
-  'durham-expenses'
   'scrub_private_leakage'
 )
 
 rg_capture() {
-  # Run rg; treat exit 1 as no-match (ok). Fail on exit >1 (bad pattern, I/O).
   local out=""
   set +e
   out="$(rg "$@" 2>/dev/null)"
@@ -100,7 +93,8 @@ fi
 
 echo "== promotion-marker gate =="
 promo=""
-if ! promo="$(rg_capture -n -i --glob '!.git/**' --glob '!scripts/check_no_private_leakage.sh' --glob '!scripts/privacy-patterns.pcre' \
+if ! promo="$(rg_capture -n -i --hidden --no-ignore \
+  --glob '!.git/**' --glob '!scripts/check_no_private_leakage.sh' --glob '!scripts/privacy-patterns.pcre' \
   'promoted from.*(private skill|private catalogue)|copied from private' .)"; then
   fail=1
 fi
