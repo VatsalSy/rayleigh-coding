@@ -32,4 +32,4 @@ http_headers = { "X-Figma-Region" = "us-east-1" }
 
 ## Usage reminders
 - The server is link-based: copy the Figma frame or layer link, then ask the MCP client to implement that URL. The client will extract the node ID from the link (it does not browse the page).
-- If output feels generic, restate the project-specific rules from the main skill and keep following the required flow (get_design_context → get_metadata if needed → get_screenshot).
+- If output feels generic, restate the project-specific rules from the main skill and ensure you follow the required flow (get_design_context → get_metadata if needed → get_screenshot).
