@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Initialize a new OpenClaw/AgentSkills skill scaffold.
+Initialize a new AgentSkills skill scaffold.
 
 Usage:
     init_skill.py <skill-name> [--path <skills-root>] [--resources scripts,references,assets] [--examples]
@@ -123,7 +123,7 @@ def init_skill(skill_name: str, skills_root: Path, resources: list[str], with_ex
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Initialize an OpenClaw skill scaffold")
+    parser = argparse.ArgumentParser(description="Initialize an AgentSkills skill scaffold")
     parser.add_argument("skill_name", help="hyphen-case skill name (e.g., paper-triage)")
     parser.add_argument(
         "--path",

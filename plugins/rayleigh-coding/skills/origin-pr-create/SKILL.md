@@ -39,8 +39,6 @@ origin pr create --status open --push --fill --remote <origin-cursor-remote>
    every actionable finding. A generated summary is not a review receipt.
 7. Merge later with `origin pr merge -m` only. Never `origin pr merge -s`.
 8. After merge, fast-forward GitHub `main` only. Then GitHub Actions may run.
-9. Tracker checkpoint: `project-tracker update <slug>` with
-   `checkpoint — opened Origin PR <n>: <title>` when the repo is profiled.
 
 ## Gotchas
 
@@ -49,3 +47,7 @@ origin pr create --status open --push --fill --remote <origin-cursor-remote>
 2. `--remote` defaults to git remote `origin`, which is often GitHub. Pass the
    `origin.cursor.com` remote explicitly.
 3. Squash merge rewrites the author. Always `-m`.
+
+## Public runtime contract
+
+This skill does not call private project trackers or profile services.

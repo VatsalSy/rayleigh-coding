@@ -1,10 +1,9 @@
 ---
 name: vatsal-mode
 description: >
-  Vatsal's coding agent style: concise replies, ask only load-bearing
-  decisions, verify with real-path evidence, and ship through disciplined
-  git/PR workflows. Use for Vatsal, /vatsal-mode, or requests to work in
-  this style.
+  Concise coding-agent style: ask only load-bearing decisions, verify with
+  real-path evidence, and ship through disciplined git/PR workflows. Use for
+  /vatsal-mode or requests to work in this style.
 disable-model-invocation: true
 mode: true
 icon: rocket
@@ -13,8 +12,8 @@ color: blue
 
 # Vatsal mode
 
-Personal coding mode for Cloud Agents and local Cursor. Reference skills in
-this plugin by path. Do not invent private fleet, vault, or lab topology.
+Coding mode for Cursor Cloud Agents and local Cursor. Reference skills in this
+plugin by path. Do not invent private fleet, vault, or lab topology.
 
 ## Non-negotiables
 
@@ -36,9 +35,12 @@ this plugin by path. Do not invent private fleet, vault, or lab topology.
 | User asks for a plan | `create-plan` (read-only) |
 | Blast radius before a risky change | `change-impact-analysis` |
 | Why was this built this way | `why` |
-| Parallel independent tool-heavy lanes | `orchestration-gpt` / `orchestration-claude` / `swarm-planner` / `parallel-task` |
+| Parallel independent tool-heavy lanes | `swarm-planner` / `parallel-task` (Cursor Task tool or equivalent) |
 
 Skip grilling for routine reversible work.
+
+Do **not** route to Codex-only or Claude-Code-only orchestration playbooks.
+Those harnesses are out of scope for this Cursor marketplace plugin.
 
 ## Verify before "done"
 
@@ -57,7 +59,7 @@ receipt helps).
 
 | Situation | Skill |
 |---|---|
-| Local quality/security pass before push | `code-review` (guarded CodeRabbit CLI when available) or `dev-review-ultra` |
+| Local quality/security pass before push | `code-review` (thin CodeRabbit CLI wrapper when available) or `dev-review-ultra` |
 | Security-focused pass | `security-best-practices` / `security-threat-model` / `security-gitleaks` |
 | Open a GitHub PR | `gh-pr-create` |
 | Make Actions green | `gh-fix-ci` |
@@ -71,14 +73,11 @@ Prefer merge commits. Do not squash unless the user asks.
 Optional assignee: `GH_ASSIGNEE`. Optional merge bot: `MERGE_BOT_LOGIN`.
 Never hard-code personal logins into skills.
 
-If pstack is installed, its babysit/shipping playbooks may complement this
-mode. Do not vendor pstack here.
-
 ## Code and UI craft
 
 - Frontend: `dev-frontend-design` (and `figma` / `figma-implement-design` when
   a design file is the source of truth).
-- Commits: `dev-commit-message` (imperative subject, no AI trailers).
+- Commits: `dev-commit-message` — drafting text does not imply mutation.
 - READMEs / docstrings: `dev-readme-writer` / `dev-docstring` with
   `AUTHOR_NAME` / `AUTHOR_EMAIL` placeholders only.
 - Python runtime choice: `python-env` (`uv` for new project work).
@@ -98,5 +97,4 @@ mode. Do not vendor pstack here.
 Broken skill mid-task: fix it in its own PR when the skill lives in this
 plugin. Do not silently work around a bad instruction.
 
-Authoring or migrating skills: `skill-creator` / `find-skills` /
-`slash-command-maker`.
+Authoring or discovering skills: `skill-creator` / `find-skills`.

@@ -1,12 +1,27 @@
 #!/usr/bin/env bash
-# Fail if private / personal leakage patterns appear in published marketplace content.
-# Hard gate: private skill catalogues (e.g. jarvis-skills) and fleet topology must
-# never land in this public repo.
+# Full-tree privacy gate for the public marketplace.
+#
+# Design rules:
+# - Never embed confidential identifiers or personal inventory values here.
+# - Scan the entire worktree (including scripts/ and .github/).
+# - Pattern sources are loaded from scripts/privacy-patterns.pcre and are
+#   excluded from the content scan so the gate does not self-match.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 
-# Denied path fragments (case-sensitive path/name hits).
+fail=0
+PATTERNS_FILE="scripts/privacy-patterns.pcre"
+
+RG_GLOBS=(
+  --glob '!.git/**'
+  --glob '!**/node_modules/**'
+  --glob '!**/.venv/**'
+  --glob '!**/__pycache__/**'
+  --glob '!scripts/privacy-patterns.pcre'
+  --glob '!scripts/check_no_private_leakage.sh'
+)
+
 DENIED_PATH_FRAGMENTS=(
   'jarvis-skills'
   'second-brain'
@@ -15,56 +30,73 @@ DENIED_PATH_FRAGMENTS=(
   'openclaw'
   'medical-record'
   'durham-expenses'
+  'scrub_private_leakage'
 )
 
-# Content patterns that must never appear in published trees.
-PATTERN='Rayleigh|Worthington|Kelvin/Stokes|/Users/vatsal|/Users/comphy|openclaw|second-brain|comphy-state|\bsgit\b|stokes-ts|Projects-cowork|dual-sync-main|medical-record|durham-expenses|vatsalsanjay\.com|vatsal\.sanjay@|5b283a1192f0a78f|2e852c08b4428ffafda676c354c13c98|264b1512bed863f81da699991dafb514|0dd798a4d4f2ba386457f3cdbe54fba9|8e47b17c0904dc8eb4a934c4038b7fa7|prj_bHRfpwCUfu05|prj_stHuYYHE9RJG|prj_SHsyjr2vTYTe|prj_rT3QjtWigNGR|prj_HmDrwzVsRwfe|prj_Yyc9nVMvlNc5|prj_8NGwHM9hYo3q|Synosync|ireminder|calcli|zoteroctl|jarvis-skills|comphy-bot'
+if [[ ! -f "$PATTERNS_FILE" ]]; then
+  echo "Missing $PATTERNS_FILE" >&2
+  exit 2
+fi
 
-SCAN_PATHS=(plugins .cursor-plugin README.md LICENSE)
-# Optional roots (present after layout migrations).
-for optional in docs; do
-  if [[ -e "$optional" ]]; then
-    SCAN_PATHS+=("$optional")
-  fi
-done
+if ! command -v rg >/dev/null 2>&1; then
+  echo "ripgrep (rg) is required for the privacy gate" >&2
+  exit 2
+fi
 
-fail=0
+mapfile -t PATTERN_LINES < <(grep -vE '^\s*(#|$)' "$PATTERNS_FILE")
+if [[ ${#PATTERN_LINES[@]} -eq 0 ]]; then
+  echo "No privacy patterns loaded" >&2
+  exit 2
+fi
 
-echo "== path-fragment gate =="
+PATTERN="$(printf '%s\n' "${PATTERN_LINES[@]}" | paste -sd'|' -)"
+if [[ -n "${PRIVACY_EXTRA_PATTERN:-}" ]]; then
+  PATTERN="${PATTERN}|${PRIVACY_EXTRA_PATTERN}"
+fi
+
+echo "== path-fragment gate (full tree) =="
 while IFS= read -r -d '' path; do
   rel="${path#./}"
+  case "$rel" in
+    .git/*) continue ;;
+  esac
   for frag in "${DENIED_PATH_FRAGMENTS[@]}"; do
     if [[ "$rel" == *"$frag"* ]]; then
       echo "Denied path fragment '$frag' in: $rel" >&2
       fail=1
     fi
   done
-done < <(find plugins .cursor-plugin -type f -print0 2>/dev/null)
+done < <(find . -type f -print0 2>/dev/null)
 
-echo "== content pattern gate =="
-hits=""
-if command -v rg >/dev/null 2>&1; then
-  hits="$(rg -n --pcre2 "$PATTERN" "${SCAN_PATHS[@]}" 2>/dev/null || true)"
-else
-  hits="$(grep -RInE "$PATTERN" "${SCAN_PATHS[@]}" 2>/dev/null || true)"
-fi
-
+echo "== content pattern gate (full tree) =="
+hits="$(rg -n --pcre2 "${RG_GLOBS[@]}" -e "$PATTERN" . 2>/dev/null || true)"
 if [[ -n "${hits}" ]]; then
   echo "Private leakage patterns found:" >&2
   echo "${hits}" >&2
   fail=1
 fi
 
-# Refuse accidental promotion markers that copy private catalogues by name.
-echo "== promotion-marker gate =="
-if command -v rg >/dev/null 2>&1; then
-  promo="$(rg -n -i 'promoted from.*(jarvis|private skill)|copied from.*jarvis-skills|source:\s*jarvis-skills' plugins 2>/dev/null || true)"
-else
-  promo="$(grep -RInE 'promoted from.*(jarvis|private skill)|copied from.*jarvis-skills|source:[[:space:]]*jarvis-skills' plugins 2>/dev/null || true)"
+echo "== no confidential scrubber =="
+if [[ -f scripts/scrub_private_leakage.py ]]; then
+  echo "scripts/scrub_private_leakage.py must not ship publicly" >&2
+  fail=1
 fi
+
+echo "== promotion-marker gate =="
+# Search for promotion phrasing without naming private catalogues in this file.
+promo="$(rg -n -i --glob '!.git/**' --glob '!scripts/check_no_private_leakage.sh' --glob '!scripts/privacy-patterns.pcre' \
+  'promoted from.*(private skill|private catalogue)|copied from private' . 2>/dev/null || true)"
 if [[ -n "${promo}" ]]; then
   echo "Private promotion markers found:" >&2
   echo "${promo}" >&2
+  fail=1
+fi
+
+echo "== recent commit-message scan =="
+msg_hits="$(git log -n 80 --pretty=%B | rg -n --pcre2 "$PATTERN" || true)"
+if [[ -n "${msg_hits}" ]]; then
+  echo "Private leakage patterns in recent commit messages:" >&2
+  echo "${msg_hits}" >&2
   fail=1
 fi
 

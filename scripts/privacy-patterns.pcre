@@ -1,0 +1,30 @@
+# One PCRE pattern per line. Comments (#) and blank lines ignored.
+# Keep this free of concrete private IDs / vault values. Confidential denylist
+# material belongs in a private exporter, optionally injected via
+# PRIVACY_EXTRA_PATTERN in CI.
+(?i)jarvis-skills
+(?i)Projects-cowork
+(?i)\bopenclaw\b
+(?i)\bsecond-brain\b
+(?i)\bcomphy-state\b
+(?i)\bsgit\b
+(?i)stokes-ts
+(?i)dual-sync-main
+(?i)medical-record
+(?i)durham-expenses
+(?i)vatsalsanjay\.com
+(?i)vatsal\.sanjay@
+(?i)/Users/vatsal\b
+(?i)/Users/comphy
+(?i)\bSynosync\b
+(?i)\bireminder\b
+(?i)\bcalcli\b
+(?i)\bzoteroctl\b
+(?i)\bcomphy-bot\b
+(?i)Worthington
+(?i)Kelvin/Stokes
+(?i)\bRayleigh\b(?!-coding)
+(?i)~/jarvis/
+(?i)project-tracker update
+(?i)project-lock
+prj_[A-Za-z0-9]{8,}

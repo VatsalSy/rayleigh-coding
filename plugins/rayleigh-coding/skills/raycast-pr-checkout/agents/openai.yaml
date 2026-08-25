@@ -1,4 +1,0 @@
-interface:
-  display_name: "Raycast PR Checkout"
-  short_description: "Checkout Raycast extension PRs"
-  default_prompt: "Use $raycast-pr-checkout to prepare a Raycast extension PR locally and stop before npm install."

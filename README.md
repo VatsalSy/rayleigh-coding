@@ -2,84 +2,74 @@
 
 Public **Cursor marketplace** for coding skills and **`/vatsal-mode`**.
 
-Built for Cursor Cloud Agents and local Cursor. Personal / fleet / writing
-skills stay in a private catalogue and are never published here.
+This is a curated downstream distribution for Cursor Cloud Agents and local
+Cursor — not a regex-scrubbed mirror of a private skill catalogue.
 
 ## Install (Import Marketplace)
 
-This repo is a marketplace (`.cursor-plugin/marketplace.json` + `plugins/…`).
-Do **not** use the single-plugin flow alone if you want Cloud Agent marketplace
-sync — use **Import Marketplace**:
-
-1. Cursor → **Settings → Plugins → Import Marketplace** (or Team Marketplaces → **+ Import Marketplace**).
+1. Cursor → **Settings → Plugins → Import Marketplace**
 2. Repository: `https://github.com/VatsalSy/rayleigh-coding`
-3. Scope: User (or Team).
-4. Enable the **rayleigh-coding** plugin when listed.
-5. Reload the window if skills do not appear immediately.
+3. Enable the **rayleigh-coding** plugin
+4. Reload the window if needed, then run `/vatsal-mode`
 
-Then run:
+### Local install (plugin directory, not marketplace root)
 
-```text
-/vatsal-mode
-```
-
-### Alternatives
-
-**Chat command** (single-plugin style; may pin an old commit on some builds):
-
-```text
-/add-plugin VatsalSy/rayleigh-coding
-```
-
-**Local clone** (best for live updates while developing):
+Cursor loads a plugin from a directory that itself contains
+`.cursor-plugin/plugin.json`. Clone the repo, then point the local plugin path
+at the nested plugin:
 
 ```bash
 mkdir -p ~/.cursor/plugins/local
-git clone https://github.com/VatsalSy/rayleigh-coding.git ~/.cursor/plugins/local/rayleigh-coding
+git clone https://github.com/VatsalSy/rayleigh-coding.git ~/.cursor/plugins/local/rayleigh-coding-src
+ln -sfn ~/.cursor/plugins/local/rayleigh-coding-src/plugins/rayleigh-coding \
+  ~/.cursor/plugins/local/rayleigh-coding
 ```
 
-Reload Cursor (**Developer: Reload Window**). Pull later with:
+Reload Cursor (**Developer: Reload Window**). Update with:
 
 ```bash
-git -C ~/.cursor/plugins/local/rayleigh-coding pull
+git -C ~/.cursor/plugins/local/rayleigh-coding-src pull
 ```
 
 ## Layout
 
 ```
-.cursor-plugin/marketplace.json     - marketplace registry
-plugins/rayleigh-coding/            - the coding plugin
+.cursor-plugin/marketplace.json
+plugins/rayleigh-coding/
   .cursor-plugin/plugin.json
-  skills/                           - public skills (/vatsal-mode, …)
-  docs/                             - CODING.md + skill inventory
-scripts/check_no_private_leakage.sh - hard privacy gate
-.github/workflows/privacy-check.yml - CI on every push/PR
+  skills.allowlist          # shipped skill names only
+  skills/
+  docs/
+scripts/                    # public gates (no confidential denylist values)
+.github/workflows/privacy-check.yml
+THIRD_PARTY.md
 ```
+
+## Public runtime contract
+
+Every shipped skill must be usable without private sibling skills, private
+profile/tracker services, or fleet hosts. Skills that cannot meet that bar are
+kept out of `skills.allowlist`.
+
+Confidential denylists and exporters stay private. CI may optionally inject
+extra patterns via the `PRIVACY_EXTRA_PATTERN` repository secret.
 
 ## What is included
 
-- **Mode:** `vatsal-mode`
-- **Plan / decide:** `create-plan`, `grill-me`, `change-impact-analysis`, `why`
-- **Parallel work:** `orchestration-gpt`, `orchestration-claude`, `swarm-planner`, `parallel-task`
-- **Verify:** `verification-contract`, `playwright`, `screenshot`
-- **Review / security:** `code-review`, `autofix`, `coderabbit-config`, `dev-review-ultra`, `security-*`
-- **GitHub / Origin:** `git-master`, `git-repo-init`, `git-*`, `gh-*`, `origin-*`
-- **UI / apps:** `dev-frontend-design`, `develop-web-game`, `figma`, `figma-implement-design`
-- **Deploy (discover IDs via CLI):** `vercel`, `netlify-deploy`, `render-deploy`, `cloudflare`
-- **Tooling:** `python-env`, `jupyter-notebook`, `skill-creator`, `find-skills`, …
+See `plugins/rayleigh-coding/docs/SKILLS.md` and `skills.allowlist`.
 
-See `plugins/rayleigh-coding/docs/CODING.md` and `plugins/rayleigh-coding/docs/SKILLS.md`.
-
-## Privacy hard gate
-
-This repository must not contain private host topology, vault paths, personal
-deploy inventories, secrets, or private skill-catalogue content. CI runs
-`scripts/check_no_private_leakage.sh` on every push and PR. Locally:
+## Privacy and release gates
 
 ```bash
 bash scripts/check_no_private_leakage.sh
+bash scripts/check_executable_scripts.sh
+python3 scripts/validate_marketplace.py
+python3 scripts/validate_skills.py
+python3 -m pytest plugins/rayleigh-coding/skills/code-review/tests -q
+bash scripts/check_history_hygiene.sh
 ```
 
 ## License
 
-MIT
+MIT for original content. Third-party skill subtrees keep their upstream
+licences — see `THIRD_PARTY.md`.

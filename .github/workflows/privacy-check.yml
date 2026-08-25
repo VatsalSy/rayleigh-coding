@@ -15,31 +15,45 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Install ripgrep
         run: sudo apt-get update -qq && sudo apt-get install -y -qq ripgrep
 
-      - name: Refuse private / personal leakage
+      - name: Full-tree privacy gate
+        env:
+          # Optional: inject private denylist alternation from repo secret
+          PRIVACY_EXTRA_PATTERN: ${{ secrets.PRIVACY_EXTRA_PATTERN }}
         run: bash scripts/check_no_private_leakage.sh
 
-      - name: Marketplace layout sanity
+      - name: Marketplace layout + allowlist sanity
         run: |
           set -euo pipefail
           test -f .cursor-plugin/marketplace.json
           test -f plugins/rayleigh-coding/.cursor-plugin/plugin.json
-          test -d plugins/rayleigh-coding/skills
-          python3 - <<'PY'
-          import json
-          from pathlib import Path
-          market = json.loads(Path(".cursor-plugin/marketplace.json").read_text())
-          assert market["name"] == "rayleigh-coding"
-          plugins = market["plugins"]
-          assert any(p.get("name") == "rayleigh-coding" for p in plugins)
-          for p in plugins:
-              src = Path(p["source"])
-              assert src.is_dir(), src
-              assert (src / ".cursor-plugin" / "plugin.json").is_file(), src
-          plugin = json.loads(Path("plugins/rayleigh-coding/.cursor-plugin/plugin.json").read_text())
-          assert plugin["name"] == "rayleigh-coding"
-          print("marketplace layout ok")
-          PY
+          test -f plugins/rayleigh-coding/skills.allowlist
+          python3 scripts/validate_marketplace.py
+
+  release-gates:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install ripgrep + pytest
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ripgrep
+          python3 -m pip install --user pytest
+
+      - name: Executable bits on skill scripts
+        run: bash scripts/check_executable_scripts.sh
+
+      - name: Skill frontmatter validation
+        run: python3 scripts/validate_skills.py
+
+      - name: Unit tests (code-review)
+        run: python3 -m pytest plugins/rayleigh-coding/skills/code-review/tests -q
+
+      - name: History hygiene scan
+        run: bash scripts/check_history_hygiene.sh
