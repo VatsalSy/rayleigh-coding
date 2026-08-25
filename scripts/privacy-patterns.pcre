@@ -1,7 +1,6 @@
 # One PCRE pattern per line. Comments (#) and blank lines ignored.
-# Keep this free of concrete private IDs / vault values. Confidential denylist
-# material belongs in a private exporter, optionally injected via
-# PRIVACY_EXTRA_PATTERN in CI.
+# Keep concrete inventory values out of git. Optional CI injection:
+# PRIVACY_EXTRA_PATTERN.
 (?i)jarvis-skills
 (?i)Projects-cowork
 (?i)\bopenclaw\b

@@ -15,7 +15,7 @@ doubt, leave a path reviewable.
 Shared conventions (all templates):
 
 - Schema header line: `# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json`
-- `language: "en-GB"` (lab standard; do not use en-US in new repos)
+- `language: "en-GB"` (prefer en-GB in new repos; do not use en-US by default)
 - `reviews.profile: "chill"`
 - Point CodeRabbit at repo conventions: every repo has `AGENTS.md` as
   canonical (`CLAUDE.md` just defers to it, and is often gitignored) — the
@@ -181,10 +181,10 @@ reviews:
       enabled: true
 ```
 
-## Infrastructure / CLI repo (fleet tooling, YAML inventories)
+## Infrastructure / CLI repo (ops inventories, host lists)
 
 For repos whose content includes intentional operational detail (hostnames,
-SSH public-key fingerprints, tailnet names). Suppress secret scanners only
+SSH public-key fingerprints, network names). Suppress secret scanners only
 when the repo genuinely holds such inventory data — keep them on otherwise.
 
 ```yaml
@@ -198,8 +198,6 @@ reviews:
   path_filters:
     - "!dist/**"
     - "!**/fonts/**"
-    # Append-only operational history, never reviewable
-    - "!reservations/history/**"
   path_instructions:
     - path: "bin/**"
       instructions: |
@@ -212,17 +210,9 @@ reviews:
         intentional repository content, not leaks. Do not raise
         secret-scanning or privacy findings on them. Do check referential
         integrity against the schemas.
-    - path: "reservations/**"
-      instructions: |
-        Machine-written operational state committed directly to main by
-        agent tooling as part of the compute-dispatch hot path. Restrict
-        findings to schema-shape drift and referential integrity (unknown
-        host/storage IDs, malformed slugs, impossible capacity values).
-        No style, naming, or structural suggestions — these files are not
-        hand-edited and a review must never delay a reservation.
     - path: "services/**"
       instructions: |
-        systemd units and shell helpers that run unattended on fleet hosts.
+        systemd units and shell helpers that run unattended on hosts.
         Review restart/failure semantics and quoting rigorously.
   tools:
     shellcheck:

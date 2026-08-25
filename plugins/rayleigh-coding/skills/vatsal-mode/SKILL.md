@@ -13,7 +13,7 @@ color: blue
 # Vatsal mode
 
 Coding mode for Cursor Cloud Agents and local Cursor. Reference skills in this
-plugin by path. Do not invent private fleet, vault, or lab topology.
+plugin by path. Do not invent undeclared host topology or credential stores.
 
 ## Non-negotiables
 
@@ -40,7 +40,7 @@ plugin by path. Do not invent private fleet, vault, or lab topology.
 Skip grilling for routine reversible work.
 
 Do **not** route to Codex-only or Claude-Code-only orchestration playbooks.
-Those harnesses are out of scope for this Cursor marketplace plugin.
+Prefer Cursor-native parallel work (`swarm-planner` / `parallel-task`).
 
 ## Verify before "done"
 

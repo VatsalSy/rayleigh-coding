@@ -1,7 +1,6 @@
-# Coding conventions (public)
+# Coding conventions
 
-Exportable rules for agents using rayleigh-coding. No private fleet, vault, or
-lab topology belongs here.
+Rules for agents using rayleigh-coding.
 
 ## Autonomy
 
@@ -19,7 +18,7 @@ Prefer merge commits. Do not squash unless the user asks.
 
 ## Review
 
-- GitHub: CodeRabbit via the guarded `code-review` entrypoint when the CLI is
+- GitHub: CodeRabbit via the `code-review` entrypoint when the CLI is
   available.
 - Origin: Bugbot / Origin review skills. Do not invent a Bugbot CLI.
 - Stop on rate limits for an unchanged diff. Do not burn quota with no-op
@@ -39,5 +38,5 @@ receipt. Do not call a green unit suite "scientific validation."
 
 ## Deploy skills
 
-Discover Cloudflare account/zone IDs and Vercel project IDs through the CLI or
-API at runtime. Never commit personal inventories into skills.
+Discover account, zone, and project IDs through the relevant CLI or API at
+runtime. Do not commit personal ID inventories into skills.

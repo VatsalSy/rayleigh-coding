@@ -5,7 +5,7 @@
     "email": "plugins@example.com"
   },
   "metadata": {
-    "description": "Curated public Cursor marketplace for coding skills. Allowlisted standalone skills only \u2014 not a private catalogue mirror.",
+    "description": "Cursor marketplace for coding skills: /vatsal-mode, verification, git/PR workflows, security helpers, and UI craft.",
     "version": "0.3.0"
   },
   "plugins": [

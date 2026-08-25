@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate marketplace manifests and allowlist membership."""
+"""Validate marketplace manifests and manifest membership."""
 from __future__ import annotations
 
 import json
@@ -8,13 +8,13 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 PLUGIN = ROOT / "plugins" / "rayleigh-coding"
-ALLOWLIST = PLUGIN / "skills.allowlist"
+MANIFEST = PLUGIN / "skills.manifest"
 SKILLS = PLUGIN / "skills"
 
 
-def load_allowlist() -> set[str]:
+def load_manifest() -> set[str]:
     names: set[str] = set()
-    for line in ALLOWLIST.read_text(encoding="utf-8").splitlines():
+    for line in MANIFEST.read_text(encoding="utf-8").splitlines():
         line = line.strip()
         if not line or line.startswith("#"):
             continue
@@ -35,12 +35,12 @@ def main() -> int:
     plugin = json.loads((PLUGIN / ".cursor-plugin" / "plugin.json").read_text())
     assert plugin["name"] == "rayleigh-coding"
 
-    allow = load_allowlist()
+    allow = load_manifest()
     present = {p.name for p in SKILLS.iterdir() if p.is_dir()}
     extra = present - allow
     missing = allow - present
     if extra or missing:
-        print(f"allowlist mismatch extra={sorted(extra)} missing={sorted(missing)}", file=sys.stderr)
+        print(f"manifest mismatch extra={sorted(extra)} missing={sorted(missing)}", file=sys.stderr)
         return 1
 
     print(f"marketplace ok; skills={len(present)}")

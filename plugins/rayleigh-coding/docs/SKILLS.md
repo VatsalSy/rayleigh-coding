@@ -1,6 +1,6 @@
 # Skill inventory
 
-56 allowlisted skills in this plugin.
+56 skills in this plugin.
 
 | Skill |
 |---|
@@ -61,4 +61,4 @@
 | `verification-contract` |
 | `why` |
 
-Source of truth: `skills.allowlist`.
+Source of truth: `skills.manifest`.

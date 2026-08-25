@@ -39,12 +39,10 @@ Never stage `.comphy/`. Prefer pathspecs such as
 - Body (optional): what/why, not how
 - No AI signatures or `Co-authored-by` trailers from tools
 
-## Public runtime contract
+## Scope
 
-This skill does **not** call private project trackers, profile services,
-context publishers, or fleet reservation tools. After a commit in a private
-workshop that uses those systems, the user (or a private skill) may checkpoint
-separately — never from this public skill.
+This skill drafts and (when asked) commits. It does not run project profile
+updates or other workshop bookkeeping.
 
 ## Gotchas
 

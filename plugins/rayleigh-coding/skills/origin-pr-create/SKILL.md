@@ -47,7 +47,3 @@ origin pr create --status open --push --fill --remote <origin-cursor-remote>
 2. `--remote` defaults to git remote `origin`, which is often GitHub. Pass the
    `origin.cursor.com` remote explicitly.
 3. Squash merge rewrites the author. Always `-m`.
-
-## Public runtime contract
-
-This skill does not call private project trackers or profile services.

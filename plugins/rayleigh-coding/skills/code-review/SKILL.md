@@ -2,21 +2,20 @@
 name: code-review
 description: >-
   Use when the user says "review my code", "run coderabbit", "check code
-  quality", or before pushing behavioural code/skill changes. Thin public
-  CodeRabbit CLI wrapper — not a private org-routing guard.
+  quality", or before pushing behavioural code/skill changes. Thin CodeRabbit
+  CLI wrapper for this plugin.
 metadata:
   version: "0.4.0"
 ---
 
-# CodeRabbit Code Review (public)
+# CodeRabbit Code Review
 
-Run the local CodeRabbit CLI through the thin wrapper in
+Run the local CodeRabbit CLI through the wrapper in
 `scripts/coderabbit_repo_review.py`.
 
-This public skill does **not** claim private fleet behaviour: no cadence
-receipts, no paid-org lock files, no exact-diff reuse ledger, and no secret
-redaction pipeline. If you need those, use a private guard outside this
-marketplace.
+This skill is a thin CLI helper: organisation hinting from env/remote, then
+`coderabbit review`. It does not maintain review-receipt ledgers or cadence
+locks.
 
 ## Prerequisites
 

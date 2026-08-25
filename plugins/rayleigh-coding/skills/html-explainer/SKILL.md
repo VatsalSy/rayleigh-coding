@@ -116,8 +116,6 @@ those checks. Otherwise ask one short question for a safe path under the
 active workspace (for example `scratch/html/<descriptive-slug>.html`) rather
 than writing into an unrelated repository or home directory.
 
-This public skill does not invoke private project trackers or lock services.
-
 ### 5. Choose one primary pattern
 
 Read `references/patterns.md`, then select the smallest pattern that matches

@@ -115,7 +115,10 @@ Treat the skill name as canonical. A dead versioned cache path is a routing prob
 ## Gotchas
 
 1. **Major-version bumps can be silent breaking changes** -- lockfile diffs for a major bump often look small but break runtime behaviour (new default options, removed APIs). Always inspect major bumps individually and run tests before including them in the batch.
-2. **Old version-pinned skill paths fail noisily** -- if the automation injects `/Users/.../jarvis/<old-version>/skills/gh-dependabot-batch-pr/SKILL.md` and that path is gone, re-resolve the live skill directory and continue. Do not treat stale path failure as a missing-skill condition.
+2. **Stale injected skill paths fail noisily** -- if automation injects an old
+   absolute path to this skill and that path is gone, re-resolve the live skill
+   directory and continue. Do not treat stale path failure as a missing-skill
+   condition.
 3. **Closing Dependabot PRs before the batch PR merges can lose context** -- use `--dry-run` first; confirm the batch PR URL is valid and the PR is open (not draft) before closing superseded PRs. The batch PR itself must not merge until the CodeRabbit App review (where installed) has posted and its threads are handled — green Actions alone are not the merge gate (`CONVENTIONS.md` "Code review before push and merge").
 4. **`tmp/dependabot-updates.json` from text/screenshot flow lacks `pr_number`** -- closing superseded PRs requires re-collecting with `--from-gh` to populate `pr_number`; the text-only path cannot close PRs without it.
 5. **Quality gates must pass before PR creation** -- if `run_repo_checks.py` fails, do not open the PR and ask for workaround. A broken batch PR is harder to revert than individual Dependabot PRs.

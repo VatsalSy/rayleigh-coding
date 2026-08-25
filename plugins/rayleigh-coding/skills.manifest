@@ -1,9 +1,6 @@
-# Public allowlist for plugins/rayleigh-coding/skills/
-# Only skills listed here ship in the marketplace. Everything else is private
-# catalogue / harness-specific and must not be promoted here.
-# One skill directory name per line. Comments start with #.
+# Skills shipped in this plugin (one directory name per line).
+# Comments start with #.
 
-# Mode & reasoning
 vatsal-mode
 create-plan
 grill-me
@@ -12,8 +9,6 @@ change-impact-analysis
 verification-contract
 parallel-task
 swarm-planner
-
-# Review & security
 code-review
 autofix
 coderabbit-config
@@ -21,8 +16,6 @@ dev-review-ultra
 security-best-practices
 security-gitleaks
 security-threat-model
-
-# Git / GitHub / Origin
 git-master
 git-repo-init
 git-worktree-playbook
@@ -41,19 +34,13 @@ origin-babysit-pr
 origin-code-review
 origin-pr-checkout
 origin-release-notes-writer
-
-# Craft
 dev-commit-message
 dev-docstring
 dev-frontend-design
 dev-readme-writer
 html-explainer
-
-# Verify
 playwright
 screenshot
-
-# Deploy / SaaS / docs (public CLI contracts)
 vercel
 netlify-deploy
 render-deploy
@@ -68,7 +55,5 @@ pdf
 jupyter-notebook
 python-env
 docs-claude
-
-# Meta
 skill-creator
 find-skills

@@ -88,9 +88,8 @@ babysat is a failure even if every comment was "addressed".
     --jq '[.data.repository.pullRequest.reviewThreads.nodes[]|select(.isResolved|not)]|length'
   ```
 
-  Never declare threads resolved from memory — the 2026-08-11 fleet
-  audit found "you said it's resolved and it isn't" was the single most common
-  validated correction, worst on CodeRabbit threads.
+  Never declare threads resolved from memory — unresolved threads marked done
+  by the agent is a recurring failure mode, worst on CodeRabbit threads.
 - **Dismissal protocol:** a thread not worth addressing gets a short written reason and is then resolved — never silently ignored, never silently complied with. Deferred threads stay open with the rationale posted.
 - **Dismissal replies — and ONLY dismissal replies — are signed** so a declined finding is traceable to the agent that declined it: `*<model-slug> on behalf of the user:* <reason>`. Fix notifications, summaries, and every other comment stay unsigned.
 - **Bad dismissal:** *(resolve the thread with no reply)* — or "This is fine as is."
