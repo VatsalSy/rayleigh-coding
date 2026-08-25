@@ -134,4 +134,49 @@ This is the smallest “production baseline” that prevents common jQuery-relat
 
 ### 3.3 CSP + Trusted Types (SHOULD, and MUST where available/required by policy)
 
-* SHOULD deploy a Content Security Policy (CSP) that reduces XSS impact (especially `script-src` restrictions and avoiding `u
+* SHOULD deploy a Content Security Policy (CSP) that reduces XSS impact (especially `script-src` restrictions and avoiding `unsafe-inline`). If not done through HTTP server, this can be done through the `<meta http-equiv="Content-Security-Policy" content="...">` tag. ([OWASP Cheat Sheet Series][9]) NOTE: It is most important to set the CSP's script-src. All other directives are not as important and can generally be excluded for the ease of development.
+* SHOULD consider Trusted Types as a strong defense-in-depth against DOM XSS. ([W3C][10])
+* If you deploy the CSP directive `require-trusted-types-for`, then code MUST route DOM-injection through Trusted Types policies. ([MDN Web Docs][11])
+* Note: jQuery 4.0 explicitly added Trusted Types support so that TrustedHTML can be used with jQuery manipulation methods without violating `require-trusted-types-for`. ([blog.jquery.com][7])
+
+### 3.4 Security headers and cookie posture (defense in depth; SHOULD)
+
+Even though these are typically set server-side, they materially reduce the blast radius of jQuery-related mistakes. However if the context is only the frontend web application, these cannot be acted on.
+
+* SHOULD set common security headers (CSP, `X-Content-Type-Options: nosniff`, clickjacking protection via `frame-ancestors` / `X-Frame-Options`, `Referrer-Policy`). ([OWASP Cheat Sheet Series][12])
+* SHOULD avoid storing long-lived secrets/tokens in places accessible to JavaScript (like `localStorage`) unless the threat model explicitly accepts “XSS == account takeover”. This is not jQuery-specific, but jQuery-heavy DOM manipulation increases the chance of DOM XSS regressions; reduce the payoff.
+
+---
+
+## 4) Rules (generation + audit)
+
+Each rule contains: required practice, insecure patterns, detection hints, and remediation.
+
+### JQ-SUPPLY-001: jQuery MUST be patched; do not run known vulnerable versions
+
+Severity: Medium (High if internet-facing app AND version is known-vulnerable)
+
+NOTE: Before performing an upgrade, get concent from the user and try to understand if they have reasons to keep it back. Upgrading can break applications in unexpected ways. Report and recommend upgrades rather than just performing them.
+
+Required:
+
+* MUST NOT use jQuery versions with known high-impact vulnerabilities when a patched version exists.
+* MUST upgrade past:
+
+  * CVE-2019-11358 (prototype pollution in jQuery before 3.4.0). ([NVD][13])
+  * CVE-2020-11022 / CVE-2020-11023 (XSS risks in DOM manipulation methods when handling untrusted HTML; patched in 3.5.0). ([NVD][1])
+
+Insecure patterns:
+
+* Script tags or package manifests referencing old jQuery (e.g., `jquery-1.*`, `jquery-2.*`, `jquery-3.3.*`, `jquery-3.4.*`, `jquery-3.4.1`, etc.).
+* Bundled vendor directories containing old minified jQuery without an upgrade path.
+
+Detection hints:
+
+* Search HTML/templates for `jquery-` and parse version strings.
+* Check `package.json`, `package-lock.json`, `yarn.lock`, `pnpm-lock.yaml`.
+* Check `vendor/`, `public/`, `static/`, `assets/`, `wwwroot/` for `jquery*.js`.
+
+Fix:
+
+* Upgrade to current jQuery (prefer latest stable major; as of 2026-01-27
