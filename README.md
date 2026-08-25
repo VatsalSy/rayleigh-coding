@@ -9,7 +9,12 @@ Built for Cursor Cloud Agents and local Cursor.
 1. Cursor → **Settings → Plugins → Import Marketplace**
 2. Repository: `https://github.com/VatsalSy/rayleigh-coding`
 3. Enable the **rayleigh-coding** plugin
-4. Reload the window if needed, then run `/vatsal-mode`
+4. Reload the window if needed, then run `/setup-rayleigh`, then `/vatsal-mode`
+
+`/setup-rayleigh` installs the plugin into your user-global local plugins path
+when needed, and writes always-applied model rules with every role set to
+**auto** (unlike multi-model setups that ask you to pick slugs). Override a
+role only when you or an agent using this plugin pin one explicitly.
 
 ### Local install
 
@@ -47,8 +52,9 @@ THIRD_PARTY.md
 
 See `plugins/rayleigh-coding/docs/SKILLS.md`.
 
-Highlights: `/vatsal-mode`, planning and verification, git/PR workflows,
-security review helpers, frontend craft, and common deploy CLIs.
+Highlights: `/setup-rayleigh`, `/vatsal-mode`, planning and verification,
+git/PR workflows, security review helpers, frontend craft, and common deploy
+CLIs.
 
 ## Checks
 
