@@ -182,4 +182,64 @@ Severity: High (Critical if known-vulnerable version)
 
 Required:
 
-* MUST run a supported Next.js version 
+* MUST run a supported Next.js version line and apply security updates promptly. Next.js documents an LTS/support policy. ([Next.js][10])
+* MUST treat published advisories as urgent upgrade signals (e.g., update to a patched release). ([GitHub][11])
+
+Insecure patterns:
+
+* Running EOL Next.js major/minor without backported security fixes.
+* Ignoring advisories, or pinning `next` to a vulnerable range.
+
+Detection hints:
+
+* Check `package.json` and lockfiles for `next` version.
+* Compare against Next.js support policy and advisories.
+
+IMPORTANT: Any versions older than these minor versions are vulnerable to "react2shell" vulnerability (https://nextjs.org/blog/CVE-2025-66478):
+15.0.5
+15.1.9
+15.2.6
+15.3.6
+15.4.8
+15.5.7
+16.0.7
+
+Fix:
+
+* Upgrade `next` to a supported and patched version.
+* Add a dependency update process + CI checks.
+
+
+---
+
+### NEXT-SECRETS-001: Secrets MUST NOT be committed or exposed to the browser
+
+Severity: High (Critical if secret is client-exposed)
+
+Required:
+
+* MUST store secrets in environment variables or a secret manager; MUST NOT commit `.env*` files.
+* MUST treat `.env*` as sensitive; Next.js warns you “almost never want to commit these files.” ([Next.js][7])
+* MUST treat any `NEXT_PUBLIC_*` environment variable as public and browser-visible (inlined into the client bundle at build time). ([Next.js][7])
+
+Insecure patterns:
+
+* `.env`, `.env.local`, `.env.production` committed to git.
+* `NEXT_PUBLIC_API_KEY`, `NEXT_PUBLIC_SECRET`, `NEXT_PUBLIC_DATABASE_URL`, etc.
+* Rendering `process.env` values into HTML or returning them from API routes.
+
+Detection hints:
+
+* Scan git history and repo files for `.env` content, `DB_PASS=`, `API_KEY=`, `SECRET=`.
+* Grep for `NEXT_PUBLIC_` and review any sensitive-looking names.
+* Search for `process.env` usage in Client Components (`"use client"`) and shared modules.
+
+Fix:
+
+* Move secrets to server-only env vars (no `NEXT_PUBLIC_` prefix).
+* Ensure `.env*` is ignored and secrets are injected at deploy time.
+* Rotate leaked keys.
+
+---
+
+### NEXT-SECRETS-0
