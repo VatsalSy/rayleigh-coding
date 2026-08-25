@@ -123,4 +123,51 @@ Required:
 
 Insecure patterns:
 - Production builds pinned to old Go versions without a patching process.
-- Docker images li
+- Docker images like `golang:1.xx` or custom base images that are not updated regularly.
+- CI pipelines that intentionally suppress Go updates.
+
+Detection hints:
+- Inspect CI (`.github/workflows`, `gitlab-ci.yml`, etc.) for `go-version:` or toolchain setup.
+- Inspect Dockerfiles for `FROM golang:` tags.
+- Inspect `go.mod` `go` directive and any toolchain pinning.
+
+Fix:
+- Upgrade to the latest patch of a supported Go version.
+- Add an automated check (CI) that fails when Go is below an approved minimum.
+
+Notes:
+- Go publishes regular minor releases that frequently include security fixes across standard library packages.
+
+---
+
+### GO-SUPPLY-001: Go module authenticity MUST NOT be disabled for public dependencies
+Severity: High
+
+Required:
+- MUST keep module checksum verification enabled for public modules.
+- SHOULD commit `go.sum` and treat changes as security-sensitive.
+- MUST NOT use insecure module fetching settings for public modules.
+- MAY configure private module behavior using `GOPRIVATE`/`GONOSUMDB` for private repos, but must do so narrowly and intentionally.
+
+Insecure patterns:
+- `GOSUMDB=off` in CI or production build environments for public modules.
+- `GONOSUMDB=*` or overly broad patterns that effectively disable verification.
+- `GOINSECURE=*` or broad `GOINSECURE` patterns for public modules.
+- `GOPROXY=direct` everywhere without a clear policy.
+
+Detection hints:
+- Search build configs for `GOSUMDB`, `GONOSUMDB`, `GOINSECURE`, `GOPROXY`, `GOPRIVATE`.
+- Look for documentation/scripts that recommend disabling checksum DB “to make builds work”.
+
+Fix:
+- Restore defaults for public module verification.
+- For private modules:
+  - Set `GOPRIVATE=your.private.domain/*`
+  - Configure an internal proxy or direct fetching, and restrict `GONOSUMDB` to private patterns only.
+
+Notes:
+- Disabling checksum verification removes an important integrity layer against targeted or compromised upstream delivery.
+
+---
+
+### GO-CONFIG-001: Secrets must be externalized and never logged or committed
