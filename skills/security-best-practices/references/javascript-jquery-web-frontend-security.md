@@ -130,4 +130,8 @@ This is the smallest “production baseline” that prevents common jQuery-relat
 
   * Your own build pipeline (bundled via npm/yarn + lockfile), or
   * The official jQuery CDN / a trusted CDN with Subresource Integrity (SRI) enabled.
-* If loading from a CDN, SHOULD use SRI (`integrity`) and correct `crossorigin`
+* If loading from a CDN, SHOULD use SRI (`integrity`) and correct `crossorigin` settings; the jQuery project explicitly supports and recommends SRI on its CDN. (Retrieved from [jquery.com][8])
+
+### 3.3 CSP + Trusted Types (SHOULD, and MUST where available/required by policy)
+
+* SHOULD deploy a Content Security Policy (CSP) that reduces XSS impact (especially `script-src` restrictions and avoiding `u
