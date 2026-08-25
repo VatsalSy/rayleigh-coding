@@ -19,15 +19,15 @@ Brief one-line description of what the project does.
 
 ## Installation
 
-```bash
+\`\`\`bash
 # Installation commands
-```
+\`\`\`
 
 ## Usage
 
-```bash
+\`\`\`bash
 # Basic usage example
-```
+\`\`\`
 
 ## License
 
@@ -51,9 +51,9 @@ Description of the scientific problem being addressed.
 
 If you use this code, please cite:
 
-```bibtex
+\`\`\`bibtex
 @article{...}
-```
+\`\`\`
 
 ## Requirements
 
@@ -130,19 +130,19 @@ Brief description of what the library provides.
 
 ## Installation
 
-```bash
+\`\`\`bash
 pip install library-name
 # or
 npm install library-name
-```
+\`\`\`
 
 ## Quick Start
 
-```python
+\`\`\`python
 from library import function
 
 result = function(args)
-```
+\`\`\`
 
 ## API Reference
 
@@ -162,15 +162,15 @@ Brief description of what the tool does.
 
 ## Installation
 
-```bash
+\`\`\`bash
 # Installation instructions
-```
+\`\`\`
 
 ## Usage
 
-```bash
+\`\`\`bash
 tool-name [options] <args>
-```
+\`\`\`
 
 ### Options
 
@@ -179,13 +179,13 @@ tool-name [options] <args>
 
 ## Examples
 
-```bash
+\`\`\`bash
 # Example 1
 tool-name input.txt -o output.txt
 
 # Example 2
 tool-name --config config.yaml
-```
+\`\`\`
 
 ## License
 
