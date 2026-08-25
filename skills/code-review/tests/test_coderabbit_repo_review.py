@@ -126,7 +126,7 @@ class RemoteParsingTests(unittest.TestCase):
 
     def test_org_picker_keys_reject_unknown_state(self):
         with self.assertRaises(MODULE.GuardError):
-            MODULE.organisation_picker_keys(organizations, "missing", "acme")
+            MODULE.organisation_picker_keys(["acme"], "missing", "acme")
 
 
 class ReceiptTests(unittest.TestCase):
