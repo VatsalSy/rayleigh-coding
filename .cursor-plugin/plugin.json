@@ -1,0 +1,28 @@
+{
+  "name": "rayleigh-coding",
+  "displayName": "rayleigh-coding",
+  "version": "0.1.0",
+  "description": "Vatsal's public coding skills for Cursor Cloud Agents and local Cursor: vatsal-mode, verification, git/PR workflows, security, and UI craft.",
+  "author": {
+    "name": "Vatsal Sanjay"
+  },
+  "homepage": "https://github.com/VatsalSy/rayleigh-coding",
+  "repository": "https://github.com/VatsalSy/rayleigh-coding",
+  "license": "MIT",
+  "keywords": [
+    "vatsal-mode",
+    "coding",
+    "verification",
+    "code-review",
+    "git",
+    "security"
+  ],
+  "category": "developer-tools",
+  "tags": [
+    "workflow",
+    "review",
+    "verification",
+    "git"
+  ],
+  "skills": "./skills/"
+}
