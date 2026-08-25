@@ -4,7 +4,7 @@ description: >
   Concise coding-agent style: ask only load-bearing decisions, verify with
   real-path evidence, and ship through disciplined git/PR workflows. Use for
   /vatsal-mode or requests to work in this style.
-disable-model-invocation: true
+disable-model-invocation: false
 mode: true
 icon: rocket
 color: blue
