@@ -1,0 +1,18 @@
+{
+  "name": "rayleigh-coding",
+  "owner": {
+    "name": "Vatsal Sanjay",
+    "email": "plugins@example.com"
+  },
+  "metadata": {
+    "description": "Public Cursor marketplace for Vatsal coding skills: vatsal-mode, verification, git/PR workflows, security, and UI craft. Safe for Cloud Agents — no private fleet or personal content.",
+    "version": "0.2.0"
+  },
+  "plugins": [
+    {
+      "name": "rayleigh-coding",
+      "source": "./plugins/rayleigh-coding",
+      "description": "Coding skills and /vatsal-mode for Cursor Cloud Agents and local Cursor"
+    }
+  ]
+}
