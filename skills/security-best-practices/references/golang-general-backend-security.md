@@ -258,4 +258,111 @@ NOTE: This only applies to production configurations. These endpoints are often 
 
 Required:
 - MUST NOT expose `net/http/pprof` handlers on a public internet-facing listener without strong access controls.
-- SHOULD run diagnostics on a separate, internal-only listener 
+- SHOULD run diagnostics on a separate, internal-only listener (loopback/VPC-only) and require auth.
+- MUST review what diagnostic endpoints reveal (stack traces, memory, command lines, environment, internal URLs).
+
+Insecure patterns:
+- Side-effect import `import _ "net/http/pprof"` in a server binary with a public mux.
+- `/debug/pprof/*` reachable without auth.
+- `/debug/vars` (expvar) reachable without auth.
+
+Detection hints:
+- Search for `net/http/pprof` imports (including blank imports).
+- Search for route prefixes `/debug/pprof`, `/debug/vars`.
+- Check whether `http.DefaultServeMux` is used and whether any debug handlers register globally.
+
+Fix:
+- Remove diagnostics from production builds, or bind them to an internal-only listener.
+- Add strong authentication/authorization (and ideally network-level restrictions).
+
+Notes:
+- pprof is typically imported for its side effect of registering HTTP handlers under `/debug/pprof/`.
+
+---
+
+### GO-HTTP-003: Reverse proxy and forwarded header trust MUST be explicit
+Severity: High (auth, URL generation, logging/auditing correctness)
+
+Required:
+- If behind a reverse proxy, MUST define which proxy is trusted and how client IP/scheme/host are derived.
+- MUST NOT trust `X-Forwarded-For`, `X-Forwarded-Proto`, `Forwarded`, or similar headers from the open internet.
+- MUST ensure “secure cookie” logic, redirects, and absolute URL generation do not rely on spoofable headers.
+
+Insecure patterns:
+- Using `r.Header.Get("X-Forwarded-For")` as the client IP without validating the proxy boundary.
+- Deriving “is HTTPS” from `X-Forwarded-Proto` without confirming it came from a trusted proxy.
+- Using forwarded `Host` values for password reset links without allowlisting.
+
+Detection hints:
+- Search for `X-Forwarded-For`, `X-Forwarded-Proto`, `Forwarded`, `Real-IP`, and any custom “client IP” helpers.
+- Inspect ingress/proxy configs; if not visible, mark as “verify at edge”.
+
+Fix:
+- Enforce proxy trust at the edge and in app:
+  - Accept forwarded headers only from known proxy IP ranges.
+  - Prefer platform-provided mechanisms where available.
+- If generating external links, use a configured allowlisted canonical origin (not the request’s Host header).
+
+---
+
+### GO-HTTP-004: Security headers SHOULD be set (in app or at the edge)
+Severity: Medium
+
+Required (typical web app serving browsers):
+- SHOULD set:
+  - `Content-Security-Policy` (CSP) appropriate to the app. NOTE: It is most important to set the CSP's script-src. All other directives are not as important and can generally be excluded for the ease of development.
+  - `X-Content-Type-Options: nosniff`
+  - Clickjacking protection (`X-Frame-Options` and/or CSP `frame-ancestors`)
+  - `Referrer-Policy` and `Permissions-Policy` where appropriate
+- MUST ensure cookies have secure attributes (see GO-HTTP-005).
+
+NOTE:
+- These headers may be set via reverse proxy/CDN; if not visible in app code, report as “verify at edge”.
+
+Insecure patterns:
+- No security headers anywhere (app or edge) for a browser-facing app.
+- CSP missing for apps rendering untrusted content.
+
+Detection hints:
+- Search for middleware setting headers: `w.Header().Set("Content-Security-Policy", ...)`, etc.
+- Search for reverse proxy config that sets headers.
+
+Fix:
+- Add centralized header middleware in Go, or configure at the edge.
+- Keep CSP realistic; avoid `unsafe-inline` where possible.
+
+---
+
+### GO-HTTP-005: Cookies MUST use secure attributes in production
+Severity: Medium
+
+Required (production, HTTPS):
+- MUST set `Secure` on cookies that carry auth/session state. IMPORTANT NOTE: Only set `Secure` in production environment when TLS is configured. When running in a local dev environment over HTTP, do not set `Secure` property on cookies. You should do this conditionally based on if the app is running in production mode. You should also include a property like `SESSION_COOKIE_SECURE` which can be used to disable `Secure` cookies when testing over HTTP.
+- MUST set `HttpOnly` on auth/session cookies.
+- SHOULD set `SameSite=Lax` by default (or `Strict` if compatible), and only use `None` when necessary (and only with `Secure`).
+- SHOULD set bounded lifetimes (`Max-Age`/`Expires`) appropriate to the app.
+
+Insecure patterns:
+- Setting auth/session cookies without `Secure` in HTTPS deployments.
+- Cookies without `HttpOnly` for session identifiers.
+- `SameSite=None` for cookie-authenticated apps without a strong CSRF strategy.
+
+Detection hints:
+- Search for `http.SetCookie`, `&http.Cookie{`, `Set-Cookie`.
+- Inspect cookie flags in auth/session code.
+
+Fix:
+- Set the correct fields on `http.Cookie` and centralize cookie creation.
+
+Notes:
+- SameSite is defense-in-depth and does not replace CSRF protections for cookie-auth apps.
+
+---
+
+### GO-HTTP-006: Cookie-authenticated state-changing endpoints MUST be CSRF-protected
+Severity: High
+
+- IMPORTANT NOTE: If cookies are not used for auth (e.g., pure bearer token in Authorization header with no ambient cookies), CSRF is not a risk for those endpoints.
+
+Required:
+- MUST protect all state-changing e
