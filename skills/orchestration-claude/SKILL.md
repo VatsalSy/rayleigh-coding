@@ -2,7 +2,7 @@
 name: orchestration-claude
 description: >-
   Use when Fable/Opus in Claude Code faces independent work needing subagents:
-  multi-file audits, repo-wide edits, or parallel exploration. Decide
+  multi-file audits, fleet-wide edits, or parallel exploration. Decide
   whether/how to delegate. NOT for Codex/GPT harnesses (orchestration-gpt).
 ---
 
