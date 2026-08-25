@@ -1,0 +1,4 @@
+interface:
+  display_name: "Git Submodule Ops"
+  short_description: "Add, sync, and repair git submodules"
+  default_prompt: "Manage this git submodule workflow, including add/update/sync/repair steps, gitlink commits, and any outer-repo pointer updates."
