@@ -11,17 +11,17 @@ Brief description of what this project does.
 
 ## Structure
 
-```
+\`\`\`
 project/
 ├── src/          # Source code
 ├── tests/        # Test files
 ├── docs/         # Documentation
 └── config/       # Configuration
-```
+\`\`\`
 
 ## Development
 
-```bash
+\`\`\`bash
 # Build command
 make build
 
@@ -30,7 +30,7 @@ make test
 
 # Run locally
 make run
-```
+\`\`\`
 
 ## Guidelines
 
@@ -50,23 +50,23 @@ make run
 
 ## Structure
 
-```
+\`\`\`
 project/
 ├── simulations/  # Simulation code
 ├── analysis/     # Data analysis scripts
 ├── data/         # Input/output data
 └── figures/      # Generated plots
-```
+\`\`\`
 
 ## Running Simulations
 
-```bash
+\`\`\`bash
 # Compile
 make
 
 # Run simulation
 ./simulation params.txt
-```
+\`\`\`
 
 ## Guidelines
 
@@ -130,17 +130,17 @@ Brief description.
 
 ## Structure
 
-```
+\`\`\`
 project/
 ├── src/          # Main source
 ├── tests/        # pytest tests
 ├── pyproject.toml
 └── requirements.txt
-```
+\`\`\`
 
 ## Development
 
-```bash
+\`\`\`bash
 # Setup
 python -m venv venv
 source venv/bin/activate
@@ -151,7 +151,7 @@ pytest
 
 # Lint
 ruff check .
-```
+\`\`\`
 
 ## Guidelines
 
@@ -169,17 +169,17 @@ Brief description.
 
 ## Structure
 
-```
+\`\`\`
 project/
 ├── src/          # Source code
 ├── tests/        # Test files
 ├── package.json
 └── tsconfig.json
-```
+\`\`\`
 
 ## Development
 
-```bash
+\`\`\`bash
 # Install
 npm install
 
@@ -191,7 +191,7 @@ npm run build
 
 # Test
 npm test
-```
+\`\`\`
 
 ## Guidelines
 
@@ -209,27 +209,27 @@ Brief description of simulation/study.
 
 ## Structure
 
-```
+\`\`\`
 project/
 ├── *.c           # Basilisk source files
 ├── Makefile      # Build configuration
 ├── params/       # Parameter files
 └── postproc/     # Post-processing scripts
-```
+\`\`\`
 
 ## Building
 
-```bash
+\`\`\`bash
 # Compile with qcc
 qcc -O2 -Wall simulation.c -o simulation -lm
 
 # Or use Makefile
 make
-```
+\`\`\`
 
 ## Running
 
-```bash
+\`\`\`bash
 ./simulation [options]
 ```
 
