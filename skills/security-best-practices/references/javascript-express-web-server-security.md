@@ -194,4 +194,59 @@ Required:
 
 * SHOULD use `helmet()` to set common security headers.
 * SHOULD configure CSP realistically (avoid `unsafe-inline` where possible) for pages that render user-influenced content.
-* SHOULD set `X-Content-Type-Options: nosniff`, clickjacking defenses (`X-Frame-Options` o
+* SHOULD set `X-Content-Type-Options: nosniff`, clickjacking defenses (`X-Frame-Options` or CSP `frame-ancestors`), and appropriate referrer policy.
+
+NOTE: It is most important to set the CSP's script-src. All other directives are not as important and can generally be excluded for the ease of development.
+
+Insecure patterns:
+
+* No security headers set in app code and no evidence they are set at the edge.
+* CSP missing on apps that display user content.
+* Misconfigured framing headers that unintentionally allow clickjacking.
+
+Detection hints:
+
+* Search for `helmet(` usage; check if CSP is configured or disabled.
+* Search for `res.setHeader(` / `res.set(` for security header setting.
+* If not visible in app code, check nginx/CDN config; otherwise flag “verify at edge.”
+
+Fix:
+
+* Add `helmet()` early in middleware order and configure:
+
+  * CSP (`contentSecurityPolicy`)
+  * Frame protections (`frameguard` or CSP `frame-ancestors`)
+  * `X-Content-Type-Options` (`noSniff`)
+
+Notes:
+
+* Express production security best practices recommend Helmet and list headers Helmet sets by default. ([Express][1])
+* OWASP HTTP Headers guidance is a useful reference when tuning policies. ([OWASP Cheat Sheet Series][10])
+
+---
+
+### EXPRESS-FINGERPRINT-001: Reduce fingerprinting by disabling `x-powered-by` and customizing error/404 responses
+
+Severity: Low (defense-in-depth)
+
+Required:
+
+* SHOULD disable `X-Powered-By` using `app.disable('x-powered-by')`.
+* SHOULD provide a custom 404 handler and a custom error handler to avoid distinct default responses and to control information leakage.
+
+Insecure patterns:
+
+* Default `X-Powered-By: Express` header left enabled.
+* Default Express 404/error responses in production with identifiable formatting and/or stack traces.
+
+Detection hints:
+
+* Search for `app.disable('x-powered-by')`.
+* Check middleware tail for a custom 404 (`app.use((req,res)=>...)`) and a custom error handler (`app.use((err,req,res,next)=>...)`).
+* Check if `NODE_ENV` is correctly set for production behavior (see EXPRESS-ERROR-001). ([Express][11])
+
+Fix:
+
+* Add:
+
+  * `app
