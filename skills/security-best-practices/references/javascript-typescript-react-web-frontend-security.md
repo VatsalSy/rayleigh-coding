@@ -151,4 +151,54 @@ Detection hints:
 
 * Search for:
 
-  * `REACT
+  * `REACT_APP_`, `VITE_`, `NEXT_PUBLIC_`, `process.env.`, `import.meta.env.`
+  * `apiKey`, `secret`, `token`, `private`, `password`, `client_secret`
+* Inspect `public/` for runtime config JSON.
+
+Fix:
+
+* Move secrets server-side (API, BFF, serverless function).
+* Use a backend to mint short-lived, scoped tokens if the browser needs to call third-party APIs.
+
+Notes:
+
+* CRA explicitly warns not to store secrets and notes env vars are embedded into the build and visible to anyone inspecting files. ([create-react-app.dev][1])
+* Vite explicitly notes that variables exposed to client code end up in the client bundle and should not contain sensitive info. ([vitejs][11])
+
+---
+
+### REACT-XSS-001: Do not use `dangerouslySetInnerHTML` with untrusted content (sanitize or avoid)
+
+Severity: High (Only if you can prove attacker-controlled HTML reaches it)
+
+Required:
+
+* MUST avoid `dangerouslySetInnerHTML` unless absolutely necessary.
+* If it must be used:
+
+  * MUST sanitize untrusted HTML with a proven sanitizer (e.g., DOMPurify) and an allowlist-oriented configuration.
+  * MUST keep the sanitization logic centralized and heavily reviewed.
+  * SHOULD add a CSP and consider Trusted Types (see REACT-TT-001).
+
+Insecure patterns:
+
+* `<div dangerouslySetInnerHTML={{ __html: userHtml }} />` where `userHtml` is from API/URL/storage.
+* “Sanitization” done with regexes, ad-hoc stripping, or incomplete allowlists.
+
+Detection hints:
+
+* Grep: `dangerouslySetInnerHTML`, `__html:`
+* Trace the origin of the HTML string (API/CMS/URL/localStorage).
+
+Fix:
+
+* Replace with safe rendering:
+
+  * Render structured data as React elements/components instead of HTML strings.
+  * If rich text is required, sanitize with DOMPurify (or equivalent) and render the sanitized output.
+* Add CSP; remove dangerous sinks where possible.
+
+Notes:
+
+* React explicitly warns that `dangerouslySetInnerHTML` is dangerous and can introduce XSS if misused. ([React][12])
+* OWASP explicitly calls out React’s `dangerouslySetInnerHTML` witho
