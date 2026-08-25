@@ -7,14 +7,14 @@ PLUGIN_LOCAL="${HOME}/.cursor/plugins/local"
 REPO_URL="${RAYLEIGH_CODING_REPO:-https://github.com/VatsalSy/rayleigh-coding.git}"
 SRC_RAW="${RAYLEIGH_CODING_SRC:-${PLUGIN_LOCAL}/rayleigh-coding-src}"
 
-# Absolute path: relative RAYLEIGH_CODING_SRC must not become a symlink
-# resolved from PLUGIN_LOCAL.
-SRC="$(python3 -c 'import os,sys; print(os.path.abspath(os.path.expanduser(sys.argv[1])))' "${SRC_RAW}")"
+# Physical absolute path so symlink/case forms of the same clone root match
+# git rev-parse --show-toplevel.
+SRC="$(python3 -c 'import os,sys; print(os.path.realpath(os.path.expanduser(sys.argv[1])))' "${SRC_RAW}")"
 
 mkdir -p "${PLUGIN_LOCAL}"
 
 if git -C "${SRC}" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-  TOPLEVEL="$(python3 -c 'import os,sys; print(os.path.abspath(sys.argv[1]))' "$(git -C "${SRC}" rev-parse --show-toplevel)")"
+  TOPLEVEL="$(python3 -c 'import os,sys; print(os.path.realpath(sys.argv[1]))' "$(git -C "${SRC}" rev-parse --show-toplevel)")"
   if [[ "${TOPLEVEL}" != "${SRC}" ]]; then
     echo "error: ${SRC} is inside git work tree ${TOPLEVEL}; set RAYLEIGH_CODING_SRC to the rayleigh-coding clone root" >&2
     exit 1
