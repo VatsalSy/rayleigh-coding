@@ -150,15 +150,15 @@ If Gitleaks finds a committed secret:
 
 ---
 
-## High-Priority Repos to Scan (CoMPhy context)
+## High-priority scan targets
 
-These repos have had CI workflows with secrets or are public-facing:
+Prioritise:
 
-- `EXAMPLE_ORG/EXAMPLE_ORG.github.io` — public, has GitHub Actions
-- `EXAMPLE_ORG/OWNER` — public profile repo
-- `OWNER/SLtheoryWebsite` — had Vercel deploy secrets
-- `EXAMPLE_ORG/sl2` — new, Vercel-connected
-- Any repo with `.env` in history (check: `git log --all --full-history -- .env`)
+- Public repos with CI that inject secrets
+- Any repo with `.env` in history (`git log --all --full-history -- .env`)
+- Deploy-connected apps (Vercel, Netlify, Render, Cloudflare Workers)
+
+Do not keep a personal repository inventory inside this skill.
 
 ---
 
