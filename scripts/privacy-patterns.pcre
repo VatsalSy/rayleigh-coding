@@ -1,0 +1,6 @@
+# One PCRE pattern per line. Comments (#) and blank lines ignored.
+# Do not put named private catalogues or personal inventory here.
+# Inject those via PRIVACY_EXTRA_PATTERN (repo secret).
+#
+# Public structural shapes only:
+prj_[A-Za-z0-9]{8,}

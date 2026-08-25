@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Package an OpenClaw/AgentSkills skill into a .skill archive.
+Package an AgentSkills skill into a .skill archive.
 
 Usage:
     package_skill.py <path/to/skill-folder> [output-directory]

@@ -1,8 +1,8 @@
 {
   "name": "rayleigh-coding",
   "displayName": "rayleigh-coding",
-  "version": "0.2.0",
-  "description": "Vatsal's public coding skills for Cursor Cloud Agents and local Cursor: vatsal-mode, verification, git/PR workflows, security, and UI craft.",
+  "version": "0.3.0",
+  "description": "Coding skills for Cursor Cloud Agents and local Cursor: /vatsal-mode, verification, git/PR workflows, security helpers, and UI craft.",
   "author": {
     "name": "Vatsal Sanjay"
   },

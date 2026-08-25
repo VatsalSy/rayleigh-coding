@@ -1,9 +1,10 @@
-# rayleigh-coding
+# rayleigh-coding plugin
 
-Public Cursor plugin with coding skills and **`/vatsal-mode`**.
+Coding skills and `/vatsal-mode` for Cursor Cloud Agents and local Cursor.
 
-This plugin lives inside the `VatsalSy/rayleigh-coding` **marketplace** repo.
-Install the marketplace (see root README), then enable this plugin.
+Install via **Import Marketplace** on `VatsalSy/rayleigh-coding`, or symlink
+this directory into `~/.cursor/plugins/local/rayleigh-coding` so the loaded
+path itself contains `.cursor-plugin/plugin.json`.
 
 ## Start here
 
@@ -11,8 +12,4 @@ Install the marketplace (see root README), then enable this plugin.
 /vatsal-mode
 ```
 
-## Privacy
-
-This plugin must not contain private host topology, vault paths, personal
-deploy inventories, secrets, or anything from private skill catalogues.
-Root CI runs `scripts/check_no_private_leakage.sh` on every push.
+Skill inventory: `docs/SKILLS.md` and `skills.manifest`.

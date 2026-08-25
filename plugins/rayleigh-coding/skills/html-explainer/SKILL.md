@@ -112,13 +112,9 @@ Inspect the destination and its repository before writing. Never overwrite an
 existing file or absorb unrelated dirty changes unless the user explicitly
 requested that exact replacement. Choose a new descriptive filename or stop
 when the target collides. Use the user-specified destination when it passes
-those checks. Otherwise, in a profiled project, default to
-`<project>/scratch/html/<descriptive-slug>.html` and follow `project-tracker`
-plus `project-lock` for the tracked context mutation and checkpoint. If no safe
-owning project or destination can be resolved, ask one short question rather
-than polluting a component repository or private home directory.
-
-Honour inline directives per `../CONVENTIONS.md`.
+those checks. Otherwise ask one short question for a safe path under the
+active workspace (for example `scratch/html/<descriptive-slug>.html`) rather
+than writing into an unrelated repository or home directory.
 
 ### 5. Choose one primary pattern
 

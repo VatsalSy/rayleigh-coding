@@ -5,8 +5,8 @@
     "email": "plugins@example.com"
   },
   "metadata": {
-    "description": "Public Cursor marketplace for Vatsal coding skills: vatsal-mode, verification, git/PR workflows, security, and UI craft. Safe for Cloud Agents — no private fleet or personal content.",
-    "version": "0.2.0"
+    "description": "Cursor marketplace for coding skills: /vatsal-mode, verification, git/PR workflows, security helpers, and UI craft.",
+    "version": "0.3.0"
   },
   "plugins": [
     {

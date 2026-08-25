@@ -1,11 +1,10 @@
 # Skill inventory
 
-62 skills in this plugin.
+56 skills in this plugin.
 
 | Skill |
 |---|
 | `autofix` |
-| `brave-search` |
 | `change-impact-analysis` |
 | `cloudflare` |
 | `code-review` |
@@ -38,8 +37,6 @@
 | `linear` |
 | `netlify-deploy` |
 | `openai-docs` |
-| `orchestration-claude` |
-| `orchestration-gpt` |
 | `origin-address-comment` |
 | `origin-babysit-pr` |
 | `origin-code-review` |
@@ -51,18 +48,17 @@
 | `pdf` |
 | `playwright` |
 | `python-env` |
-| `raycast-pr-checkout` |
 | `render-deploy` |
 | `screenshot` |
 | `security-best-practices` |
 | `security-gitleaks` |
-| `security-ownership-map` |
 | `security-threat-model` |
 | `sentry` |
 | `skill-creator` |
-| `slash-command-maker` |
 | `swarm-planner` |
 | `vatsal-mode` |
 | `vercel` |
 | `verification-contract` |
 | `why` |
+
+Source of truth: `skills.manifest`.
