@@ -14,6 +14,8 @@ path itself contains `.cursor-plugin/plugin.json`.
 ```
 
 `/setup-rayleigh` installs/initializes the plugin for this environment and
-your user-global Cursor home, and sets every model role to `auto`.
+your user-global Cursor home, then writes the default / executor / wise-owl
+model rule from this session's Task slugs. Say **stay on auto** to inherit
+the parent chat instead.
 
 Skill inventory: `docs/SKILLS.md` and `skills.manifest`.

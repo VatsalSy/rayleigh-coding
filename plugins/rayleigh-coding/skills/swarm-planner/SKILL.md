@@ -1,9 +1,8 @@
 ---
 name: swarm-planner
 description: >
-  [EXPLICIT INVOCATION ONLY] Use only when the user explicitly invokes
-  "swarm-planner" or asks for a dependency-aware implementation plan for
-  parallel multi-agent execution. Produces task graphs with explicit
+  Use when /vatsal-mode or the user needs a dependency-aware implementation
+  plan for parallel multi-agent execution. Produces task graphs with explicit
   depends_on fields and parallel execution waves.
 ---
 
@@ -11,7 +10,16 @@ description: >
 
 Create implementation plans with explicit task dependencies optimized for parallel agent execution. This skill can be run inside or outside of Plan Mode.
 
-> **Opus 4.7 note:** the model now spawns fewer subagents by default. When emitting this plan, make every parallelizable group explicit — e.g. *"Dispatch 3 agents in parallel: one for T2, one for T3, one for T4."* Don't assume the executor will parallelize on its own.
+When emitting this plan, make every parallelizable group explicit — e.g.
+*"Dispatch 3 agents in parallel: one for T2, one for T3, one for T4."* Do
+not assume the executor will parallelize on its own.
+
+**Models.** Read `default` / `executor` / `wise-owl` from
+`.cursor/rules/rayleigh-models.mdc` or `~/.cursor/rules/rayleigh-models.mdc`
+(workspace first). The plan-review `Task` and any worker you spawn use
+`executor`. Omit `model` when that value is `auto` or `inherit-parent`.
+If those files are missing, run `setup-rayleigh/scripts/pick_models.py` on
+this session's Task slugs.
 
 ## Core Principles
 

@@ -1,7 +1,9 @@
 ---
 name: parallel-task
 description: >
-  Only to be triggered by explicit /parallel-task commands. 
+  Use when /vatsal-mode or the user asks to execute a swarm plan with
+  parallel subagents. Parses plan files and delegates unblocked tasks in
+  waves until the plan is done.
 ---
 
 # Parallel Task Executor
@@ -30,8 +32,14 @@ If no subset provided, run the full plan.
 
 ### Step 3: Launch Subagents
 
-For each **unblocked** task, launch subagent with:
+For each **unblocked** task, launch a `Task` subagent with:
 - **description**: "Implement task [ID]: [name]"
+- **model**: the `executor` value from
+  `.cursor/rules/rayleigh-models.mdc` or
+  `~/.cursor/rules/rayleigh-models.mdc` (workspace first). Omit `model`
+  when the value is `auto` or `inherit-parent`. If those files are
+  missing, run `setup-rayleigh/scripts/pick_models.py` on this session's
+  Task slugs and use its `executor` line.
 - **prompt**: Use template below
 
 Launch all unblocked tasks in parallel. A task is unblocked if all IDs in its depends_on list are complete.

@@ -29,16 +29,53 @@ plugin by path. Do not invent undeclared host topology or credential stores.
 
 ## Models
 
-For every `Task` / subagent call, use **`auto`** (omit the `model` field)
-unless a higher-priority pin applies. Precedence, highest first:
+Three categories. Names stay stable; slugs are the current Cursor mapping
+from `/setup-rayleigh`.
+
+| Category | Use it for | Current family |
+|---|---|---|
+| `default` | Parent work and anything the user reads | Cursor Grok |
+| `executor` | `Task` / swarm / parallel waves once the brief is self-contained | Composer |
+| `wise-owl` | One read-only consult when a second view could change a consequential decision | Fable high |
+
+Resolve a category, highest first:
 
 1. Explicit human or `/vatsal-mode` pin for this turn
-2. Workspace `.cursor/rules/rayleigh-models.mdc` (role line)
-3. User-global `~/.cursor/rules/rayleigh-models.mdc` (role line)
-4. Default: `auto`
+2. Workspace `.cursor/rules/rayleigh-models.mdc`
+3. User-global `~/.cursor/rules/rayleigh-models.mdc`
+4. Run `setup-rayleigh/scripts/pick_models.py` on the Task slugs visible in
+   this session. If that is impossible, omit `model`.
 
-First-time install and explicit reset: `/setup-rayleigh` (writes / upserts
-`auto`; full overwrite only on reset).
+Pass a real slug as Task `model`. For `auto` / `inherit-parent`, omit
+`model`. Never pass a slug that is not in this session's Task set. If a
+written slug is rejected, pick the closest allowlisted slug in the same
+family (Grok, Composer, or Fable high) or omit `model`, and say so.
+
+Old role names (`code`, `judgment`, `review`, `swarm workers`,
+`parallel-task`) map to `executor` except `judgment` / `review`, which map
+to `default` unless this turn is a consult (`wise-owl`).
+
+Do not set `disable-model-invocation` on this skill. Apply the routing
+yourself. Do not wait for a slash command.
+
+### Wise-owl consult
+
+Apply automatically when an independent view could change a consequential
+decision (architecture fork, contested design, irreversible-adjacent plan,
+or a claim that would ship without a second look). Skip settled or routine
+work.
+
+Spawn at most one read-only `Task` on the `wise-owl` slug. A second consult
+is allowed only after materially new evidence. The consult must not edit,
+commit, or spawn another consult. You keep tools, files, decisions, and
+verification. Advice never satisfies "done". Check it against source
+evidence.
+
+Skip the extra consult when `wise-owl` resolves to `auto` /
+`inherit-parent`, is missing, or is the same family as the parent. This
+does not change the parent session's model.
+
+First-time install and reset: `/setup-rayleigh`.
 
 ## Understand first
 
@@ -48,7 +85,7 @@ First-time install and explicit reset: `/setup-rayleigh` (writes / upserts
 | User asks for a plan | `create-plan` (read-only) |
 | Blast radius before a risky change | `change-impact-analysis` |
 | Why was this built this way | `why` |
-| Parallel independent tool-heavy lanes | `swarm-planner` / `parallel-task` (Cursor Task tool or equivalent) |
+| Parallel independent tool-heavy lanes | `swarm-planner` / `parallel-task` (apply; executor category) |
 
 Skip grilling for routine reversible work.
 

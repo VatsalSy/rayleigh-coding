@@ -2,10 +2,10 @@
 name: setup-rayleigh
 description: >
   Install and initialize the rayleigh-coding plugin (skills + /vatsal-mode)
-  for this Cursor environment and the user-global Cursor home. Writes the
-  always-applied model rule with every role set to auto. Use for
-  /setup-rayleigh, first-time install, "enable rayleigh-coding", or resetting
-  rayleigh model defaults to auto.
+  for this Cursor environment and the user-global Cursor home. Detects Task
+  slugs and writes the always-applied category rule (default / executor /
+  wise-owl). Use for /setup-rayleigh, first-time install, "enable
+  rayleigh-coding", "configure rayleigh models", or resetting those defaults.
 ---
 
 # Setup rayleigh-coding
@@ -13,15 +13,15 @@ description: >
 Install the **rayleigh-coding** plugin so its skills and `/vatsal-mode` are
 available, then initialize model policy.
 
-Unlike pstack setup: **do not ask which models to use.** Always write `auto`
-for every role unless the human (or an agent already running under this
-plugin) explicitly overrides a role in the same session.
+Do **not** ask which models to use. Do **not** set `disable-model-invocation`
+on this skill or on `/vatsal-mode`. Write the ensemble below unless the human
+in this session says to stay on `auto`.
 
 ## Goals
 
 1. Plugin loadable in this environment (Cloud Agent env and/or local Cursor).
 2. Same install available user-globally under `~/.cursor/plugins/local/`.
-3. Always-applied model rule: every role is `auto`.
+3. Always-applied model rule with three stable categories.
 4. Confirm `/vatsal-mode` is the next step.
 
 ## Steps
@@ -103,10 +103,20 @@ If this session is a Cursor Cloud Agent or the user prefers Import Marketplace:
 Do not pretend the UI click succeeded without a receipt (plugin path present,
 or this skill / `/vatsal-mode` resolving after reload).
 
-### 4. Write model rules (always `auto`)
+### 4. Write model rules (ensemble by default)
 
-Default policy for rayleigh-coding: **every Task / subagent role uses `auto`**
-(omit the Task `model` field so the child inherits the parent chat / Auto).
+Categories are stable. Concrete slugs are the current Cursor mapping and can
+be swapped later without renaming the categories.
+
+| Category | Job | Family (current) |
+|---|---|---|
+| `default` | Lead chat and anything the user reads | latest Cursor Grok |
+| `executor` | Grunt `Task` / swarm / parallel waves once the brief is complete | latest Composer |
+| `wise-owl` | Rare second opinion. Advise only. High effort only | latest Fable |
+
+`auto` / `inherit-parent` remain first-class: omit the Task `model` field so
+the child follows the parent chat. Write all three as `auto` only when the
+human in this session says to stay on Auto, or on an explicit "reset to auto".
 
 Touch **only** these two files when writable (never other `.cursor/rules`
 files):
@@ -116,63 +126,45 @@ files):
 
 Create parent directories as needed.
 
-Managed role labels (one line each):
+**Detect, then pick. Never invent a slug.**
 
-```text
-default
-code
-judgment
-review
-swarm workers
-parallel-task
+1. Enumerate the slugs the `Task` tool accepts in *this* session. That list
+   is the dependable source. A models API or CLI may complete it, but every
+   real slug you write must still be in the Task set.
+2. Run the bundled picker (same directory as this skill's `scripts/`):
+
+```bash
+python3 <path-to-setup-rayleigh>/scripts/pick_models.py --format rule -- <detected slugs...>
 ```
 
-**Normal install / re-run (not an explicit reset):**
+Use `--policy auto --format rule` when the human asked to stay on Auto.
+If you cannot detect any slugs, run `--policy auto` and say so.
 
-- If the file is missing, create it with the shape below (all managed roles
-  `auto`).
-- If it exists, upsert only missing managed-role lines as `auto`. Keep any
-  existing non-`auto` values and any extra lines or comments. Do not wipe the
-  file.
+The picker allowlists only Grok, Composer, and Fable. It ignores other
+families even when they appear in the Task set. Wise-owl accepts Fable
+**high** only (not max, not extra-high). A missing family becomes `auto`.
 
-**Explicit reset** ("reset to auto", "fresh model defaults"): overwrite the
-whole file with the shape below.
+**Write policy (no confirmation gate):**
 
-Shape (new file or explicit reset):
+- Human said "stay on auto" / "reset to auto": overwrite both files with the
+  picker `--policy auto` rule.
+- Otherwise write the detected ensemble. Overwrite the old six-role shape
+  (`code`, `judgment`, `review`, `swarm workers`, `parallel-task`).
+- If a file already has `default` / `executor` / `wise-owl` set to a real
+  slug that is still in the detected set, keep that pin. Replace `auto` and
+  unavailable slugs with the new pick unless the human asked to stay on Auto.
 
-```markdown
----
-description: rayleigh-coding model choices (default auto; overrides skill defaults)
-alwaysApply: true
----
-# rayleigh-coding model configuration. One line per role.
-# Policy: always `auto` unless a human or rayleigh-coding agent overwrites a line.
-# `auto` / `inherit-parent`: omit Task `model` so the subagent follows the parent chat.
-default: auto
-code: auto
-judgment: auto
-review: auto
-swarm workers: auto
-parallel-task: auto
-```
-
-**Do not** prompt for model picks. Do not substitute named frontier slugs.
-
-**Override rule:** only change a line away from `auto` when the human clearly
-asks, or when an agent already operating under rayleigh-coding /
-`/vatsal-mode` is told to pin a model for a role. Prefer editing the same rule
-file over scattering one-off Task `model` arguments. After an override, say
-which roles changed.
+Do not prompt for model picks. Do not write a slug the picker did not emit.
 
 ### 5. Confirm
 
 Tell the user:
 
 - Local plugin path (if installed) and whether marketplace enablement is still needed
-- That both model rule paths were written or updated (or which one was skipped and why)
-- Whether intentional non-`auto` overrides were preserved
+- The three category values written (and which family fell back to `auto`)
+- Which rule paths were written or skipped, and why
 - New chats / reloaded windows pick up the rule
 - Next command: `/vatsal-mode`
 
-Re-running `/setup-rayleigh` is safe: pull + relink + upsert `auto` defaults
-(respecting the merge/reset rules in step 4).
+Re-running `/setup-rayleigh` is safe: pull + relink + rewrite the three
+categories from the current Task set (respecting the pin / auto rules above).

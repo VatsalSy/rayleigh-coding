@@ -12,9 +12,10 @@ Built for Cursor Cloud Agents and local Cursor.
 4. Reload the window if needed, then run `/setup-rayleigh`, then `/vatsal-mode`
 
 `/setup-rayleigh` installs the plugin into your user-global local plugins path
-when needed, and writes always-applied model rules with every role set to
-**auto** (unlike multi-model setups that ask you to pick slugs). Override a
-role only when you or an agent using this plugin pin one explicitly.
+when needed, and writes always-applied model rules for three categories:
+**default** (Cursor Grok), **executor** (Composer), and **wise-owl** (Fable
+high). It uses slugs the Task tool accepts in that session. Say **stay on
+auto** in the same session to inherit the parent chat instead.
 
 ### Local install
 
