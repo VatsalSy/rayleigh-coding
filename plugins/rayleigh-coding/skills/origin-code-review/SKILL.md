@@ -20,10 +20,12 @@ as a local scanner.
 3. Run `origin pr checks <change> --watch` with **Bugbot wait caps** (not
    CodeRabbit's ten/fifteen minutes): at most **45 minutes** for Bugbot to
    reach `status: completed` with `conclusion` `neutral` or `success` on one
-   head, and **90 minutes cumulative** across the session. Bounded polls
-   only; never busy-loop; do not stretch into hours. Then require its JSON
-   row to have that completed conclusion for the exact latest head. Then
-   read full comments with `origin pr view --checks --comments` and
+   head (the **45-minute per-head** timer **resets** on a new head), and
+   **90 minutes cumulative** across the session (cumulative counter **does
+   not** reset on a new head). Bounded polls only; never busy-loop; do not
+   stretch into hours. Then require its JSON row to have that completed
+   conclusion for the exact latest head. Then read full comments with
+   `origin pr view --checks --comments` and
    `origin pr thread list --comments` — those are Origin PR commands, not a
    Bugbot review tool. A generated PR summary is not a completed review.
 4. Triage with `origin-pr-triage`, fix with `origin-address-comment`.

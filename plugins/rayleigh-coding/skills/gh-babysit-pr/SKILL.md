@@ -34,26 +34,36 @@ After PR open and during babysit: **do not** auto-trigger Bugbot. Never post
 
 1. Owning desk / Batch asks Vatsal once whether to request Bugbot.
 2. Only if he says yes: comment exactly `bugbot run` or `@cursor review` on
-   the PR, then treat that run's findings like other review comments, and
-   apply **Bugbot wait caps** below (not CodeRabbit's).
+   the PR. Track **trigger-post success** and whether a Cursor Bugbot check
+   for the current `headRefOid` has **started**. Until started is true, use
+   the no-Bugbot path (do not wait or block on Bugbot). Once started: apply
+   **Bugbot wait caps** below (not CodeRabbit's), wait for completion on the
+   current head, read that run's findings/comments, and route each actionable
+   item through `gh-address-comment` or the established dismissal path
+   (signed reason). Pending runs and unresolved Bugbot findings block
+   `MERGE_READY`.
 3. If he declines, or has not been asked yet: continue babysit without waiting
    on Bugbot at all. Exit merge-ready must **not** require a Bugbot run,
-   check, or threads when Bugbot was declined or never requested.
+   check, or threads when Bugbot was declined or never requested (Manual Only
+   sticky).
 
 Green checks, unresolved threads, CodeRabbit / `MERGE_BOT_LOGIN` gates stay as
 written below. Bugbot is optional and never a hard gate unless Vatsal
-requested it and that run was started.
+approved and started a run.
 
 ### Bugbot wait caps (yes-triggered path only)
 
-Apply only after Vatsal approved a trigger and a `bugbot run` /
-`@cursor review` comment was posted. Do **not** reuse CodeRabbit's
-ten/fifteen-minute caps for Bugbot — Bugbot Low needs the longer window.
+Apply only after Vatsal approved a trigger, the trigger comment posted
+successfully, and a Cursor Bugbot check has **started** on the current head.
+Do **not** reuse CodeRabbit's ten/fifteen-minute caps for Bugbot — Bugbot Low
+needs the longer window.
 
 - At most **45 minutes** waiting for Bugbot to reach `completed` with
   conclusion `success` or `neutral` on one head after that trigger comment.
+  The **45-minute per-head** timer **resets** when a new head is created.
 - Cap **90 minutes cumulative** Bugbot wait across the babysit session for
-  that PR.
+  that PR. The **90-minute cumulative** counter and the feedback-driven push
+  count **do not** reset on a new head.
 - Use bounded polls only. Never busy-loop. Do not stretch into hours-long
   waits. On timeout, stop and report with the latest check receipt.
 
@@ -78,12 +88,15 @@ ten/fifteen-minute caps for Bugbot — Bugbot Low needs the longer window.
    Ordinary CI may use its normal runtime. **CodeRabbit** (GitHub App only)
    gets at most ten cumulative minutes on one pushed head and fifteen
    cumulative minutes across the PR — those CodeRabbit caps do not apply to
-   Bugbot. When Bugbot was yes-triggered, use **Bugbot wait caps** (45
-   min/head, 90 min cumulative) from **Bugbot — Manual Only**; when Bugbot
-   was declined or not requested, spend zero Bugbot wait. Record each bot's
-   counters separately and the number of feedback-driven pushes; neither
-   resets after compaction, a bot comment edit, or a new head. Allow at most
-   two such fix pushes. Never busy-loop `gh` calls.
+   Bugbot. When Bugbot was approved and **started**, use **Bugbot wait caps**
+   (45 min/head, 90 min cumulative) from **Bugbot — Manual Only**; when
+   Bugbot was declined, not requested, or the trigger/start never happened,
+   spend zero Bugbot wait. Record each bot's counters separately and the
+   number of feedback-driven pushes. After compaction or a bot comment edit,
+   counters do not reset. For Bugbot on a **new head**: the **45-minute
+   per-head** timer **resets**; the **90-minute cumulative** counter and the
+   feedback-driven push count **do not**. Allow at most two such fix pushes.
+   Never busy-loop `gh` calls.
 3. **On each wake**, act only on what is newer than the latest push (rule 2):
    - **New bot threads (CodeRabbit)** → `autofix`.
    - **CodeRabbit is incremental:** a normal push triggers review of that new
@@ -100,6 +113,14 @@ ten/fifteen-minute caps for Bugbot — Bugbot Low needs the longer window.
      body (`gh api repos/<o>/<r>/pulls/<n>/reviews --jq '.[].body'`) — items
      there never become threads and a thread-only sweep misses them.
      Read new review bodies on every wake and triage their items like threads.
+   - **Bugbot (only when Vatsal approved and the run has started):** wait for
+     the Cursor Bugbot check on the exact current `headRefOid` to reach
+     `completed` with `success` or `neutral` (within Bugbot wait caps). Read
+     that run's full comments and findings. Route each actionable finding
+     through `gh-address-comment` (must-fix) or the established dismissal
+     path with a signed reason. A pending Bugbot run or unresolved Bugbot
+     findings block `MERGE_READY`. Until trigger-post success and started
+     are both true, use the no-Bugbot path.
    - **New human threads** → `gh-address-comment`.
    - **Failing checks** → flake-triage first (rule 3), then `gh-fix-ci`
      (GitHub Actions) or report the external provider's details URL.
@@ -137,11 +158,14 @@ ten/fifteen-minute caps for Bugbot — Bugbot Low needs the longer window.
 7. **Exit — merge-ready:** checks green, zero unresolved threads, required
    approvals present, and either the App reviewed the latest meaningful range
    or `autofix` produced the bounded exact-head fallback receipt from
-   `CONVENTIONS.md` when that convention exists. Bugbot is not part of this
-   exit gate unless Vatsal requested a run (see **Bugbot — Manual Only**);
-   do not wait on absent Bugbot when declined or not requested. Re-fetch and
-   paste the receipt (rule 7): the GraphQL unresolved-thread count from step 1
-   plus
+   `CONVENTIONS.md` when that convention exists. **Bugbot gate:** when Vatsal
+   approved and started Bugbot, require a Cursor Bugbot check on the exact
+   current `headRefOid` with `status: completed` and conclusion `success` or
+   `neutral`, and every Bugbot finding resolved or explicitly dismissed with
+   a reason; pending, failed, stale, or unresolved Bugbot results block
+   `MERGE_READY`. When Manual Only / declined / not-requested (or never
+   started), do **not** require Bugbot. Re-fetch and paste the receipt
+   (rule 7): the GraphQL unresolved-thread count from step 1 plus
    `gh pr view <n> --json headRefOid,statusCheckRollup,reviews,reviewDecision,mergeStateStatus`.
    When `MERGE_BOT_LOGIN` is set, the final merge-bot gate must also have
    approved the exact current head: `headRefOid` must equal the commit SHA of
