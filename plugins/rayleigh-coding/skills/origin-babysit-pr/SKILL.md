@@ -31,12 +31,25 @@ Never post `bugbot run` or `@cursor review` on your own initiative.
 2. Only if he says yes: post exactly `bugbot run` or `@cursor review`, then
    handle that run's check and threads with the mechanics below.
 3. If he says no / Hold, or has not been asked yet: babysit proceeds without
-   waiting on Bugbot. Exit merge-ready must **not** require a Bugbot check or
-   Bugbot threads when review was declined or never requested.
+   waiting on Bugbot at all. Exit merge-ready must **not** require a Bugbot
+   check or Bugbot threads when review was declined or never requested.
 
 When a Bugbot run did happen (Vatsal said yes), keep the existing
 Bugbot-as-reviewer handling below. The change is the **trigger / wait gate**,
 not the review workflow after a run.
+
+### Bugbot wait caps (yes-triggered path only)
+
+Apply only after Vatsal approved a trigger and a `bugbot run` /
+`@cursor review` comment was posted. Do **not** use GitHub CodeRabbit
+minutes here.
+
+- At most **45 minutes** waiting for Bugbot to reach `status: completed` with
+  `conclusion` `success` or `neutral` on one head after that trigger comment.
+- Cap **90 minutes cumulative** Bugbot wait across the babysit session for
+  that change.
+- Use bounded polls only. Never busy-loop. Do not stretch into hours-long
+  waits. On timeout, stop and report with the latest check receipt.
 
 ## Loop
 
@@ -46,13 +59,16 @@ not the review workflow after a run.
    unresolved Bugbot threads (if any), and the user's goal.
    `origin pr checkout` before any write.
 2. Wait with bounded polls. Allow at most two fix pushes. Never busy-loop.
+   When Bugbot was requested, honour **Bugbot wait caps** (45 min/head,
+   90 min cumulative). When Bugbot was declined or never requested, do not
+   spend any wait budget on Bugbot.
 3. On each wake, act only on comments newer than the last push:
    - New Bugbot threads (only if a requested run produced them) →
      `origin-address-comment` (must-fix) after `origin-pr-triage`.
    - Human threads → same.
    - If Bugbot was requested: run `origin pr checks <change> --watch` for the
-     Cursor Bugbot check. A pending, absent, cancelled, or failed Bugbot
-     check is not approval. Re-read with
+     Cursor Bugbot check within the Bugbot wait caps. A pending, absent,
+     cancelled, or failed Bugbot check is not approval. Re-read with
      `origin pr checks --json name,status,conclusion` and require the Cursor
      Bugbot row to have `status: completed` and `conclusion` equal to
      `neutral` or `success`; any other conclusion is a hard stop.

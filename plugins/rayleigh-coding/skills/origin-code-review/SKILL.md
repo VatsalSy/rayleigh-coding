@@ -17,10 +17,13 @@ as a local scanner.
 2. Ensure the branch is pushed to `origin.cursor.com` and the change is
    **open** (`origin pr ready` if it is still draft). Drafts often get no
    Bugbot comments.
-3. Run `origin pr checks <change> --watch`, then require its JSON row to have
-   `status: completed` and `conclusion: neutral|success` for the exact latest
-   head. Then read full comments with
-   `origin pr view --checks --comments` and
+3. Run `origin pr checks <change> --watch` with **Bugbot wait caps** (not
+   CodeRabbit's ten/fifteen minutes): at most **45 minutes** for Bugbot to
+   reach `status: completed` with `conclusion` `neutral` or `success` on one
+   head, and **90 minutes cumulative** across the session. Bounded polls
+   only; never busy-loop; do not stretch into hours. Then require its JSON
+   row to have that completed conclusion for the exact latest head. Then
+   read full comments with `origin pr view --checks --comments` and
    `origin pr thread list --comments` — those are Origin PR commands, not a
    Bugbot review tool. A generated PR summary is not a completed review.
 4. Triage with `origin-pr-triage`, fix with `origin-address-comment`.

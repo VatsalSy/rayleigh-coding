@@ -34,14 +34,28 @@ After PR open and during babysit: **do not** auto-trigger Bugbot. Never post
 
 1. Owning desk / Batch asks Vatsal once whether to request Bugbot.
 2. Only if he says yes: comment exactly `bugbot run` or `@cursor review` on
-   the PR, then treat that run's findings like other review comments.
+   the PR, then treat that run's findings like other review comments, and
+   apply **Bugbot wait caps** below (not CodeRabbit's).
 3. If he declines, or has not been asked yet: continue babysit without waiting
-   on Bugbot. Exit merge-ready must **not** require a Bugbot run, check, or
-   threads when Bugbot was declined or never requested.
+   on Bugbot at all. Exit merge-ready must **not** require a Bugbot run,
+   check, or threads when Bugbot was declined or never requested.
 
 Green checks, unresolved threads, CodeRabbit / `MERGE_BOT_LOGIN` gates stay as
 written below. Bugbot is optional and never a hard gate unless Vatsal
 requested it and that run was started.
+
+### Bugbot wait caps (yes-triggered path only)
+
+Apply only after Vatsal approved a trigger and a `bugbot run` /
+`@cursor review` comment was posted. Do **not** reuse CodeRabbit's
+ten/fifteen-minute caps for Bugbot — Bugbot Low needs the longer window.
+
+- At most **45 minutes** waiting for Bugbot to reach `completed` with
+  conclusion `success` or `neutral` on one head after that trigger comment.
+- Cap **90 minutes cumulative** Bugbot wait across the babysit session for
+  that PR.
+- Use bounded polls only. Never busy-loop. Do not stretch into hours-long
+  waits. On timeout, stop and report with the latest check receipt.
 
 ## Loop contract
 
@@ -61,9 +75,13 @@ requested it and that run was started.
    branch after gh-pr-create's hand-off.
 2. **Wait, don't spin—and stop waiting.** Prefer the harness's facility: in
    Claude Code use `/loop` self-paced or a Monitor; in Codex, bounded polls.
-   Ordinary CI may use its normal runtime, but CodeRabbit gets at most ten
-   cumulative minutes on one pushed head and fifteen cumulative minutes across
-   the PR. Record both counters and the number of feedback-driven pushes; neither
+   Ordinary CI may use its normal runtime. **CodeRabbit** (GitHub App only)
+   gets at most ten cumulative minutes on one pushed head and fifteen
+   cumulative minutes across the PR — those CodeRabbit caps do not apply to
+   Bugbot. When Bugbot was yes-triggered, use **Bugbot wait caps** (45
+   min/head, 90 min cumulative) from **Bugbot — Manual Only**; when Bugbot
+   was declined or not requested, spend zero Bugbot wait. Record each bot's
+   counters separately and the number of feedback-driven pushes; neither
    resets after compaction, a bot comment edit, or a new head. Allow at most
    two such fix pushes. Never busy-loop `gh` calls.
 3. **On each wake**, act only on what is newer than the latest push (rule 2):
