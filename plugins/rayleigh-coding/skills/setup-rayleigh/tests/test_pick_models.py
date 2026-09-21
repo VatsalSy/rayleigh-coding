@@ -16,7 +16,7 @@ SESSION_SLUGS = [
     "claude-fable-5-1-thinking-high",
     "claude-opus-5-thinking-high",
     "composer-2.5-fast",
-    "cursor-grok-4.6-xhigh-fast",
+    "grok-4.7-xhigh-fast",
     "gpt-5.6-sol-medium",
     "muse-spark-1.3-high",
 ]
@@ -28,7 +28,7 @@ class PickModelsTests(unittest.TestCase):
         self.assertEqual(
             mapping,
             {
-                "default": "cursor-grok-4.6-xhigh-fast",
+                "default": "grok-4.7-xhigh-fast",
                 "executor": "composer-2.5-fast",
                 "wise-owl": "claude-fable-5-1-thinking-high",
             },
@@ -50,24 +50,25 @@ class PickModelsTests(unittest.TestCase):
             [
                 "claude-fable-5-1-thinking-max",
                 "claude-fable-5-1-thinking-xhigh",
-                "cursor-grok-4.6-high",
+                "grok-4.7-high",
                 "composer-2.5",
             ]
         )
         self.assertEqual(mapping["wise-owl"], "auto")
-        self.assertEqual(mapping["default"], "cursor-grok-4.6-high")
+        self.assertEqual(mapping["default"], "grok-4.7-high")
         self.assertEqual(mapping["executor"], "composer-2.5")
 
     def test_prefers_newer_grok_and_higher_effort(self):
         mapping = MODULE.pick_mapping(
             [
-                "cursor-grok-4.5-high",
+                "cursor-grok-4.6-high",
                 "cursor-grok-4.6-medium",
+                "grok-4.7-medium",
+                "grok-4.7-xhigh-fast",
                 "cursor-grok-4.6-xhigh-fast",
-                "grok-4.6-fast-xhigh",
             ]
         )
-        self.assertIn(mapping["default"], {"cursor-grok-4.6-xhigh-fast", "grok-4.6-fast-xhigh"})
+        self.assertEqual(mapping["default"], "grok-4.7-xhigh-fast")
         self.assertEqual(MODULE.effort_rank(mapping["default"]), 3)
 
     def test_prefers_non_fast_composer_when_both_exist(self):
@@ -75,8 +76,13 @@ class PickModelsTests(unittest.TestCase):
         self.assertEqual(mapping["executor"], "composer-2.5")
 
     def test_accepts_unprefixed_grok_slug_as_default_family(self):
-        mapping = MODULE.pick_mapping(["grok-4.6-fast-xhigh", "composer-2.5-fast"])
-        self.assertEqual(mapping["default"], "grok-4.6-fast-xhigh")
+        mapping = MODULE.pick_mapping(["grok-4.7-xhigh-fast", "composer-2.5-fast"])
+        self.assertEqual(mapping["default"], "grok-4.7-xhigh-fast")
+        self.assertEqual(mapping["executor"], "composer-2.5-fast")
+
+    def test_accepts_cursor_prefixed_grok_slug_as_default_family(self):
+        mapping = MODULE.pick_mapping(["cursor-grok-4.7-xhigh-fast", "composer-2.5-fast"])
+        self.assertEqual(mapping["default"], "cursor-grok-4.7-xhigh-fast")
         self.assertEqual(mapping["executor"], "composer-2.5-fast")
 
     def test_empty_detections_are_all_auto(self):
@@ -104,7 +110,7 @@ class PickModelsTests(unittest.TestCase):
         self.assertEqual(code, 0)
         text = buf.getvalue()
         self.assertIn("alwaysApply: true", text)
-        self.assertIn("default: cursor-grok-4.6-xhigh-fast", text)
+        self.assertIn("default: grok-4.7-xhigh-fast", text)
         self.assertIn("executor: composer-2.5-fast", text)
         self.assertIn("wise-owl: claude-fable-5-1-thinking-high", text)
         self.assertNotIn("code:", text)
