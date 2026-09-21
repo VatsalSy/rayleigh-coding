@@ -104,6 +104,8 @@ Recover immediately:
     back out to `main`. This skill does not merge; if the user also asked to
     babysit/watch the PR ("file and babysit"), continue with `gh-babysit-pr`
     after opening — it must `gh pr checkout <n>` before any write operation.
+    Do not auto-trigger Bugbot after open (`bugbot run` / `@cursor review`);
+    see `gh-babysit-pr` → **Bugbot — Manual Only**.
 13. **Return URL**: Output the PR URL and mention any post-PR actions you
     completed
 

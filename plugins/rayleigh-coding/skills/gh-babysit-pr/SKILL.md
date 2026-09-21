@@ -27,6 +27,22 @@ number, do not restate it.
 MERGE_BOT_LOGIN="${MERGE_BOT_LOGIN:-}"
 ```
 
+## Bugbot — Manual Only
+
+After PR open and during babysit: **do not** auto-trigger Bugbot. Never post
+`bugbot run` or `@cursor review` on your own initiative.
+
+1. Owning desk / Batch asks Vatsal once whether to request Bugbot.
+2. Only if he says yes: comment exactly `bugbot run` or `@cursor review` on
+   the PR, then treat that run's findings like other review comments.
+3. If he declines, or has not been asked yet: continue babysit without waiting
+   on Bugbot. Exit merge-ready must **not** require a Bugbot run, check, or
+   threads when Bugbot was declined or never requested.
+
+Green checks, unresolved threads, CodeRabbit / `MERGE_BOT_LOGIN` gates stay as
+written below. Bugbot is optional and never a hard gate unless Vatsal
+requested it and that run was started.
+
 ## Loop contract
 
 1. **Baseline.** `gh pr view <n> --json headRefOid,statusCheckRollup,reviews,reviewDecision,mergeStateStatus,mergeable,baseRefName,isDraft`
@@ -103,8 +119,11 @@ MERGE_BOT_LOGIN="${MERGE_BOT_LOGIN:-}"
 7. **Exit — merge-ready:** checks green, zero unresolved threads, required
    approvals present, and either the App reviewed the latest meaningful range
    or `autofix` produced the bounded exact-head fallback receipt from
-   `CONVENTIONS.md` when that convention exists. Re-fetch and paste the receipt
-   (rule 7): the GraphQL unresolved-thread count from step 1 plus
+   `CONVENTIONS.md` when that convention exists. Bugbot is not part of this
+   exit gate unless Vatsal requested a run (see **Bugbot — Manual Only**);
+   do not wait on absent Bugbot when declined or not requested. Re-fetch and
+   paste the receipt (rule 7): the GraphQL unresolved-thread count from step 1
+   plus
    `gh pr view <n> --json headRefOid,statusCheckRollup,reviews,reviewDecision,mergeStateStatus`.
    When `MERGE_BOT_LOGIN` is set, the final merge-bot gate must also have
    approved the exact current head: `headRefOid` must equal the commit SHA of
