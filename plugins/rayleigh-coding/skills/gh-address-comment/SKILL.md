@@ -93,7 +93,7 @@ babysat is a failure even if every comment was "addressed".
 - **Dismissal protocol:** a thread not worth addressing gets a short written reason and is then resolved — never silently ignored, never silently complied with. Deferred threads stay open with the rationale posted.
 - **Dismissal replies — and ONLY dismissal replies — are signed** so a declined finding is traceable to the agent that declined it: `*<model-slug> on behalf of the user:* <reason>`. Fix notifications, summaries, and every other comment stay unsigned.
 - **Bad dismissal:** *(resolve the thread with no reply)* — or "This is fine as is."
-- **Good dismissal:** `*claude-fable-5 on behalf of the user:* Declining — generalising the sweep runner to arbitrary parameter grids is out of this PR's scope (goal: fix the Oh-sweep restart bug). Happy to take it as a follow-up issue. Resolving.`
+- **Good dismissal:** `*claude-opus-5-5 on behalf of the user:* Declining — generalising the sweep runner to arbitrary parameter grids is out of this PR's scope (goal: fix the Oh-sweep restart bug). Happy to take it as a follow-up issue. Resolving.`
 
 
 ## Gotchas

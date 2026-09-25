@@ -112,7 +112,7 @@ be swapped later without renaming the categories.
 |---|---|---|
 | `default` | Lead chat and anything the user reads | latest Cursor Grok |
 | `executor` | Grunt `Task` / swarm / parallel waves once the brief is complete | latest Composer |
-| `wise-owl` | Rare second opinion. Advise only. High effort only | latest Fable |
+| `wise-owl` | Rare second opinion. Advise only. High effort only | latest Opus |
 
 `auto` / `inherit-parent` remain first-class: omit the Task `model` field so
 the child follows the parent chat. Write all three as `auto` only when the
@@ -140,8 +140,8 @@ python3 <path-to-setup-rayleigh>/scripts/pick_models.py --format rule -- <detect
 Use `--policy auto --format rule` when the human asked to stay on Auto.
 If you cannot detect any slugs, run `--policy auto` and say so.
 
-The picker allowlists only Grok, Composer, and Fable. It ignores other
-families even when they appear in the Task set. Wise-owl accepts Fable
+The picker allowlists only Grok, Composer, and Opus. It ignores other
+families even when they appear in the Task set. Wise-owl accepts Opus
 **high** only (not max, not extra-high). A missing family becomes `auto`.
 
 **Write policy (no confirmation gate):**
@@ -151,8 +151,9 @@ families even when they appear in the Task set. Wise-owl accepts Fable
 - Otherwise write the detected ensemble. Overwrite the old six-role shape
   (`code`, `judgment`, `review`, `swarm workers`, `parallel-task`).
 - If a file already has `default` / `executor` / `wise-owl` set to a real
-  slug that is still in the detected set, keep that pin. Replace `auto` and
-  unavailable slugs with the new pick unless the human asked to stay on Auto.
+  slug that is still in the detected set **and** eligible for that category
+  under the picker, keep that pin. Replace `auto`, unavailable, and
+  ineligible slugs with the new pick unless the human asked to stay on Auto.
 
 Do not prompt for model picks. Do not write a slug the picker did not emit.
 

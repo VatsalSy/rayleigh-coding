@@ -13,7 +13,7 @@ Built for Cursor Cloud Agents and local Cursor.
 
 `/setup-rayleigh` installs the plugin into your user-global local plugins path
 when needed, and writes always-applied model rules for three categories:
-**default** (Cursor Grok), **executor** (Composer), and **wise-owl** (Fable
+**default** (Cursor Grok), **executor** (Composer), and **wise-owl** (Opus
 high). It uses slugs the Task tool accepts in that session. Say **stay on
 auto** in the same session to inherit the parent chat instead.
 

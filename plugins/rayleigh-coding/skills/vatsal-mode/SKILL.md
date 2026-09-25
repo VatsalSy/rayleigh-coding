@@ -36,7 +36,7 @@ from `/setup-rayleigh`.
 |---|---|---|
 | `default` | Parent work and anything the user reads | Cursor Grok |
 | `executor` | `Task` / swarm / parallel waves once the brief is self-contained | Composer |
-| `wise-owl` | One read-only consult when a second view could change a consequential decision | Fable high |
+| `wise-owl` | One read-only consult when a second view could change a consequential decision | Opus high |
 
 Resolve a category, highest first:
 
@@ -49,7 +49,7 @@ Resolve a category, highest first:
 Pass a real slug as Task `model`. For `auto` / `inherit-parent`, omit
 `model`. Never pass a slug that is not in this session's Task set. If a
 written slug is rejected, pick the closest allowlisted slug in the same
-family (Grok, Composer, or Fable high) or omit `model`, and say so.
+family (Grok, Composer, or Opus high) or omit `model`, and say so.
 
 Old role names (`code`, `judgment`, `review`, `swarm workers`,
 `parallel-task`) map to `executor` except `judgment` / `review`, which map
