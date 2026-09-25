@@ -5,7 +5,7 @@ Categories stay stable. Concrete slugs are the current Cursor mapping:
 
 - default: latest Cursor Grok family
 - executor: latest Composer family
-- wise-owl: latest Fable family at *high* only (not max, not extra-high)
+- wise-owl: latest Opus family at *high* only (not max, not extra-high)
 
 Aliases ``auto`` and ``inherit-parent`` mean: omit Task ``model``.
 Unknown or disallowed families are never assigned.
@@ -20,11 +20,11 @@ import sys
 CATEGORIES = ("default", "executor", "wise-owl")
 ALIASES = frozenset({"auto", "inherit-parent", "inherit"})
 FORBIDDEN = re.compile(
-    r"(?i)(?:^|-)(?:opus|sonnet|sol|luna|terra|muse|gemini|gpt)(?:-|$)"
+    r"(?i)(?:^|-)(?:fable|sonnet|sol|luna|terra|muse|gemini|gpt)(?:-|$)"
 )
 GROK = re.compile(r"(?i)(?:^|-)(?:cursor-)?grok-")
 COMPOSER = re.compile(r"(?i)(?:^|-)composer-")
-FABLE = re.compile(r"(?i)(?:^|-)(?:claude-)?fable-")
+OPUS = re.compile(r"(?i)(?:^|-)(?:claude-)?opus-")
 
 RULE_HEADER = """---
 description: rayleigh-coding model choices (category mapping; overrides skill defaults)
@@ -80,7 +80,7 @@ def family_of(slug: str) -> str | None:
         return "default"
     if COMPOSER.search(slug):
         return "executor"
-    if FABLE.search(slug):
+    if OPUS.search(slug):
         return "wise-owl"
     return None
 
@@ -99,7 +99,7 @@ def pick_mapping(detected: list[str]) -> dict[str, str]:
     real = [slug.strip() for slug in detected if slug.strip() and not is_alias(slug)]
     grok = [slug for slug in real if family_of(slug) == "default"]
     composer = [slug for slug in real if family_of(slug) == "executor"]
-    fable = [slug for slug in real if wise_owl_eligible(slug)]
+    opus = [slug for slug in real if wise_owl_eligible(slug)]
     return {
         "default": _pick_one(
             grok,
@@ -112,7 +112,7 @@ def pick_mapping(detected: list[str]) -> dict[str, str]:
         )
         or "auto",
         "wise-owl": _pick_one(
-            fable,
+            opus,
             key=lambda slug: (
                 version_sort_key(slug),
                 0 if "thinking" in slug.lower() else 1,
