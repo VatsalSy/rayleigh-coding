@@ -151,8 +151,9 @@ families even when they appear in the Task set. Wise-owl accepts Opus
 - Otherwise write the detected ensemble. Overwrite the old six-role shape
   (`code`, `judgment`, `review`, `swarm workers`, `parallel-task`).
 - If a file already has `default` / `executor` / `wise-owl` set to a real
-  slug that is still in the detected set, keep that pin. Replace `auto` and
-  unavailable slugs with the new pick unless the human asked to stay on Auto.
+  slug that is still in the detected set **and** eligible for that category
+  under the picker, keep that pin. Replace `auto`, unavailable, and
+  ineligible slugs with the new pick unless the human asked to stay on Auto.
 
 Do not prompt for model picks. Do not write a slug the picker did not emit.
 
