@@ -34,15 +34,17 @@ requested” applies to GitHub workshops, not Origin workshops.
 origin pr create --status open --push --fill --remote <origin-cursor-remote>
 ```
 
-6. For standing-watch / merge-ready babysitting guidance, follow
-   `gh-babysit-pr` (GitHub-only skill; reuse its wait-cap and loop
-   discipline as the playbook). **Bugbot — Manual Only:** after open, do
-   **not** auto-trigger Bugbot; never post `bugbot run` or `@cursor review`
-   on your own initiative. Batch asks Vatsal once; only after an explicit
-   yes: wait on `origin pr checks --watch` for that requested run, inspect
-   full comments, and address every actionable finding. If he declines or
-   has not been asked, proceed without waiting on Bugbot. A generated
-   summary is not a review receipt.
+6. There is no Origin standing-watch / babysit skill in this plugin. Do
+   **not** follow `gh-babysit-pr` (GitHub-only; its loop uses `gh` /
+   CodeRabbit / `autofix`). Handle Origin review with
+   `origin-address-comment` and `origin-code-review`. **Bugbot — Manual
+   Only:** after open, do **not** auto-trigger Bugbot; never post
+   `bugbot run` or `@cursor review` on your own initiative. Batch asks
+   Vatsal once; only after an explicit yes: wait on
+   `origin pr checks --watch` for that requested run, inspect full
+   comments, and address every actionable finding. If he declines or has
+   not been asked, proceed without waiting on Bugbot. A generated summary
+   is not a review receipt.
 7. Merge later with `origin pr merge -m` only. Never `origin pr merge -s`.
 8. After merge, fast-forward GitHub `main` only. Then GitHub Actions may run.
 
