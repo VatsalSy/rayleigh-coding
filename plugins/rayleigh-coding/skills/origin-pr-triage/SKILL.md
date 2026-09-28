@@ -10,16 +10,19 @@ description: >
 # Origin PR Triage
 
 Sort Origin review comments into must-fix vs decline. Reviewer is **Cursor
-Bugbot**, never CodeRabbit. Bugbot has no review CLI; require its check with
-`origin pr checks --watch`, then read full comments with
-`origin pr view --checks --comments` and `origin pr thread list --comments`.
+Bugbot**, never CodeRabbit. Bugbot has no review CLI. When Bugbot was
+approved and started, require its check with `origin pr checks --watch`,
+then read full comments with `origin pr view --checks --comments` and
+`origin pr thread list --comments`.
 
 ## Execution
 
 1. Confirm Origin workshop.
-2. `origin pr checks --watch`, then require the Cursor Bugbot JSON row to have
-   `status: completed` and `conclusion: neutral|success` for the latest head.
-   Inspect `origin pr view --checks --comments` and
+2. If Bugbot was declined or not requested (**Bugbot — Manual Only**),
+   skip the Bugbot wait and triage human review threads only. Otherwise
+   `origin pr checks --watch`, then require the Cursor Bugbot JSON row to
+   have `status: completed` and `conclusion: neutral|success` for the
+   latest head. Inspect `origin pr view --checks --comments` and
    `origin pr thread list --comments`. A successful check with no finding
    threads is a clean pass; a missing or running check is not approval.
 3. Freshness: ignore comments on superseded commits.
