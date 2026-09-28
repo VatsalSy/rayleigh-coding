@@ -38,7 +38,6 @@
 | `netlify-deploy` |
 | `openai-docs` |
 | `origin-address-comment` |
-| `origin-babysit-pr` |
 | `origin-code-review` |
 | `origin-pr-checkout` |
 | `origin-pr-create` |
@@ -57,6 +56,7 @@
 | `setup-rayleigh` |
 | `skill-creator` |
 | `swarm-planner` |
+| `unslop` |
 | `vatsal-mode` |
 | `vercel` |
 | `verification-contract` |

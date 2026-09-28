@@ -31,7 +31,6 @@ gh-dependabot-batch-pr
 origin-pr-create
 origin-pr-triage
 origin-address-comment
-origin-babysit-pr
 origin-code-review
 origin-pr-checkout
 origin-release-notes-writer

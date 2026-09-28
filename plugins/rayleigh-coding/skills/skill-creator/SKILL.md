@@ -52,7 +52,7 @@ Before building, classify what you're making. The best skills fit cleanly into o
 | 4 | **Business Process & Automation** | Automate a repetitive workflow into one command | `daily-focus-planner`, `archiver-reminders-sync`, `github-reminders-sync` |
 | 5 | **Code Scaffolding & Templates** | Generate boilerplate for a specific pattern; natural-language requirements | `solver-project-scaffold`, `git-repo-init` |
 | 6 | **Code Quality & Review** | Enforce standards; spawn adversarial reviewers; run lint/style | `dev-review-ultra`, `dev-docstring`, `dev-commit-message` |
-| 7 | **CI/CD & Deployment** | Fetch, push, deploy code; babysit PRs; handle CI failures | `gh-fix-ci`, `gh-pr-create`, `gh-pr-triage` (GitHub); `origin-pr-create`, `origin-babysit-pr` (Origin/Bugbot) |
+| 7 | **CI/CD & Deployment** | Fetch, push, deploy code; babysit PRs; handle CI failures | `gh-fix-ci`, `gh-pr-create`, `gh-babysit-pr`, `gh-pr-triage` (GitHub); `origin-pr-create`, `origin-address-comment` (Origin/Bugbot) |
 | 8 | **Runbooks** | Take a symptom → multi-tool investigation → structured report | `domain-solver-docs` (partial) |
 | 9 | **Infrastructure & Operations** | Routine maintenance; destructive actions with guardrails | (gaps — e.g. NAS/sim storage operations) |
 

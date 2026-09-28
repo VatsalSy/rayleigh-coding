@@ -142,7 +142,8 @@ Pass `--remote` when the git remote named `origin` points at GitHub.
 asked for draft.
 
 Deeper Origin flows: `origin-pr-create`, `origin-pr-triage`,
-`origin-address-comment`, `origin-babysit-pr`, `origin-code-review`.
+`origin-address-comment`, `origin-code-review`. Standing-watch babysit is
+GitHub-only via `gh-babysit-pr`.
 
 ### After opening a PR
 

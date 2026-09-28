@@ -8,7 +8,8 @@ description: "Use when the user says \"fix CI\", \"the checks are failing\", \"m
 
 GitHub Actions only. If the session workshop is Origin, wait until the GitHub mirror has
 fast-forwarded GitHub `main` and then run this on the GitHub side. Do not treat
-Origin as having Actions. Origin review is `origin-babysit-pr`.
+Origin as having Actions. Origin review is Bugbot via `origin-address-comment`
+/ `origin-code-review`; standing-watch babysit on GitHub is `gh-babysit-pr`.
 
 ## Execution Backend
 

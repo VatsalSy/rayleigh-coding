@@ -22,7 +22,7 @@ metadata:
 # CodeRabbit Autofix
 
 GitHub-workshop / CodeRabbit only. Origin-workshop review is Cursor Bugbot
-(`origin-babysit-pr`, `origin-address-comment`). Bugbot has no review CLI.
+(`origin-address-comment`, `origin-code-review`). Bugbot has no review CLI.
 Do not run this skill on an Origin change.
 
 Fetch unresolved CodeRabbit review-thread feedback for your current branch's PR and apply validated fixes with explicit approval.
