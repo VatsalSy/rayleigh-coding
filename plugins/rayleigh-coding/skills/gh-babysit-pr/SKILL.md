@@ -9,8 +9,11 @@ description: >
 
 # Babysit a PR
 
-GitHub-workshop skill (CodeRabbit + Actions). If the remote is not GitHub,
-stop and use the matching host skill (for Origin: `origin-babysit-pr`).
+GitHub-only babysit skill (CodeRabbit + Actions). If the remote is not
+GitHub, stop. Do not run this loop. Origin review comments (when needed)
+go to `origin-address-comment`; invoke `origin-code-review` only after
+Vatsal explicitly approves Bugbot checks. There is no Origin babysit
+skill.
 
 Own a PR as a standing watch until it is merge-ready: green checks, all
 review threads resolved or declined-with-reason, approvals in, branch fresh.

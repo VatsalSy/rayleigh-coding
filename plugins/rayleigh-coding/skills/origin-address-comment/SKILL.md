@@ -16,7 +16,9 @@ Bugbot** (and any human comments). Never CodeRabbit.
 
 1. Confirm Origin workshop. Otherwise use `gh-address-comment`.
 2. `origin auth status`. Checkout the change: `origin pr checkout`.
-3. Require the Cursor Bugbot check to complete for the exact head with
+3. If Bugbot was declined or not requested (**Bugbot — Manual Only**),
+   skip the Bugbot wait and handle human review threads only. Otherwise
+   require the Cursor Bugbot check to complete for the exact head with
    `origin pr checks --watch`, then list full threads with
    `origin pr thread list --comments`. Act only on comments newer than the
    latest push; generated summary threads are not findings.
