@@ -6,10 +6,9 @@ description: "Use when the user says \"fix CI\", \"the checks are failing\", \"m
 
 # Gh Pr Checks Plan Fix
 
-GitHub Actions only. If the session workshop is Origin, wait until the GitHub mirror has
-fast-forwarded GitHub `main` and then run this on the GitHub side. Do not treat
-Origin as having Actions. Origin review is Bugbot via `origin-address-comment`
-/ `origin-code-review`; standing-watch babysit on GitHub is `gh-babysit-pr`.
+GitHub Actions only. Origin is out of scope for this plugin; use this
+`gh-fix-ci` skill on GitHub only. Do not treat Origin as having Actions.
+Standing-watch babysit on GitHub is `gh-babysit-pr`.
 
 ## Execution Backend
 

@@ -28,12 +28,6 @@ gh-babysit-pr
 gh-fix-ci
 gh-release-notes-writer
 gh-dependabot-batch-pr
-origin-pr-create
-origin-pr-triage
-origin-address-comment
-origin-code-review
-origin-pr-checkout
-origin-release-notes-writer
 dev-commit-message
 dev-docstring
 dev-frontend-design

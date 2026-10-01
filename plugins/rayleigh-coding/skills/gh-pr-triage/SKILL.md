@@ -5,8 +5,8 @@ description: Use when the user says "triage the PR", "analyze the PR feedback", 
 
 # PR Triage
 
-GitHub-workshop skill. Origin-workshop triage is `origin-pr-triage` (Bugbot,
-never CodeRabbit).
+GitHub-workshop skill. Origin is out of scope for this plugin; use this
+`gh-pr-triage` skill on GitHub only.
 
 ## Execution Backend
 

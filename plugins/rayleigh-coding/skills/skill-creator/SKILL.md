@@ -52,7 +52,7 @@ Before building, classify what you're making. The best skills fit cleanly into o
 | 4 | **Business Process & Automation** | Automate a repetitive workflow into one command | `daily-focus-planner`, `archiver-reminders-sync`, `github-reminders-sync` |
 | 5 | **Code Scaffolding & Templates** | Generate boilerplate for a specific pattern; natural-language requirements | `solver-project-scaffold`, `git-repo-init` |
 | 6 | **Code Quality & Review** | Enforce standards; spawn adversarial reviewers; run lint/style | `dev-review-ultra`, `dev-docstring`, `dev-commit-message` |
-| 7 | **CI/CD & Deployment** | Fetch, push, deploy code; babysit PRs; handle CI failures | `gh-fix-ci`, `gh-pr-create`, `gh-babysit-pr`, `gh-pr-triage` (GitHub); `origin-pr-create`, `origin-address-comment` (Origin/Bugbot) |
+| 7 | **CI/CD & Deployment** | Fetch, push, deploy code; babysit PRs; handle CI failures | `gh-fix-ci`, `gh-pr-create`, `gh-babysit-pr`, `gh-pr-triage`, `gh-address-comment` (GitHub only; Origin is out of scope for this plugin) |
 | 8 | **Runbooks** | Take a symptom → multi-tool investigation → structured report | `domain-solver-docs` (partial) |
 | 9 | **Infrastructure & Operations** | Routine maintenance; destructive actions with guardrails | (gaps — e.g. NAS/sim storage operations) |
 
@@ -242,7 +242,7 @@ available validator, and report the local result.
 
 4. **A skill should explain what to do, not smuggle in an installer.** If a proposed skill depends on downloading and executing remote scripts, that is usually a supply-chain footgun, not a reusable skill. Prefer pinned tools, explicit commands, and local verification steps.
 
-5. **Git forge skills must take a workshop.** Default workshop is GitHub (`gh`, guarded `code-review` entry point, Actions). Origin workshop uses the `origin` CLI and Cursor Bugbot — never CodeRabbit. Bugbot has no review CLI; do not invent one. Do not assume the git remote named `origin` is GitHub. Put shared rules in `git-master`; do not duplicate a `gh-*` skill as Origin unless review/merge actually runs on Origin.
+5. **Git forge skills default to GitHub.** Use `gh`, the guarded `code-review` entry point, and Actions. Origin workshop skills are out of scope for this plugin — do not author `origin-*` forge skills here; point agents at the matching `gh-*` skill instead. Do not assume the git remote named `origin` is GitHub. Put shared rules in `git-master`.
 
 ---
 

@@ -1,6 +1,6 @@
 # Skill inventory
 
-57 skills in this plugin.
+51 skills in this plugin.
 
 | Skill |
 |---|
@@ -37,12 +37,6 @@
 | `linear` |
 | `netlify-deploy` |
 | `openai-docs` |
-| `origin-address-comment` |
-| `origin-code-review` |
-| `origin-pr-checkout` |
-| `origin-pr-create` |
-| `origin-pr-triage` |
-| `origin-release-notes-writer` |
 | `parallel-task` |
 | `pdf` |
 | `playwright` |
