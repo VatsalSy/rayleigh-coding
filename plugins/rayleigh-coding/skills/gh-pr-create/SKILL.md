@@ -4,13 +4,13 @@ description: >
   Use only when the user explicitly says "create PR", "open PR", "make a pull
   request", "push and create PR", "pr-creator", `$gh-pr-create`,
   `/gh-pr-create`, or `/pr-creator`, or when safe main reconciliation has
-  concretely failed. NOT for Origin-workshop PRs (origin-pr-create).
+  concretely failed. Origin workshop is out of scope for this plugin.
 ---
 
 # PR Creator
 
-GitHub-workshop skill. If the remote is not GitHub, stop and use the matching
-host skill (for Origin: `origin-pr-create`).
+GitHub-workshop skill. Origin is out of scope for this plugin; use this
+`gh-pr-create` skill on GitHub only.
 
 Use this skill only after an explicit PR request, or after a concrete failed
 attempt to reconcile local and remote `main` safely has made direct delivery

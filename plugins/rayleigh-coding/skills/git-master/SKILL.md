@@ -141,9 +141,9 @@ Pass `--remote` when the git remote named `origin` points at GitHub.
 `origin pr create` may default to draft; use `--status open` unless the user
 asked for draft.
 
-Deeper Origin flows: `origin-pr-create`, `origin-pr-triage`,
-`origin-address-comment`, `origin-code-review`. Standing-watch babysit is
-GitHub-only via `gh-babysit-pr`.
+Origin skill routing is out of scope for this plugin. Use the matching
+`gh-*` GitHub skill instead (`gh-pr-create`, `gh-pr-triage`,
+`gh-address-comment`, `code-review`, `gh-babysit-pr`).
 
 ### After opening a PR
 

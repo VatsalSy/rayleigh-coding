@@ -5,9 +5,8 @@ description: Use when the user says "cut a release", "release notes", "tag a new
 
 # Release Notes Writer
 
-GitHub Releases (`gh release`). Origin-workshop tags/notes start in
-`origin-release-notes-writer`; call this only after GitHub `main` has the
-fast-forwarded tag.
+GitHub Releases (`gh release`). Origin is out of scope for this plugin; use
+this `gh-release-notes-writer` skill on GitHub only.
 
 ## Execution Backend
 

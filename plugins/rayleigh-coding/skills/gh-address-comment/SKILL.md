@@ -9,8 +9,9 @@ description: >
 
 # PR Comment Handler (Deterministic)
 
-GitHub-workshop skill. Origin-workshop threads are `origin-address-comment`
-(Bugbot). CodeRabbit-authored GitHub threads stay `autofix`.
+GitHub-workshop skill. Origin is out of scope for this plugin; use this
+`gh-address-comment` skill on GitHub only. CodeRabbit-authored GitHub threads
+stay `autofix`.
 
 ## Execution Backend
 

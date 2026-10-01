@@ -115,7 +115,7 @@ receipt helps).
 | Make Actions green | `gh-fix-ci` |
 | Address human review threads | `gh-address-comment` / `gh-pr-triage` |
 | Drive a PR to merge-ready | `gh-babysit-pr` |
-| Origin workshop | matching `origin-*` skill |
+| Origin workshop | Out of scope for this plugin — use the matching `gh-*` GitHub skill |
 | Git workshop choice | `git-master` (choose by remote URL host) |
 
 Prefer merge commits. Do not squash unless the user asks.

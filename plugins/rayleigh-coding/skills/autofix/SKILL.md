@@ -21,9 +21,8 @@ metadata:
 
 # CodeRabbit Autofix
 
-GitHub-workshop / CodeRabbit only. Origin-workshop review is Cursor Bugbot
-(`origin-address-comment`, `origin-code-review`). Bugbot has no review CLI.
-Do not run this skill on an Origin change.
+GitHub-workshop / CodeRabbit only. Origin is out of scope for this plugin;
+do not run this skill on an Origin change.
 
 Fetch unresolved CodeRabbit review-thread feedback for your current branch's PR and apply validated fixes with explicit approval.
 
