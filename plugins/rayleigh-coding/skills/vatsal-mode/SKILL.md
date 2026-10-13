@@ -36,7 +36,7 @@ from `/setup-rayleigh`.
 |---|---|---|
 | `default` | Parent work and anything the user reads | Cursor Grok |
 | `executor` | `Task` / swarm / parallel waves once the brief is self-contained | Composer |
-| `wise-owl` | One read-only consult when a second view could change a consequential decision | Opus high |
+| `wise-owl` | One read-only consult when a second view could change a consequential decision | Cursor Grok, high effort |
 
 Resolve a category, highest first:
 
@@ -49,7 +49,7 @@ Resolve a category, highest first:
 Pass a real slug as Task `model`. For `auto` / `inherit-parent`, omit
 `model`. Never pass a slug that is not in this session's Task set. If a
 written slug is rejected, pick the closest allowlisted slug in the same
-family (Grok, Composer, or Opus high) or omit `model`, and say so.
+family (Grok or Composer; never a third-party model) or omit `model`, and say so.
 
 Old role names (`code`, `judgment`, `review`, `swarm workers`,
 `parallel-task`) map to `executor` except `judgment` / `review`, which map
@@ -72,7 +72,7 @@ verification. Advice never satisfies "done". Check it against source
 evidence.
 
 Skip the extra consult when `wise-owl` resolves to `auto` /
-`inherit-parent`, is missing, or is the same family as the parent. This
+`inherit-parent`, is missing, or is the exact same slug as the parent. This
 does not change the parent session's model.
 
 First-time install and reset: `/setup-rayleigh`.

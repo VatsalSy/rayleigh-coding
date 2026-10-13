@@ -100,7 +100,7 @@ Updated some files
 ## Summary
 Changes to authentication
 
-Generated with Claude 🤖
+Generated with Grok 🤖
 
 # Generic template unfilled
 ## Summary
