@@ -50,6 +50,9 @@ Pass a real slug as Task `model`. For `auto` / `inherit-parent`, omit
 `model`. Never pass a slug that is not in this session's Task set. If a
 written slug is rejected, pick the closest allowlisted slug in the same
 family (Grok or Composer; never a third-party model) or omit `model`, and say so.
+A rejected `wise-owl` slug may fall back only to another Grok slug at high
+effort (not max, not extra-high). If no high-effort Grok slug is in the Task
+set, omit `model`.
 
 Old role names (`code`, `judgment`, `review`, `swarm workers`,
 `parallel-task`) map to `executor` except `judgment` / `review`, which map
