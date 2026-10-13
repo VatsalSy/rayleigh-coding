@@ -334,7 +334,7 @@ Display issues in original thread order, but review "Fix" issues in severity ord
 
 **Bad dismissal:** *(thread resolved with no reply)* — or "Won't fix."
 
-**Good dismissal:** `*claude-opus-5-5 on behalf of the user:* Declining — the divergence check here runs on the interpolated field, not the raw VOF fraction, so the flagged conservation issue doesn't apply. Resolving.`
+**Good dismissal:** `*grok-4.7 on behalf of the user:* Declining — the divergence check here runs on the interpolated field, not the raw VOF fraction, so the flagged conservation issue doesn't apply. Resolving.`
 
 After all fixes, display summary of fixed/declined/deferred issues.
 

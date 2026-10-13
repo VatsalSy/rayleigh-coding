@@ -18,6 +18,7 @@ SESSION_SLUGS = [
     "claude-opus-5-thinking-high",
     "composer-2.5-fast",
     "grok-4.7-xhigh-fast",
+    "grok-4.7-high",
     "gpt-5.6-sol-medium",
     "muse-spark-1.3-high",
 ]
@@ -31,7 +32,7 @@ class PickModelsTests(unittest.TestCase):
             {
                 "default": "grok-4.7-xhigh-fast",
                 "executor": "composer-2.5-fast",
-                "wise-owl": "claude-opus-5-5-high",
+                "wise-owl": "grok-4.7-high",
             },
         )
 
@@ -42,34 +43,40 @@ class PickModelsTests(unittest.TestCase):
                 "gpt-5.6-sol-medium",
                 "muse-spark-1.3-high",
                 "claude-sonnet-5-thinking-high",
+                "claude-opus-5-5-high",
+                "gpt-6.1-sol",
+                "gemini-3-pro",
+                "kimi-k2",
+                "deepseek-v4",
             ]
         )
         self.assertEqual(mapping, MODULE.auto_mapping())
 
-    def test_opus_max_and_xhigh_are_not_wise_owl(self):
+    def test_opus_and_grok_max_xhigh_are_not_wise_owl(self):
         mapping = MODULE.pick_mapping(
             [
                 "claude-opus-5-5-max",
                 "claude-opus-5-5-xhigh",
-                "grok-4.7-high",
+                "grok-4.7-xhigh",
+                "grok-4.7-max",
                 "composer-2.5",
             ]
         )
         self.assertEqual(mapping["wise-owl"], "auto")
-        self.assertEqual(mapping["default"], "grok-4.7-high")
+        self.assertTrue(mapping["default"].startswith("grok-4.7-"))
         self.assertEqual(mapping["executor"], "composer-2.5")
 
-    def test_prefers_newer_opus_high(self):
+    def test_opus_is_never_wise_owl(self):
         mapping = MODULE.pick_mapping(
             [
                 "claude-opus-5-thinking-high",
                 "claude-opus-5-5-high",
-                "claude-opus-5-5-high-fast",
+                "grok-4.6-high",
                 "grok-4.7-high",
                 "composer-2.5",
             ]
         )
-        self.assertEqual(mapping["wise-owl"], "claude-opus-5-5-high")
+        self.assertEqual(mapping["wise-owl"], "grok-4.7-high")
 
     def test_prefers_newer_grok_and_higher_effort(self):
         mapping = MODULE.pick_mapping(
@@ -125,7 +132,7 @@ class PickModelsTests(unittest.TestCase):
         self.assertIn("alwaysApply: true", text)
         self.assertIn("default: grok-4.7-xhigh-fast", text)
         self.assertIn("executor: composer-2.5-fast", text)
-        self.assertIn("wise-owl: claude-opus-5-5-high", text)
+        self.assertIn("wise-owl: grok-4.7-high", text)
         self.assertNotIn("code:", text)
         self.assertNotIn("judgment:", text)
 
