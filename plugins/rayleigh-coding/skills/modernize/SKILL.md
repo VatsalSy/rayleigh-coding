@@ -2,10 +2,9 @@
 name: modernize
 disable-model-invocation: true
 description: >-
-  Use only when the user explicitly invokes `/modernize` or `$modernize`, or
-  clearly asks to run the modernize skill: bring an old PR or branch up to
-  date and judge whether it should still exist. Taking over unfinished work:
-  takeover.
+  Use only when the user explicitly invokes `/modernize` or `$modernize`: bring
+  an old PR or branch up to date and judge whether it should still exist.
+  Taking over unfinished work: takeover.
 ---
 
 # Modernize
@@ -14,7 +13,9 @@ Modernize the idea, not just the branch. A clean rebase does not prove that
 the PR still belongs in the product.
 
 Independently adapted from [tstack](https://github.com/t3dotgg/tstack)
-(`NOTICE.txt`). Prefer Cursor and Grok first-party models via `/vatsal-mode`.
+(`NOTICE.txt`). Use only Cursor and Grok first-party models via
+`/vatsal-mode`. Do not use third-party model families or private agent home
+directories.
 
 ## Guardrails
 
@@ -95,7 +96,14 @@ For UPDATE or RECUT:
 6. Push normally after a merge. After a rebase, push with
    `--force-with-lease=<branch>:<observed-sha>`; if the lease fails, fetch
    and reassess. A modernize RECUT disposition is the explicit request to
-   file the replacement PR through `gh-pr-create` (no second ask required).
+   file the replacement PR through `gh-pr-create` with the **recorded base
+   branch** passed explicitly (no second ask required; do not rely on the
+   default `main`).
+7. After filing: if this run used a disposable/linked worktree, skip
+   `gh-pr-create`'s mandatory `git checkout main` cleanup (it fails when
+   another worktree already holds `main`). Remove or leave the disposable
+   worktree instead. In a regular single worktree, keep the usual return to
+   the default branch.
 
 Do not merge.
 

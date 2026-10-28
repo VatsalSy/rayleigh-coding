@@ -2,10 +2,9 @@
 name: sol-loop
 disable-model-invocation: true
 description: >-
-  Use only when the user explicitly invokes `/sol-loop` or `$sol-loop`, or
-  clearly asks to run the sol-loop skill: review a change in a bounded
-  CodeRabbit + wise-owl loop until findings are settled. One-off review
-  without the loop: code-review.
+  Use only when the user explicitly invokes `/sol-loop` or `$sol-loop`: review
+  a change in a bounded CodeRabbit + wise-owl loop until findings are settled.
+  One-off review without the loop: code-review.
 ---
 
 # Sol Loop
@@ -16,8 +15,11 @@ findings. Resist scope creep and push back with evidence.
 
 The name keeps parity with upstream tstack. In this plugin the reviewers are
 **CodeRabbit** (via `code-review`) and at most one read-only **wise-owl**
-consult (Cursor Grok, high effort). Do not call third-party model families
-for this loop. Prefer Cursor and Grok first-party models via `/vatsal-mode`.
+consult (Cursor Grok, high effort).
+
+Use only Cursor and Grok first-party models via
+`/vatsal-mode`. Do not use third-party model families or private agent home
+directories.
 
 Independently adapted from [tstack](https://github.com/t3dotgg/tstack)
 (`NOTICE.txt`).

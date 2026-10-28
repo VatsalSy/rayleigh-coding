@@ -2,10 +2,9 @@
 name: takeover
 disable-model-invocation: true
 description: >-
-  Use only when the user explicitly invokes `/takeover` or `$takeover`, or
-  clearly asks to run the takeover skill on a named PR, branch, or agent
-  thread: finish the original goal while preserving contributor credit.
-  Refresh an old PR without taking ownership: modernize.
+  Use only when the user explicitly invokes `/takeover` or `$takeover` on a
+  named PR, branch, or agent thread: finish the original goal while preserving
+  contributor credit. Refresh an old PR without taking ownership: modernize.
 ---
 
 # Takeover
@@ -16,7 +15,9 @@ another agent already built it, and do not trust its claims because it
 reported them.
 
 Independently adapted from [tstack](https://github.com/t3dotgg/tstack)
-(`NOTICE.txt`). Prefer Cursor and Grok first-party models via `/vatsal-mode`.
+(`NOTICE.txt`). Use only Cursor and Grok first-party models via
+`/vatsal-mode`. Do not use third-party model families or private agent home
+directories.
 
 ## Resolve what you inherit
 
