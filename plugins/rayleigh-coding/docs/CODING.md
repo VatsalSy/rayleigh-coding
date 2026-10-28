@@ -8,6 +8,9 @@ Rules for agents using rayleigh-coding.
 - Ask only for load-bearing product or preference decisions.
 - Hard-stop before irreversible external actions (force-push to shared
   branches, production deploys, deletion, customer messages, purchases).
+- Unattended delivery: `full-send` / `full-stop` (never bypass review or
+  merge gates; never merge a public or protected/prod target without the
+  owner's explicit OK; never send email or chat on anyone's behalf).
 
 ## Git workshops
 

@@ -1,0 +1,10 @@
+This skill is independently adapted from Theo Browne's tstack (MIT).
+
+Upstream: https://github.com/t3dotgg/tstack
+Reviewed upstream commit: 7de017b3fc9d50c03cf3ecb98fb71e0ca65a78bd
+
+The upstream MIT license text is retained in LICENSE.txt in this directory.
+This adaptation targets Cursor Cloud Agents and local Cursor. It is not a
+verbatim copy of upstream and deliberately differs on safety stops and
+review tooling.
+

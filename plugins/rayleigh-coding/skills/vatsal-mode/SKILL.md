@@ -113,6 +113,11 @@ receipt helps).
 | Situation | Skill |
 |---|---|
 | Local quality/security pass before push | `code-review` (thin CodeRabbit CLI wrapper when available; inspect the outgoing diff first and skip if it would send secrets) or `dev-review-ultra` |
+| Bounded review loop before ship | `sol-loop` (CodeRabbit + optional wise-owl) |
+| Unattended finish to merge-ready / merge | `full-send` (gates still apply; public/protected merge needs owner OK) |
+| Same as full-send but owner merges | `full-stop` |
+| Take over a PR/branch/thread | `takeover` |
+| Refresh an old PR and judge keep/close | `modernize` |
 | Security-focused pass | `security-best-practices` / `security-threat-model` / `security-gitleaks` |
 | Open a GitHub PR | `gh-pr-create` |
 | Make Actions green | `gh-fix-ci` |
