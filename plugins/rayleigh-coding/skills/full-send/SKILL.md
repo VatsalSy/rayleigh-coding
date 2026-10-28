@@ -2,10 +2,11 @@
 name: full-send
 disable-model-invocation: true
 description: >-
-  Use only when the user explicitly invokes `$full-send` or says "full send":
-  finish, prove, review, and babysit the task unattended to a merge-ready PR,
-  then merge only after gates pass and the owner has authorized landing.
-  Stop ready for the owner to merge: full-stop.
+  Use only when the user explicitly invokes `/full-send` or `$full-send`, or
+  clearly asks to run the full-send skill: finish, prove, review, and babysit
+  the task unattended to a merge-ready PR, then merge only after gates pass
+  and the owner has authorized landing. Stop ready for the owner to merge:
+  full-stop.
 ---
 
 # Full Send

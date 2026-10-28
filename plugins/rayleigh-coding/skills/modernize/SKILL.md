@@ -2,9 +2,10 @@
 name: modernize
 disable-model-invocation: true
 description: >-
-  Use only when the user explicitly invokes `$modernize` or says "modernize":
-  bring an old PR or branch up to date and judge whether it should still
-  exist. Taking over unfinished work: takeover.
+  Use only when the user explicitly invokes `/modernize` or `$modernize`, or
+  clearly asks to run the modernize skill: bring an old PR or branch up to
+  date and judge whether it should still exist. Taking over unfinished work:
+  takeover.
 ---
 
 # Modernize
@@ -28,8 +29,9 @@ Independently adapted from [tstack](https://github.com/t3dotgg/tstack)
   force-pushing any other branch. Never use an unqualified force push.
 - Never send email or chat on anyone's behalf, and never move secrets or
   money as part of modernizing.
-- Post no PR comment unless the user asked for one; replies follow
-  `gh-address-comment`.
+- Post no PR comment unless the user asked for one. Route CodeRabbit-authored
+  threads through `autofix`; reserve `gh-address-comment` for human-authored
+  threads.
 
 ## Establish the intent
 
@@ -60,8 +62,9 @@ Git reporting no conflicts does not make a change current.
   no open threads anchored to it.
 - **RECUT:** the goal still fits but the branch is long-conflicted or carries
   stale commits. Re-apply the minimal change on a fresh branch from the
-  current base and open a new PR whose body says `Supersedes #N`. The user
-  decides whether the old PR is closed.
+  current base and open a new PR. When an original PR number exists, put
+  `Supersedes #N` in the body; otherwise cite the source branch or commit.
+  The user decides whether any old PR is closed.
 - **REWORK:** the goal still fits but a mechanical update would preserve the
   wrong implementation. Explain the smallest credible rewrite and stop before
   pushing unless the user also asked for that rework. Use `create-plan` when
@@ -91,7 +94,8 @@ For UPDATE or RECUT:
    send.
 6. Push normally after a merge. After a rebase, push with
    `--force-with-lease=<branch>:<observed-sha>`; if the lease fails, fetch
-   and reassess. File a RECUT PR with `gh-pr-create`.
+   and reassess. A modernize RECUT disposition is the explicit request to
+   file the replacement PR through `gh-pr-create` (no second ask required).
 
 Do not merge.
 

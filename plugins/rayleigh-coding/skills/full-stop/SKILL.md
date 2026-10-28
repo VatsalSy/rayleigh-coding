@@ -2,10 +2,10 @@
 name: full-stop
 disable-model-invocation: true
 description: >-
-  Use only when the user explicitly invokes `$full-stop` or says "full stop",
-  including a closing "Full stop." that reads like emphasis: do the full-send
-  work, then stop with the PR ready for the owner to merge. Never merge it.
-  Unattended landing: full-send.
+  Use only when the user explicitly invokes `/full-stop` or `$full-stop`, or
+  clearly asks to run the full-stop skill: do the full-send work, then stop
+  with the PR ready for the owner to merge. Never merge it. Do not treat an
+  ordinary closing "Full stop." as activation. Unattended landing: full-send.
 ---
 
 # Full Stop
@@ -15,9 +15,10 @@ reversible point with the pull request ready for the owner to merge. Never
 merge it.
 
 Read full-send and follow its scope, steps, proof, review, babysitting, and
-question rules. An explicit "full stop" request authorizes that work,
-including full-send's testing permission, without a separate "full send".
-Its merge permission does not apply; the overrides below take precedence.
+question rules. An explicit `/full-stop`, `$full-stop`, or "run full-stop"
+request authorizes that work, including full-send's testing permission,
+without a separate "full send". Its merge permission does not apply; the
+overrides below take precedence. A bare closing "Full stop." is not enough.
 
 Independently adapted from [tstack](https://github.com/t3dotgg/tstack)
 (`NOTICE.txt`). Prefer Cursor and Grok first-party models via `/vatsal-mode`.

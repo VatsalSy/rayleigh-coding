@@ -2,9 +2,10 @@
 name: sol-loop
 disable-model-invocation: true
 description: >-
-  Use only when the user explicitly invokes `$sol-loop` or says "sol loop":
-  review a change in a bounded CodeRabbit + wise-owl loop until findings are
-  settled. One-off review without the loop: code-review.
+  Use only when the user explicitly invokes `/sol-loop` or `$sol-loop`, or
+  clearly asks to run the sol-loop skill: review a change in a bounded
+  CodeRabbit + wise-owl loop until findings are settled. One-off review
+  without the loop: code-review.
 ---
 
 # Sol Loop
