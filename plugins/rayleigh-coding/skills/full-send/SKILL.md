@@ -4,8 +4,9 @@ disable-model-invocation: true
 description: >-
   Use only when the user explicitly invokes `/full-send` or `$full-send`:
   finish, prove, review, and babysit the task unattended to a merge-ready PR,
-  then merge only after gates pass and the owner has authorized landing.
-  Stop ready for the owner to merge: full-stop.
+  then merge only after gates pass; public, protected, or production targets
+  also need a separate explicit owner OK on the exact head (full-send itself
+  never counts). Stop ready for the owner to merge: full-stop.
 ---
 
 # Full Send
@@ -29,9 +30,11 @@ A "full send" request never overrides these:
 - Never bypass a required review, status check, branch-protection rule, or
   merge gate. Never use `--admin` or other privilege bypasses.
 - Never merge into a protected or production branch, and never merge a PR on a
-  **public** repository, unless the owner explicitly authorized landing for
-  this task (a clear "full send" on the named task counts) **and** every gate
-  below still passes on the exact head.
+  **public** repository, unless the owner gave a **separate, explicit OK** to
+  land the **exact head SHA** being merged **and** every gate below still
+  passes on that head. Invoking full-send never counts as that OK.
+- On a **private**, unprotected, non-production repository and target branch,
+  merge only after the merge gate below passes (full-send's usual grant).
 - Never send email or chat messages on anyone's behalf.
 - Never handle secrets beyond what the repo already uses for ordinary CI, and
   never move money, change billing, or make purchases.
@@ -53,7 +56,9 @@ For the named task only:
 - Open or update a non-draft PR with `gh-pr-create`.
 - Babysit with `gh-babysit-pr` (and `gh-address-comment` / `gh-fix-ci` as
   needed). Honour optional `MERGE_BOT_LOGIN` when set.
-- Merge the task's own PR only after the merge gate passes.
+- Merge the task's own PR only after the merge gate passes and the safety
+  stops above allow it (separate owner OK on the exact head when the target
+  is public, protected, or production).
 
 GitHub is the workshop for these skills. Origin is out of scope here.
 

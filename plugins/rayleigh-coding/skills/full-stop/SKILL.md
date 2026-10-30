@@ -37,7 +37,9 @@ work begins; check again before each push. Report those changes. If you
 cannot prevent automatic merging, report the blocker before proceeding.
 
 Full-send's safety stops still apply: never bypass review or merge gates,
-never send email or chat on anyone's behalf, and never move secrets or money.
+never treat a full-send invoke as merge approval for a public, protected, or
+production target, never send email or chat on anyone's behalf, and never
+move secrets or money.
 
 ## Stop at the gate
 

@@ -39,9 +39,11 @@ to.
 A takeover request authorizes finishing the same goal. It does not authorize
 closing or rewriting the original PR, force-pushing its branch without
 `--force-with-lease`, production deploys, email or chat on anyone's behalf,
-secret exfiltration, or money movement. Merge only when the user authorized
-landing (for example via `full-send` on this takeover) and `full-send`'s
-merge gate and safety stops pass.
+secret exfiltration, or money movement. Merge only when `full-send`'s merge
+gate and safety stops permit landing. On a public, protected, or production
+target that means a separate explicit owner OK on the exact head being
+merged; invoking full-send never counts as that OK. Private, unprotected,
+non-production targets keep full-send's usual merge-gate behaviour.
 
 ## Continue the work
 
