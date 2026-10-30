@@ -53,9 +53,9 @@ THIRD_PARTY.md
 
 See `plugins/rayleigh-coding/docs/SKILLS.md`.
 
-Highlights: `/setup-rayleigh`, `/vatsal-mode`, planning and verification,
-git/PR workflows, security review helpers, frontend craft, and common deploy
-CLIs.
+Highlights: `/setup-rayleigh`, `/vatsal-mode`, `full-send` / `full-stop`
+delivery, planning and verification, git/PR workflows, security review
+helpers, frontend craft, and common deploy CLIs.
 
 ## Checks
 
