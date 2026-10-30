@@ -88,7 +88,10 @@ Recover immediately:
    is unavailable, record that and rely on repository tests plus independent
    local inspection; never retry an unchanged diff merely to satisfy the gate.
 4. **Push to remote**: Run `git push -u origin HEAD` to push current branch
-5. **Analyze changes**: Run `git log "${BASE_BRANCH}"..HEAD --oneline` and `git diff "${BASE_BRANCH}"...HEAD --stat` to understand scope
+5. **Analyze changes**: Run `git log "origin/${BASE_BRANCH}"..HEAD --oneline`
+   and `git diff "origin/${BASE_BRANCH}"...HEAD --stat` against the same
+   remote-tracking ref validated above (a remote-only base need not exist
+   as a local branch).
 6. **Learn the repo's title convention**: Run `gh pr list --state merged --limit 15 --json title --jq '.[].title'` and match the style (prefixes, capitalisation, tense). The title must be concise, human-readable, and say why the change matters.
 7. **Generate description**: Write the PR body following the standards below — open with the problem in plain language, from the user's original intent.
 8. **Create PR**: Use `gh pr create` with title/body and
@@ -143,8 +146,8 @@ GH_ASSIGNEE="${GH_ASSIGNEE:-$(gh api user -q .login)}"
 python3 <skills-dir>/code-review/scripts/coderabbit_repo_review.py \
   --switch-org -- --base "${BASE_BRANCH}" || exit $?
 git push -u origin HEAD
-git log "${BASE_BRANCH}"..HEAD --oneline
-git diff "${BASE_BRANCH}"...HEAD --stat
+git log "origin/${BASE_BRANCH}"..HEAD --oneline
+git diff "origin/${BASE_BRANCH}"...HEAD --stat
 gh pr list --state merged --limit 15 --json title --jq '.[].title'
 gh pr create --base "${BASE_BRANCH}" \
   --title "Title matching repo convention; says why it matters" \
@@ -243,8 +246,8 @@ GH_ASSIGNEE="${GH_ASSIGNEE:-$(gh api user -q .login)}"
 BASE_BRANCH="${BASE_BRANCH:-main}"
 
 git push -u origin HEAD
-git log "${BASE_BRANCH}"..HEAD --oneline
-git diff "${BASE_BRANCH}"...HEAD --stat
+git log "origin/${BASE_BRANCH}"..HEAD --oneline
+git diff "origin/${BASE_BRANCH}"...HEAD --stat
 
 gh pr create --base "${BASE_BRANCH}" \
   --title "Title matching repo convention" \
