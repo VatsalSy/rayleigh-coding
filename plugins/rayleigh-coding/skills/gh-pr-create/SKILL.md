@@ -3,8 +3,9 @@ name: gh-pr-create
 description: >
   Use only when the user explicitly says "create PR", "open PR", "make a pull
   request", "push and create PR", "pr-creator", `$gh-pr-create`,
-  `/gh-pr-create`, or `/pr-creator`, or when safe main reconciliation has
-  concretely failed. Origin workshop is out of scope for this plugin.
+  `/gh-pr-create`, or `/pr-creator`; when `full-send` / `full-stop` / a
+  `modernize` RECUT has authorized filing; or when safe main reconciliation
+  has concretely failed. Origin workshop is out of scope for this plugin.
 ---
 
 # PR Creator
@@ -12,11 +13,12 @@ description: >
 GitHub-workshop skill. Origin is out of scope for this plugin; use this
 `gh-pr-create` skill on GitHub only.
 
-Use this skill only after an explicit PR request, or after a concrete failed
-attempt to reconcile local and remote `main` safely has made direct delivery
-impossible. In that fallback case, create or check out a distinct non-`main`
-head branch before following the workflow; never let the later branch push
-target `main`.
+Use this skill only after an explicit PR request, when `full-send` /
+`full-stop` / a `modernize` RECUT has authorized filing, or after a concrete
+failed attempt to reconcile local and remote `main` safely has made direct
+delivery impossible. In that fallback case, create or check out a distinct
+non-`main` head branch before following the workflow; never let the later
+branch push target `main`.
 
 ## Assignee
 
@@ -73,8 +75,9 @@ Recover immediately:
 ## Workflow
 
 1. **Verify branch state**: Run `git status` to ensure working tree is clean or changes are committed.
-2. **Pick base branch**: Default to `main` — set `BASE_BRANCH="main"`. Preserve
-   an explicit caller-provided base instead. If the repository has no selected
+2. **Pick base branch**: Default to `main` — set
+   `BASE_BRANCH="${BASE_BRANCH:-main}"` so a caller-provided base (for example
+   a `modernize` RECUT base) is preserved. If the repository has no selected
    base branch, `git rev-parse --verify
    "refs/remotes/origin/${BASE_BRANCH}"` fails; stop and ask rather than guessing.
 3. **Local CodeRabbit pass**: For code or behavioural `SKILL.md` runtime
@@ -135,7 +138,7 @@ gh pr edit --add-assignee "${GH_ASSIGNEE}"
 
 ```bash
 git status
-BASE_BRANCH="main"  # override only if user explicitly named another base
+BASE_BRANCH="${BASE_BRANCH:-main}"  # use main only when no base was supplied
 GH_ASSIGNEE="${GH_ASSIGNEE:-$(gh api user -q .login)}"
 python3 <skills-dir>/code-review/scripts/coderabbit_repo_review.py \
   --switch-org -- --base "${BASE_BRANCH}" || exit $?
@@ -237,7 +240,7 @@ reduction, so serial and parallel budgets now match to round-off.
 
 ```bash
 GH_ASSIGNEE="${GH_ASSIGNEE:-$(gh api user -q .login)}"
-BASE_BRANCH="main"
+BASE_BRANCH="${BASE_BRANCH:-main}"
 
 git push -u origin HEAD
 git log "${BASE_BRANCH}"..HEAD --oneline
