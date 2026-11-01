@@ -16,11 +16,12 @@ git status --porcelain  # Empty output = clean
 BASE_BRANCH_SCRIPT="<skills-dir>/gh-pr-create/scripts/get-base-branch.sh"
 BASE_BRANCH="$("$BASE_BRANCH_SCRIPT")"
 
-# View commits since base branch
-git log "${BASE_BRANCH}"..HEAD --oneline
+# View commits since base branch (use the remote-tracking ref;
+# get-base-branch.sh may resolve a remote-only base)
+git log "origin/${BASE_BRANCH}"..HEAD --oneline
 
 # View file changes since base branch
-git diff "${BASE_BRANCH}"...HEAD --stat
+git diff "origin/${BASE_BRANCH}"...HEAD --stat
 
 # Check if branch tracks remote
 git branch -vv
@@ -131,7 +132,7 @@ BASE_BRANCH_SCRIPT="<skills-dir>/gh-pr-create/scripts/get-base-branch.sh"
 BASE_BRANCH="$("$BASE_BRANCH_SCRIPT")"
 
 # Verify commits exist
-git log "${BASE_BRANCH}"..HEAD --oneline
+git log "origin/${BASE_BRANCH}"..HEAD --oneline
 
 # If empty, nothing to PR
 ```
@@ -167,8 +168,8 @@ git push -u origin HEAD
 # 3. Detect base and inspect PR scope
 BASE_BRANCH_SCRIPT="<skills-dir>/gh-pr-create/scripts/get-base-branch.sh"
 BASE_BRANCH="$("$BASE_BRANCH_SCRIPT")"
-git log "${BASE_BRANCH}"..HEAD --oneline
-git diff "${BASE_BRANCH}"...HEAD --stat
+git log "origin/${BASE_BRANCH}"..HEAD --oneline
+git diff "origin/${BASE_BRANCH}"...HEAD --stat
 
 # 4. Create PR
 gh pr create --title "Add user authentication" --base "${BASE_BRANCH}" --body "$(cat <<'EOF'
