@@ -12,12 +12,12 @@ git status
 # Ensure all changes committed
 git status --porcelain  # Empty output = clean
 
-# Resolve base branch
+# Fetch once, then resolve a base that exists as origin/<name>
+git fetch origin --prune
 BASE_BRANCH_SCRIPT="<skills-dir>/gh-pr-create/scripts/get-base-branch.sh"
 BASE_BRANCH="$("$BASE_BRANCH_SCRIPT")"
 
-# View commits since base branch (use the remote-tracking ref;
-# get-base-branch.sh may resolve a remote-only base)
+# View commits since base branch (same remote-tracking ref the resolver requires)
 git log "origin/${BASE_BRANCH}"..HEAD --oneline
 
 # View file changes since base branch
@@ -127,7 +127,8 @@ gh auth status
 ### No Commits Ahead
 
 ```bash
-# Verify base
+# Verify base (resolver requires origin/<name>)
+git fetch origin --prune
 BASE_BRANCH_SCRIPT="<skills-dir>/gh-pr-create/scripts/get-base-branch.sh"
 BASE_BRANCH="$("$BASE_BRANCH_SCRIPT")"
 
@@ -166,6 +167,7 @@ git status
 git push -u origin HEAD
 
 # 3. Detect base and inspect PR scope
+git fetch origin --prune
 BASE_BRANCH_SCRIPT="<skills-dir>/gh-pr-create/scripts/get-base-branch.sh"
 BASE_BRANCH="$("$BASE_BRANCH_SCRIPT")"
 git log "origin/${BASE_BRANCH}"..HEAD --oneline

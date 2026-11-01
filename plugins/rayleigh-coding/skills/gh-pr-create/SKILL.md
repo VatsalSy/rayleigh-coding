@@ -77,9 +77,10 @@ Recover immediately:
 1. **Verify branch state**: Run `git status` to ensure working tree is clean or changes are committed.
 2. **Pick base branch**: Default to `main` — set
    `BASE_BRANCH="${BASE_BRANCH:-main}"` so a caller-provided base (for example
-   a `modernize` RECUT base) is preserved. If the repository has no selected
-   base branch, `git rev-parse --verify
-   "refs/remotes/origin/${BASE_BRANCH}"` fails; stop and ask rather than guessing.
+   a `modernize` RECUT base) is preserved. Run `git fetch origin --prune`
+   once, then validate with `git rev-parse --verify
+   "refs/remotes/origin/${BASE_BRANCH}"`. If that fails, stop and ask rather
+   than guessing. Do not re-fetch before later `git log` / `git diff` steps.
 3. **Local CodeRabbit pass**: For code or behavioural `SKILL.md` runtime
    instruction changes, run the repository-aware
    `code-review` guard on the committed branch with `--switch-org -- --base
@@ -106,12 +107,16 @@ Recover immediately:
 11. **Automation follow-up**: If the prompt says "if you create a PR" and asks
     for an issue, PR comment, Slack message, or other GitHub follow-up, do that
     work before finishing. If no PR is created, skip the follow-up and say why.
-12. **Return repo to `main`**: After the PR is opened, check the local repo
-    back out to `main`. This skill does not merge; if the user also asked to
-    babysit/watch the PR ("file and babysit"), continue with `gh-babysit-pr`
-    after opening — it must `gh pr checkout <n>` before any write operation.
-    Do not auto-trigger Bugbot after open (`bugbot run` / `@cursor review`);
-    see `gh-babysit-pr` → **Bugbot — Manual Only**.
+12. **Return repo to `main`**: After the PR is opened, in a regular single
+    worktree check the local repo back out to `main`. If this run is inside a
+    disposable or linked worktree (for example a `modernize` RECUT), skip
+    `git checkout main` — it fails when another worktree already holds
+    `main`; remove or leave the disposable worktree instead. This skill does
+    not merge; if the user also asked to babysit/watch the PR ("file and
+    babysit"), continue with `gh-babysit-pr` after opening — it must
+    `gh pr checkout <n>` before any write operation. Do not auto-trigger
+    Bugbot after open (`bugbot run` / `@cursor review`); see `gh-babysit-pr`
+    → **Bugbot — Manual Only**.
 13. **Return URL**: Output the PR URL and mention any post-PR actions you
     completed
 
@@ -142,6 +147,8 @@ gh pr edit --add-assignee "${GH_ASSIGNEE}"
 ```bash
 git status
 BASE_BRANCH="${BASE_BRANCH:-main}"  # use main only when no base was supplied
+git fetch origin --prune
+git rev-parse --verify "refs/remotes/origin/${BASE_BRANCH}"
 GH_ASSIGNEE="${GH_ASSIGNEE:-$(gh api user -q .login)}"
 python3 <skills-dir>/code-review/scripts/coderabbit_repo_review.py \
   --switch-org -- --base "${BASE_BRANCH}" || exit $?
@@ -165,19 +172,23 @@ Plain-language problem statement from the original intent, then the fix briefly.
 EOF
 )"
 gh pr edit --add-assignee "${GH_ASSIGNEE}"
+# Skip in disposable/linked worktrees; otherwise:
 git checkout main
 ```
 
 ## Post-PR branch cleanup
 
-After the PR is created, always leave the local repo on `main`:
+After the PR is created, in a regular single worktree leave the local repo on
+`main`:
 
 ```bash
 git checkout main
 ```
 
-This is mandatory even when the PR remains open for review. Do not leave the
-local repo parked on the feature branch after the workflow.
+Skip that checkout in a disposable or linked worktree (for example a
+`modernize` RECUT): another worktree may already hold `main`. Remove or leave
+the disposable worktree instead. Do not leave a regular single worktree parked
+on the feature branch after the workflow.
 
 ## Expected Inputs (Clarify Early)
 
@@ -244,6 +255,8 @@ reduction, so serial and parallel budgets now match to round-off.
 ```bash
 GH_ASSIGNEE="${GH_ASSIGNEE:-$(gh api user -q .login)}"
 BASE_BRANCH="${BASE_BRANCH:-main}"
+git fetch origin --prune
+git rev-parse --verify "refs/remotes/origin/${BASE_BRANCH}"
 
 git push -u origin HEAD
 git log "origin/${BASE_BRANCH}"..HEAD --oneline
@@ -277,7 +290,7 @@ gh pr view --json url -q .url
 3. **No AI markers anywhere** — no attribution lines, generated-by badges, co-authored-by trailers, or tool advertisements in PR bodies or commit messages. Scan before posting.
 4. **Base branch is `main` unless user overrides** — do not "detect" or "infer" a base. Assume `main`. If the repo genuinely has no `main` branch (legacy `master`, upstream fork), STOP and ask — do not silently guess.
 5. **Requested labels are not automatic** — if the prompt calls for labels, add them explicitly with `gh pr edit --add-label ...` after PR creation.
-6. **Leaving the local repo on the feature branch after PR creation breaks later automation** — always `checkout main` after the PR is opened so future runs start from a clean default branch.
+6. **Leaving the local repo on the feature branch after PR creation breaks later automation** — in a regular single worktree, `checkout main` after the PR is opened so future runs start from a clean default branch. Skip that checkout in disposable/linked worktrees.
 
 ## Error Handling
 
