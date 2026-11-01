@@ -1,6 +1,6 @@
 # Skill inventory
 
-51 skills in this plugin.
+56 skills in this plugin.
 
 | Skill |
 |---|
@@ -20,6 +20,8 @@
 | `figma` |
 | `figma-implement-design` |
 | `find-skills` |
+| `full-send` |
+| `full-stop` |
 | `gh-address-comment` |
 | `gh-babysit-pr` |
 | `gh-dependabot-batch-pr` |
@@ -35,6 +37,7 @@
 | `html-explainer` |
 | `jupyter-notebook` |
 | `linear` |
+| `modernize` |
 | `netlify-deploy` |
 | `openai-docs` |
 | `parallel-task` |
@@ -49,7 +52,9 @@
 | `sentry` |
 | `setup-rayleigh` |
 | `skill-creator` |
+| `sol-loop` |
 | `swarm-planner` |
+| `takeover` |
 | `unslop` |
 | `vatsal-mode` |
 | `vercel` |
