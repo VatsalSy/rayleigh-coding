@@ -81,13 +81,9 @@ Recover immediately:
    once, then validate with `git rev-parse --verify
    "refs/remotes/origin/${BASE_BRANCH}"`. If that fails, stop and ask rather
    than guessing. Do not re-fetch before later `git log` / `git diff` steps.
-3. **Local CodeRabbit pass**: For code or behavioural `SKILL.md` runtime
-   instruction changes, run the repository-aware
-   `code-review` guard on the committed branch with `--switch-org -- --base
-   "${BASE_BRANCH}"` when that tool is available. Fix Critical/Warning findings
-   before pushing, or note the deferral in the PR body. If the CLI or capacity
-   is unavailable, record that and rely on repository tests plus independent
-   local inspection; never retry an unchanged diff merely to satisfy the gate.
+3. **Review the change**: Use `code-review` on the exact base and head. Follow
+   required reviewers and checks for this repository before pushing. Report
+   incomplete checks with their actual status.
 4. **Push to remote**: Run `git push -u origin HEAD` to push current branch
 5. **Analyze changes**: Run `git log "origin/${BASE_BRANCH}"..HEAD --oneline`
    and `git diff "origin/${BASE_BRANCH}"...HEAD --stat` against the same
@@ -144,14 +140,14 @@ gh pr edit --add-assignee "${GH_ASSIGNEE}"
 
 ## Quick Start (Most Common Path)
 
+Before pushing a behavioural change, review the exact diff with `code-review` and apply any repository-required review gate.
+
 ```bash
 git status
 BASE_BRANCH="${BASE_BRANCH:-main}"  # use main only when no base was supplied
 git fetch origin --prune
 git rev-parse --verify "refs/remotes/origin/${BASE_BRANCH}"
 GH_ASSIGNEE="${GH_ASSIGNEE:-$(gh api user -q .login)}"
-python3 <skills-dir>/code-review/scripts/coderabbit_repo_review.py \
-  --switch-org -- --base "${BASE_BRANCH}" || exit $?
 git push -u origin HEAD
 git log "origin/${BASE_BRANCH}"..HEAD --oneline
 git diff "origin/${BASE_BRANCH}"...HEAD --stat

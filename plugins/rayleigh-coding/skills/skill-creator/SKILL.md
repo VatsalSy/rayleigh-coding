@@ -14,16 +14,11 @@ description: >
 |------|----------|----------|
 | **Shared** | `<skills-dir>/<name>/` | Cross-agent, cross-project workflows (e.g. notes, weather, slack) |
 | **Agent-specific** | `<agent-workspace>/skills/<name>/` | One agent owns this; other agents shouldn't see it (e.g. email agent's `literature-paper-triage`) |
-| **Repo-specific** | `<repo-root>/.agents/skills/<name>/` | Scoped to a single codebase; activated via overlay script |
+| **Repo-specific** | `<repo-root>/.cursor/skills/<name>/` | Scoped to a Cursor project |
+| **Plugin** | `<plugin-root>/skills/<name>/` | Distributed with the plugin |
 
-**Precedence (highest to lowest):**
-1. `<workspace>/skills/<name>/` — agent workspace override
-2. `<skills-dir>/<name>/` — shared custom skills
-3. Bundled Claude Code skills
-4. `skills.load.extraDirs` config
-
-Repo overlay: `scripts/repo-skill-overlay.py activate <repo-root>`
-Deactivate: `scripts/repo-skill-overlay.py deactivate`
+Choose the location that the active harness documents for the desired scope.
+Create the draft there only when authorised.
 
 ---
 
@@ -40,21 +35,19 @@ Deactivate: `scripts/repo-skill-overlay.py deactivate`
 
 ---
 
-## Skill taxonomy — nine types
+## Skill taxonomy
 
 Before building, classify what you're making. The best skills fit cleanly into one category:
 
 | # | Type | What it does | Our examples |
 |---|------|-------------|-------------|
-| 1 | **Library & API Reference** | How to use a CLI, library, or SDK correctly; edge cases + gotchas | `domain-solver-docs`, `http-cli-example`, `python-env` |
-| 2 | **Product Verification** | Test / verify that code or a workflow is working; paired with playwright, tmux, etc. | (gaps here — worth building) |
-| 3 | **Data Fetching & Analysis** | Connect to data stacks; dashboard IDs, query patterns, credentials | `personal-notes-search`, `memory-query` |
-| 4 | **Business Process & Automation** | Automate a repetitive workflow into one command | `daily-focus-planner`, `archiver-reminders-sync`, `github-reminders-sync` |
-| 5 | **Code Scaffolding & Templates** | Generate boilerplate for a specific pattern; natural-language requirements | `solver-project-scaffold`, `git-repo-init` |
-| 6 | **Code Quality & Review** | Enforce standards; spawn adversarial reviewers; run lint/style | `dev-review-ultra`, `dev-docstring`, `dev-commit-message` |
-| 7 | **CI/CD & Deployment** | Fetch, push, deploy code; babysit PRs; handle CI failures | `gh-fix-ci`, `gh-pr-create`, `gh-babysit-pr`, `gh-pr-triage`, `gh-address-comment` (GitHub only; Origin is out of scope for this plugin) |
-| 8 | **Runbooks** | Take a symptom → multi-tool investigation → structured report | `domain-solver-docs` (partial) |
-| 9 | **Infrastructure & Operations** | Routine maintenance; destructive actions with guardrails | (gaps — e.g. NAS/sim storage operations) |
+| 1 | **Product Verification** | Test / verify that code or a workflow is working; paired with playwright, tmux, etc. | (gaps here — worth building) |
+| 2 | **Data Fetching & Analysis** | Connect to data stacks; dashboard IDs, query patterns, credentials | local search, indexing |
+| 3 | **Business Process & Automation** | Automate a repetitive workflow into one command | batch file conversion, report generation |
+| 4 | **Code Scaffolding & Templates** | Generate boilerplate for a specific pattern; natural-language requirements | `git-repo-init`, `skill-creator` |
+| 5 | **Code Quality & Review** | Enforce standards; spawn adversarial reviewers; run lint/style | `dev-review-ultra`, `dev-docstring`, `dev-commit-message` |
+| 6 | **CI/CD & Deployment** | Fetch, push, deploy code; babysit PRs; handle CI failures | `gh-fix-ci`, `gh-pr-create`, `gh-babysit-pr`, `gh-pr-triage`, `gh-address-comment` (GitHub only; Origin is out of scope for this plugin) |
+| 7 | **Infrastructure & Operations** | Routine maintenance; destructive actions with guardrails | (gaps — e.g. NAS/sim storage operations) |
 
 Skills that straddle multiple categories are usually too broad — split them.
 
@@ -160,7 +153,7 @@ Zero hits expected.
 ### 1. Decide scope
 - Will any agent or session ever need this? → **Shared** (`<skills-dir>/`)
 - Is this owned by one specific agent (e.g. email agent, main)? → **Agent-specific** (`<workspace>/skills/`)
-- Is this scoped to a single repo's codebase? → **Repo-specific** (`<repo>/.agents/skills/`)
+- Is this scoped to a single repo's codebase? → **Repo-specific** (`<repo>/.cursor/skills/`)
 
 ### 2. Create the directory and SKILL.md
 ```bash
@@ -170,7 +163,7 @@ mkdir -p <location>/<skill-name>
 
 Or use the init script:
 ```bash
-python3 <skills-dir>/skill-creator/scripts/init_skill.py <name> --location <shared|agent|repo>
+python3 <skills-dir>/skill-creator/scripts/init_skill.py <name> --path <target-skills-directory>
 ```
 
 ### 3. Write the SKILL.md body
@@ -242,7 +235,7 @@ available validator, and report the local result.
 
 4. **A skill should explain what to do, not smuggle in an installer.** If a proposed skill depends on downloading and executing remote scripts, that is usually a supply-chain footgun, not a reusable skill. Prefer pinned tools, explicit commands, and local verification steps.
 
-5. **Git forge skills default to GitHub.** Use `gh`, the guarded `code-review` entry point, and Actions. Origin workshop skills are out of scope for this plugin — do not author `origin-*` forge skills here; point agents at the matching `gh-*` skill instead. Do not assume the git remote named `origin` is GitHub. Put shared rules in `git-master`.
+5. **Git forge skills default to GitHub.** Use `gh`, `code-review` for the exact diff, and Actions. Origin workshop skills are out of scope for this plugin — do not author `origin-*` forge skills here; point agents at the matching `gh-*` skill instead. Do not assume the git remote named `origin` is GitHub. Put shared rules in `git-master`.
 
 ---
 
@@ -250,11 +243,7 @@ available validator, and report the local result.
 
 | Skill | Location | What it does |
 |-------|----------|--------------|
-| `http-cli-example` | `<skills-dir>/` | Library & API Reference — drive the installed `examplectl` CLI for the live Zotero library |
-| `notes-save` | `<skills-dir>/` | Business Process — classify content, save into the vault, commit + push |
-| `git-master` | `<skills-dir>/` | Library & API Reference — unified git + GitHub/`origin` workshop (commits, PRs, CI, review triage) |
-| `writer-general` | `<skills-dir>/` | Voice & Style — write in the user's academic/technical voice |
-| `domain-solver-docs` | `<skills-dir>/` | Runbook — Basilisk CFD workflow with source-grounded semantic lookup |
+| `git-master` | `<skills-dir>/` | Code Quality & Review — unified git + GitHub/`origin` workshop (commits, PRs, CI, review triage) |
 
 ---
 
@@ -263,6 +252,6 @@ available validator, and report the local result.
 - [ ] Folder name matches `name` in frontmatter?
 - [ ] `description` specific enough to trigger, loose enough not to over-trigger?
 - [ ] Skill in correct tier location?
-- [ ] If repo skill: overlay active? (`scripts/repo-skill-overlay.py status`)
+- [ ] If repo skill: verify discovery in the intended project.
 - [ ] Fresh session started since last edit?
 - [ ] If it's a memory file disguised as a skill: migrate it properly

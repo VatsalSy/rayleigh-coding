@@ -69,9 +69,8 @@ Prereq: authenticate with `gh auth login` once, then confirm with `gh auth statu
    - **Exception — CodeRabbit:** a CodeRabbit check or pending review is not
      fixable CI. A passing `Review rate limited` check means no review ran.
      Route the exact missed head SHA to `autofix`, which owns the bounded
-     exact-head guarded fallback. Never query capacity, request another review,
-     rerun it as CI, or use a no-op push (policy: `CONVENTIONS.md` "Code review
-     before push and merge").
+     exact-head fallback. Never query capacity, request another review,
+     rerun it as CI, or use a no-op push.
 5. Summarize failures for the user.
    - Provide the failing check name, run URL (if any), and a concise log snippet.
    - Call out missing logs explicitly.
@@ -103,7 +102,7 @@ state (repos with the App installed):
   few minutes" (in-progress probe — see `autofix` Step 3), wait; do not
   merge or report the PR as ready.
 - If the current head has a passing `Review rate limited` check, no review ran;
-  route to `autofix`'s bounded exact-head guarded fallback before declaring
+  route to `autofix`'s bounded exact-head fallback before declaring
   merge-ready.
 - CodeRabbit-authored threads → handle via `autofix`.
 - Human reviewer threads → handle via `gh-address-comment`.
@@ -120,7 +119,6 @@ Skill: <skills-dir>/gh-address-comment/SKILL.md
 Trigger: before starting any code changes to address reviewer feedback
 ```
 
-Ops workers / Savart: load `gh-address-comment` before starting code changes. Do NOT re-implement git checkout + edit + commit logic inline.
 
 ## Bundled Resources
 

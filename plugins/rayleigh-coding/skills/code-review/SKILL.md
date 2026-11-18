@@ -1,62 +1,41 @@
 ---
 name: code-review
 description: >-
-  Use when the user says "review my code", "run coderabbit", "check code
-  quality", or before pushing behavioural code/skill changes. Thin CodeRabbit
-  CLI wrapper for this plugin.
-metadata:
-  version: "0.4.0"
+  Use for an evidence-led code review of a local diff or pull request. Review the exact change, validate reachable findings, and check fixes against the final revision.
 ---
 
-# CodeRabbit Code Review
 
-Run the local CodeRabbit CLI through the wrapper in
-`scripts/coderabbit_repo_review.py`.
+# Code review
 
-This skill is a thin CLI helper: organisation hinting from env/remote, then
-`coderabbit review`. It does not maintain review-receipt ledgers or cadence
-locks.
+## Scope and evidence
 
-## Prerequisites
+- Read the user's intent, repository instructions, base, head, and working-tree status.
+  For an open pull request, use its live base and head. Include uncommitted changes only
+  when they are in scope and freeze the paths while a reviewer reads them.
+- Read the complete scoped diff and the affected callers. Inspect the normal entry
+  points, error and retry paths, concurrent state, and pre-existing data as applicable.
+  Check tests for what they actually prove. Distinguish source inspection, local execution,
+  and observed service behaviour.
+- Prioritise issues that are introduced or made reachable by the change. For each
+  finding, give severity, a file and line, the triggering condition, the consequence,
+  and the smallest correction. Group equivalent findings and omit speculation.
 
-1. `coderabbit` CLI installed and authenticated
-   (<https://www.coderabbit.ai/cli>).
-2. A GitHub remote when you want organisation hints from the repo owner.
-3. Never pass secrets into the review diff. Inspect the outgoing change first
-   and skip the review if it would transmit unpublished or sensitive material.
+## Independent pass
 
-If the CLI is missing, say so and stop. Do not invent another review backend.
+When requested or required by repository policy, use an independent reviewer on the
+same evidence. Confirm the backend and what data it receives. Limit the brief to
+authorised source and omit credentials, private configuration, and personal data.
+Give read-only instructions and confirm that the reviewed state stayed unchanged.
+When a required reviewer is unavailable, report the missing result and retain the
+repository's review requirement.
 
-## Invocation
+Use `autofix` for CodeRabbit App findings on GitHub and `coderabbit-config` for
+configuring that integration.
 
-```bash
-python3 /absolute/path/to/code-review/scripts/coderabbit_repo_review.py \
-  -- --base main
-```
+## Close out
 
-Useful flags on the wrapper (before `--`):
-
-| Flag | Meaning |
-|---|---|
-| `--uncommitted` | Prefer reviewing against `--base` for local work |
-| `--base <ref>` | Comparison base (default `main`) |
-| `--switch-org` | Accepted for compatibility; org still comes from env/remote |
-
-Organisation hint order:
-
-1. `CODERABBIT_ORG` if set
-2. else GitHub `origin` owner
-3. optional `CODERABBIT_REQUIRE_ORG=1` refuses when unset
-
-## After review
-
-- Fix or explicitly note Critical/Warning findings before push when the user
-  asked for a guarded ship.
-- If CodeRabbit is unavailable, say the gate was skipped and run repository
-  tests plus independent inspection instead.
-
-## Related
-
-- `autofix` — address review-thread comments on an open PR
-- `coderabbit-config` — `.coderabbit.yaml` authoring
-- `dev-review-ultra` — adversarial human-style review without CodeRabbit
+Verify the strongest finding against the source and a directed check when practical.
+Record the disposition and evidence for any disputed findings. If the user requests
+a fix, rerun the relevant checks and re-review materially changed behaviour. Report
+the exact reviewed revision and any verification gaps. A timeout or partial review
+has no approval status.

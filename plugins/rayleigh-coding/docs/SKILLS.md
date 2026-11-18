@@ -1,6 +1,6 @@
 # Skill inventory
 
-56 skills in this plugin.
+55 skills in this plugin.
 
 | Skill |
 |---|
@@ -9,6 +9,7 @@
 | `cloudflare` |
 | `code-review` |
 | `coderabbit-config` |
+| `coding-workflow` |
 | `create-plan` |
 | `dev-commit-message` |
 | `dev-docstring` |
@@ -50,13 +51,11 @@
 | `security-gitleaks` |
 | `security-threat-model` |
 | `sentry` |
-| `setup-rayleigh` |
 | `skill-creator` |
 | `sol-loop` |
 | `swarm-planner` |
 | `takeover` |
 | `unslop` |
-| `vatsal-mode` |
 | `vercel` |
 | `verification-contract` |
 | `why` |

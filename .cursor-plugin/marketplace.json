@@ -1,18 +1,17 @@
 {
   "name": "rayleigh-coding",
   "owner": {
-    "name": "Vatsal Sanjay",
-    "email": "plugins@example.com"
+    "name": "rayleigh-coding maintainers"
   },
   "metadata": {
-    "description": "Cursor marketplace for coding skills: /setup-rayleigh, /vatsal-mode, full-send/full-stop, verification, git/PR workflows, security helpers, and UI craft.",
-    "version": "0.5.0"
+    "description": "Portable coding, verification, review, and delivery workflows for Cursor.",
+    "version": "0.6.0"
   },
   "plugins": [
     {
       "name": "rayleigh-coding",
       "source": "./plugins/rayleigh-coding",
-      "description": "Coding skills, /setup-rayleigh, and /vatsal-mode for Cursor Cloud Agents and local Cursor"
+      "description": "Portable coding, verification, review, and delivery workflows for Cursor."
     }
   ]
 }

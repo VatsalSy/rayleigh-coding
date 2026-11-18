@@ -32,8 +32,8 @@ MERGE_BOT_LOGIN="${MERGE_BOT_LOGIN:-}"
 After PR open and during babysit: **do not** auto-trigger Bugbot. Never post
 `bugbot run` or `@cursor review` on your own initiative.
 
-1. Owning desk / Batch asks Vatsal once whether to request Bugbot.
-2. Only if he says yes: comment exactly `bugbot run` or `@cursor review` on
+1. Ask the repository owner once whether to request Bugbot.
+2. Only if the owner agrees: comment exactly `bugbot run` or `@cursor review` on
    the PR. Track **trigger-post success** and whether a Cursor Bugbot check
    for the current `headRefOid` has **started**. Until started is true, use
    the no-Bugbot path (do not wait or block on Bugbot). Once started: apply
@@ -42,18 +42,18 @@ After PR open and during babysit: **do not** auto-trigger Bugbot. Never post
    item through `gh-address-comment` or the established dismissal path
    (signed reason). Pending runs and unresolved Bugbot findings block
    `MERGE_READY`.
-3. If he declines, or has not been asked yet: continue babysit without waiting
+3. If the owner declines, or has not been asked yet: continue babysit without waiting
    on Bugbot at all. Exit merge-ready must **not** require a Bugbot run,
    check, or threads when Bugbot was declined or never requested (Manual Only
    sticky).
 
 Green checks, unresolved threads, CodeRabbit / `MERGE_BOT_LOGIN` gates stay as
-written below. Bugbot is optional and never a hard gate unless Vatsal
+written below. Bugbot is optional and never a hard gate unless the repository owner
 approved and started a run.
 
 ### Bugbot wait caps (yes-triggered path only)
 
-Apply only after Vatsal approved a trigger, the trigger comment posted
+Apply only after the repository owner approved a trigger, the trigger comment posted
 successfully, and a Cursor Bugbot check has **started** on the current head.
 Do **not** reuse CodeRabbit's ten/fifteen-minute caps for Bugbot — Bugbot Low
 needs the longer window.
@@ -69,20 +69,19 @@ needs the longer window.
 
 ## Loop contract
 
-1. **Baseline.** `gh pr view <n> --json headRefOid,statusCheckRollup,reviews,reviewDecision,mergeStateStatus,mergeable,baseRefName,isDraft`
-   (`reviewThreads` is NOT a `gh pr view` field — thread state needs GraphQL):
+1. **Baseline.** Read a complete PR snapshot for the canonical GitHub URL.
+   Run it on each wake and immediately before declaring readiness:
 
    ```bash
-   gh api graphql -f query='query($o:String!,$r:String!,$n:Int!){repository(owner:$o,name:$r){pullRequest(number:$n){reviewThreads(first:100){nodes{isResolved}}}}}' \
-     -F o=<owner> -F r=<repo> -F n=<n> \
-     --jq '[.data.repository.pullRequest.reviewThreads.nodes[]|select(.isResolved|not)]|length'
+   python3 <skills-dir>/gh-babysit-pr/scripts/github_snapshot.py <PR_URL>
    ```
 
-   Record the head SHA, the recorded `baseRefName`, and the counts. Note
-   the user's original goal for the PR in one line; it is the scope anchor
-   (rule 5) for every later decision. Before any write operation (fixes,
-   rebases), `gh pr checkout <n>` — the repo may be sitting on the default
-   branch after gh-pr-create's hand-off.
+   Record the head, base, checks, reviews, and count every thread whose
+   `is_resolved` is false. If the snapshot fails, returns missing checks, or
+   the head changes during its read, report incomplete evidence and withhold
+   readiness until a complete current read succeeds. Keep the user's intended
+   change as the scope and verify the checkout head before edits.
+
 2. **Wait, don't spin—and stop waiting.** Prefer the harness's facility: in
    Claude Code use `/loop` self-paced or a Monitor; in Codex, bounded polls.
    Ordinary CI may use its normal runtime. **CodeRabbit** (GitHub App only)
@@ -97,7 +96,7 @@ needs the longer window.
    per-head** timer **resets**; the **90-minute cumulative** counter and the
    feedback-driven push count **do not**. Allow at most two such fix pushes.
    Never busy-loop `gh` calls.
-3. **On each wake**, act only on what is newer than the latest push (rule 2):
+3. **On each wake**, check open findings against the current source, including those raised before the latest push:
    - **New bot threads (CodeRabbit)** → `autofix`.
    - **CodeRabbit is incremental:** a normal push triggers review of that new
      commit range automatically and consumes rolling per-developer capacity.
@@ -108,12 +107,9 @@ needs the longer window.
      CodeRabbit cap, route the exact head to `autofix` for its bounded local
      fallback. Do not query quota, request a manual review, or wait beyond the
      cap here.
-   - **Review BODIES, not just threads:** CodeRabbit puts nitpicks,
-     outside-diff-range comments, and the full fix guidance in the review
-     body (`gh api repos/<o>/<r>/pulls/<n>/reviews --jq '.[].body'`) — items
-     there never become threads and a thread-only sweep misses them.
-     Read new review bodies on every wake and triage their items like threads.
-   - **Bugbot (only when Vatsal approved and the run has started):** wait for
+   - Inspect all review bodies in the paginated snapshot as well as inline
+     threads. A finding can appear in a review body alone.
+   - **Bugbot (only when the repository owner approved and the run has started):** wait for
      the Cursor Bugbot check on the exact current `headRefOid` to reach
      `completed` with `success` or `neutral` (within Bugbot wait caps). Read
      that run's full comments and findings. Route each actionable finding
@@ -157,16 +153,13 @@ needs the longer window.
    When `MERGE_BOT_LOGIN` is unset, skip this step entirely.
 7. **Exit — merge-ready:** checks green, zero unresolved threads, required
    approvals present, and either the App reviewed the latest meaningful range
-   or `autofix` produced the bounded exact-head fallback receipt from
-   `CONVENTIONS.md` when that convention exists. **Bugbot gate:** when Vatsal
+   or `autofix` produced the bounded exact-head fallback receipt when permitted by the repository's review policy. **Bugbot gate:** when the repository owner
    approved and started Bugbot, require a Cursor Bugbot check on the exact
    current `headRefOid` with `status: completed` and conclusion `success` or
    `neutral`, and every Bugbot finding resolved or explicitly dismissed with
    a reason; pending, failed, stale, or unresolved Bugbot results block
    `MERGE_READY`. When Manual Only / declined / not-requested (or never
-   started), do **not** require Bugbot. Re-fetch and paste the receipt
-   (rule 7): the GraphQL unresolved-thread count from step 1 plus
-   `gh pr view <n> --json headRefOid,statusCheckRollup,reviews,reviewDecision,mergeStateStatus`.
+   started), do **not** require Bugbot. Re-read the complete snapshot from step 1 and report the current head, checks, reviews, and unresolved threads.
    When `MERGE_BOT_LOGIN` is set, the final merge-bot gate must also have
    approved the exact current head: `headRefOid` must equal the commit SHA of
    that login's latest effective `APPROVED` review (later `CHANGES_REQUESTED`
@@ -177,8 +170,8 @@ needs the longer window.
 8. **Exit — stuck:** the same substantive failure survives two full fix
    attempts, a known Critical/Warning finding remains, or a
    thread needs a judgement only the user can make. Stop the loop and report
-   what is blocking, with the receipt. Bot silence, paused state, queueing and
-   rate limiting are fallback conditions, not blockers. Do not grind. Attempt
+   what is blocking, with the receipt. At the App deadline, stop and report missing review evidence if policy
+   disallows a local fallback or a required App gate remains unmet. Attempt
    counts must survive compaction: keep a small state line per failure (failure
    key, head SHA, attempt number) in the wake log or a scratch state note, and
    re-read it after compaction — never re-derive "attempt 1" from memory.
@@ -196,8 +189,7 @@ scope, replies posted."
 
 ## Gotchas
 
-- A wake with nothing newer than the last push is a no-op — say so in one
-  line and go back to sleep; do not re-litigate old threads.
+- A wake with no unresolved findings and no new events needs no further action.
 - Do not turn CodeRabbit silence or a rate-limit countdown into a re-review
   loop. Delegate the exact head to `autofix` for one receipt-bound local
   fallback; never query quota, post review commands, no-op push, or revisit an

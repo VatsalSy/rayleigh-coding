@@ -21,13 +21,21 @@ export WEB_GAME_ACTIONS="<SKILL_ROOT>/references/action_payloads.json"
 
 Replace `<SKILL_ROOT>` with the path to this skill's directory on your system.
 
+## Test-only requests
+
+For inspection or validation, leave source and project notes untouched. Use
+an explicit temporary output directory for screenshots and state, and compare
+the repository status before and after. Record what was tested in the reply.
+Follow the implementation workflow below when the user asks for changes.
+
 ## Workflow
 
 1. **Pick a goal.** Define a single feature or behavior to implement.
 2. **Implement small.** Make the smallest change that moves the game forward.
 3. **Ensure integration points.** Provide a single canvas and `window.render_game_to_text` so the test loop can read state.
 4. **Add `window.advanceTime(ms)`.** Strongly prefer a deterministic step hook so the Playwright script can advance frames reliably; without it, automated tests can be flaky.
-5. **Initialize progress.md.** If `progress.md` exists, read it first and confirm the original user prompt is recorded at the top (prefix with `Original prompt:`). Also note any TODOs and suggestions left by the previous agent. If missing, create it and write `Original prompt: <prompt>` at the top before appending updates.
+5. **Record progress when useful.** Read existing project notes. Record the
+   implementation goal and results briefly without copying private prompt text.
 6. **Verify Playwright availability.** Ensure `playwright` is available (local dependency or global install). If unsure, check `npx` first.
 7. **Run the Playwright test script.** You must run `$WEB_GAME_CLIENT` after each meaningful change; do not invent a new client unless required.
 8. **Use the payload reference.** Base actions on `$WEB_GAME_ACTIONS` to avoid guessing keys.
@@ -125,10 +133,9 @@ window.advanceTime = (ms) => {
 
 ## Progress Tracking
 
-Create a `progress.md` file if it doesn't exist, and append TODOs, notes, gotchas, and loose ends as you go so another agent can pick up seamlessly.
-If a `progress.md` file already exists, read it first, including the original user prompt at the top (you may be continuing another agent's work). Do not overwrite the original prompt; preserve it.
-Update `progress.md` after each meaningful chunk of work (feature added, bug found, test run, or decision made).
-At the end of your work, leave TODOs and suggestions for the next agent in `progress.md`.
+When the repository uses `progress.md` for implementation work, record
+verified changes, relevant test results, and open items. Keep read-only
+validation output out of the checkout.
 
 ## Playwright Prerequisites
 

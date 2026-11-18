@@ -22,9 +22,9 @@ Prefer merge commits. Do not squash unless the user asks.
 
 ## Review
 
-- GitHub: CodeRabbit via the `code-review` entrypoint when the CLI is
-  available.
-- Origin: Bugbot / Origin review skills. Do not invent a Bugbot CLI.
+- Review the exact change with `code-review`. Use a repository-approved
+  reviewer when required and verify its verdict against the current revision.
+- Use `autofix` for CodeRabbit App feedback on GitHub.
 - Stop on rate limits for an unchanged diff. Do not burn quota with no-op
   retries.
 

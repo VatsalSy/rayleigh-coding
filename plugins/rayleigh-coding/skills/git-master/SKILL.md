@@ -154,7 +154,7 @@ on the branch: `git checkout main`.
 
 - Verify each bot finding against source before editing. Decline invalid or
   out-of-scope comments with a short reason.
-- Act on checks and comments for the **latest head** only. Refresh from
+- Use the **latest head** for check readiness. Verify older unresolved feedback against current source. Refresh from
   `main` when base drift is material.
 - Prefer smallest safe fixes. Do not expand the PR beyond the user's goal.
 - CI flakes (runner loss, timeouts, registry errors): re-run failed jobs

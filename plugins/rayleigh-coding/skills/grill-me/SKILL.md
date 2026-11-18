@@ -4,7 +4,7 @@ description: >-
   Use when the user says "grill me", "interrogate this", "ask me questions
   before planning", or asks to pressure-test a consequential underspecified
   decision. NOT for generic code review or manuscript interview prompts; use
-  code-review or prompter-paper-interview.
+  code-review.
 user-invocable: true
 ---
 
@@ -176,10 +176,6 @@ execution approval.
 
 ## Boundaries and sibling routing
 
-- Use `prompter-paper-interview` when the deliverable is a reusable manuscript
-  interview prompt. An explicit live request to pressure-test a paper's core
-  mechanism may still use this skill, but it must not create the interview
-  artefact.
 - Use `create-plan` when requirements are already decision-complete and the user
   simply wants an implementation plan.
 - Do not write a `CONTEXT.md`, ADR, plan file, tracker entry, memory entry, or

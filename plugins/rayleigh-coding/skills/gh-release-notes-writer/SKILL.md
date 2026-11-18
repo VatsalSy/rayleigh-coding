@@ -99,34 +99,35 @@ Guidelines:
 - Omit empty sections
 - Use present tense ("Adds..." not "Added...")
 
-### 4. User Confirmation
+### 4. Confirm the release
 
-Before any git operations, present:
-1. Proposed version number
-2. Draft release notes
-3. Request explicit approval
+Prepare the version, notes, destination repository and exact commit locally.
+Confirm authority before creating a remote tag, draft, or published release.
+Use the repository's tag workflow for a new tag and verify the remote tag
+before proceeding. Keep any existing tag on its current commit.
 
-### 5. Create Release
+### 5. Create and read back the draft
 
 ```bash
-scripts/create_release.sh <version> <notes-file>
+scripts/create_release.sh <owner/repo> <version> <notes-file> <commit-sha>
 ```
 
-Creates annotated tag (via `git`), pushes to remote (via `git push`), publishes GitHub release (via `gh`).
+The helper requires an existing tag at the approved commit, creates a draft,
+and verifies the draft and tag. It supports lightweight tags and annotated
+tags pointing directly to a commit. If an API read or verification fails,
+inspect the remote draft and tag before retrying.
 
+Publishing is a separate operation. Read back the approved draft, tag and
+commit, and publish only with authority for that release. Verify the live
+release and tag afterward. For an authorised publication, use
+`gh release edit <tag> --repo github.com/<owner/repo> --draft=false`, then confirm
+`isDraft` is false and the tag still resolves to the approved commit.
 
-## Gotchas
-
-1. **Tag already exists → must NOT silently reuse it** -- if the suggested version tag exists, surface an explicit error and suggest the next available version; never silently overwrite an existing release tag (it would rewrite GitHub release history).
-2. **Uncommitted changes produce misleading release notes** -- always verify a clean working tree before gathering changes. `gather_changes.sh` runs `check_prerequisites.sh` first; if it is bypassed, dirty state bleeds into the release diff.
-3. **User confirmation is mandatory before any git tag operation** -- always present the draft version + notes and wait for explicit approval. Auto-tagging without confirmation has caused accidental public releases on repos with branch protection that allows bot pushes.
-4. **Route tag creation through `create_release.sh`** -- it creates the annotated tag, pushes it, and publishes the GitHub release in one verified sequence with the correct tagger identity; ad-hoc `git tag` + `gh release create` calls drift out of sync (tag pushed without release, or release against an unpushed tag).
-
-## Error Recovery
+## Error recovery
 
 | Error | Resolution |
-|-------|------------|
-| Tag exists | Suggest next available version |
-| Uncommitted changes | List changes, suggest stashing or committing |
-| gh not authenticated | Run `gh auth login` |
-| Push rejected | Check branch protection, suggest PR workflow |
+|---|---|
+| Tag missing | Use the repository's tag workflow after approval. |
+| Tag points somewhere else | Confirm the intended version and commit. Preserve the existing tag. |
+| GitHub CLI unauthenticated | Check `gh auth status` for the target host. |
+| Uncertain remote state | Read back before retrying. |

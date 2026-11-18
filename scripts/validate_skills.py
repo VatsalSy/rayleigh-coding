@@ -8,7 +8,30 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SKILLS = ROOT / "plugins" / "rayleigh-coding" / "skills"
+SHIPPED_PATH = re.compile(r"<skills-dir>/([a-z][a-z0-9-]+/(?:scripts|references|docs)/[a-zA-Z0-9._/-]+)")
+RELATIVE_LINK = re.compile(r"\]\((\.{1,2}/[^\s)#]+)(?:#[^)]*)?\)")
+FENCE = re.compile(r"^\s*(`{3,}|~{3,})")
 FM_RE = re.compile(r"^---\n(.*?)\n---\n", re.S)
+
+
+def dependency_errors(path: Path) -> list[str]:
+    errors = []
+    fence = None
+    for number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+        marker = FENCE.match(line)
+        if marker is not None:
+            token = marker[1]
+            if fence is None:
+                fence = token
+            elif token[0] == fence[0] and len(token) >= len(fence):
+                fence = None
+        targets = [(SKILLS / ref, ref) for ref in SHIPPED_PATH.findall(line)]
+        if fence is None:
+            targets.extend((path.parent / ref, ref) for ref in RELATIVE_LINK.findall(line))
+        for target, label in targets:
+            if not target.resolve().is_relative_to(SKILLS.parent) or not target.exists():
+                errors.append(f"{path.relative_to(ROOT)}:{number}: missing bundled target {label}")
+    return errors
 
 
 def main() -> int:
@@ -35,6 +58,8 @@ def main() -> int:
             errors.append(
                 f"{skill_dir.name}: name {name_m.group(1).strip()!r} != directory"
             )
+    for path in SKILLS.parent.rglob("*.md"):
+        errors.extend(dependency_errors(path))
     if errors:
         print("\n".join(errors), file=sys.stderr)
         return 1

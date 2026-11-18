@@ -29,7 +29,7 @@ Detailed guidance for writing each section of a scientific README.
 | Python | `[![Python](https://img.shields.io/badge/Python-3.8+-green)](https://python.org)` | Python projects, specify min version |
 | License | `[![License: GPL](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)` | Always include |
 | Docs | `[![Docs](https://img.shields.io/badge/docs-online-brightgreen)](URL)` | If docs site exists |
-| CoMPhy Lab | `[![CoMPhy Lab](https://img.shields.io/badge/CoMPhy-Lab-orange)](https://EXAMPLE_ORG.org)` | Lab projects |
+| Project website | `[![Project website](https://img.shields.io/badge/Project-website-orange)](https://example.org)` | Lab projects |
 | DOI | `[![DOI](https://zenodo.org/badge/DOI/10.XXXX.svg)](https://doi.org/10.XXXX)` | If DOI exists |
 
 ---
@@ -351,8 +351,8 @@ see the [LICENSE](LICENSE) file for details.
 
 **Your Name**
 Email: AUTHOR_EMAIL
-[CoMPhy Lab](https://EXAMPLE_ORG.org) · [Physics of Fluids](https://pof.tnw.utwente.nl)
-University of Twente
+[Project website](https://example.org)
+Institution
 ```
 
 ---

@@ -15,9 +15,7 @@ another agent already built it, and do not trust its claims because it
 reported them.
 
 Independently adapted from [tstack](https://github.com/t3dotgg/tstack)
-(`NOTICE.txt`). Use only Cursor and Grok first-party models via
-`/vatsal-mode`. Do not use third-party model families or private agent home
-directories.
+(`NOTICE.txt`).
 
 ## Resolve what you inherit
 

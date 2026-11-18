@@ -1,6 +1,8 @@
-# One PCRE pattern per line. Comments (#) and blank lines ignored.
-# Do not put named private catalogues or personal inventory here.
-# Inject those via PRIVACY_EXTRA_PATTERN (repo secret).
-#
-# Public structural shapes only:
+# One PCRE pattern per line. Keep organisation-specific terms in the optional
+# PRIVACY_EXTRA_PATTERN environment variable rather than in this file.
 prj_[A-Za-z0-9]{8,}
+(?i)\b(?:[a-z0-9-]+\.)+[a-z0-9-]+\.ts\.net\b
+(?i)(?:/Users/|/home/)(?!runner/|username/|user/|example/)[a-z0-9._-]+/
+(?i)\b(?:10(?:\.\d{1,3}){3}|192\.168(?:\.\d{1,3}){2}|172\.(?:1[6-9]|2\d|3[01])(?:\.\d{1,3}){2})\b
+(?i)\bscrub_private_leakage\b
+(?i)promoted from.*(?:private skill|private catalogue)|copied from private

@@ -111,7 +111,7 @@ Override or extend the default ruleset. Place at repo root:
 useDefault = true
 
 [[rules]]
-id = "comphy-openai-key"
+id = "example-service-key"
 description = "OpenAI API key"
 regex = '''sk-[a-zA-Z0-9]{48}'''
 tags = ["key", "openai"]

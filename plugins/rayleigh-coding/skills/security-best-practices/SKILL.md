@@ -31,13 +31,9 @@ Before deep review, run a rapid risk scan for these two classes:
    - URL/attribute injection in dynamic anchors/images/scripts
    - Missing sanitizer or safer alternatives (`textContent`, DOM APIs, vetted sanitizer)
 
-As a corroborating pass, run the repository-aware `code-review` guard on the
-changed code with `--uncommitted` or `--base main`, and reconcile its security
-findings with the manual scan. It catches different classes than the checklist.
-Caveat: the CLI sends diffs to the CodeRabbit API; when the code
-under review handles secrets or credentials, confirm none are present in the
-diff itself before running it, and skip the pass entirely if they are (see
-`code-review/SKILL.md` Security).
+Use `code-review` for an independent check of the exact diff when requested
+or required. Confirm what a reviewer can see and omit credentials, personal
+data, and unpublished material outside the accepted scope.
 
 Then check this skill's references directory to see if there are any relevant documentation for the language and or frameworks. Make sure you read ALL reference files which relate to the specific framework or language. The format of the filenames is `<language>-<framework>-<stack>-security.md`. You should also check if there is a `<language>-general-<stack>-security.md` which is agnostic to the framework you may be using.
 
@@ -114,7 +110,7 @@ While TLS is important for production deployments, most development work will be
 
 ## Gotchas
 
-- **Shell scripts with unquoted variables are the highest-frequency real vulnerability here.** In CoMPhy scripts, `runSimulation.sh` and sweep runners routinely do `cd $DIR` or `rm -rf $OUTPUT` without quoting. A path with a space in the name causes silent word-splitting. Always quote: `"$DIR"`, `"$OUTPUT"`.
+- Quote shell variables used as arguments, use arrays for command arguments, and validate values before using them in shell command construction.
 - **Security reports that reference wrong line numbers are worse than no report.** Line numbers shift after every edit. Verify line numbers immediately before writing the report, not against a cached read. If referencing a finding in a script, quote the actual code snippet alongside the line number.
 - **TLS warnings should not be filed as findings for local/dev Basilisk scripts.** These are command-line CFD runners, not web services. Flagging "no HTTPS" on a local simulation script wastes the user's review time. Scope findings to actual exposure paths.
 

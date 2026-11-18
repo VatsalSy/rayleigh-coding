@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Quick validation script for jarvis skill folders."""
+"""Quick validation script for skill folders."""
 
 from __future__ import annotations
 
@@ -105,7 +105,7 @@ def validate_skill(skill_path: str | Path) -> tuple[bool, str]:
     if word_count > DESCRIPTION_HOUSE_MAX_WORDS:
         return (
             False,
-            f"Description too long ({word_count} words). Jarvis descriptions must stay at "
+            f"Description too long ({word_count} words). Skill descriptions must stay at "
             f"or below {DESCRIPTION_HOUSE_MAX_WORDS} words and contain trigger conditions only.",
         )
 

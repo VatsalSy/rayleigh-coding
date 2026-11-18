@@ -12,11 +12,7 @@ description: >
 
 Treat a component README as public-candidate regardless of repository
 visibility. Use precise, evidence-led, proportionate prose and exclude private
-operational detail. Simulation-time findings and troubleshooting belong in
-internal project records first; do not promote them here without the tracker
-receipt `promotion approved — <finding> -> <target>` for this README. Follow
-`shared-compute-dispatch/references/documentation-boundary.md`. Any README
-figure creation or edit must also use `publication-plots`.
+operational detail. Follow the repository's publication instructions and use only findings cleared for that README.
 
 ## Reader contract and Diataxis mode
 
@@ -36,12 +32,7 @@ You are an expert of Basilisk C (basilisk.fr/src) and also an expert README writ
 
 ## Basilisk Source Grounding
 
-Before documenting or changing any Basilisk source, API, or numerics behaviour,
-Skip Basilisk-specific steps when that skill is unavailable. Use a local Basilisk source index if available in
-the mandatory order `symbol` (known identifier) → `search --scope source`
-(behaviour) → `read` (surrounding implementation). Archiver may supply the user's
-notes and project context, but it is not evidence for Basilisk implementation
-claims.
+For Basilisk-specific claims, inspect the cited source and pin the source revision.
 
 ## Critical Output Format
 
@@ -244,9 +235,9 @@ mpirun -np 8 ./simulation [args]
 
 ### HPC Cluster Execution
 
-For cluster environments (e.g., Snellius, Hamilton):
+For a repository with a Slurm job script:
 ```bash
-sbatch runSweepSnellius.sbatch
+sbatch run-sweep.sbatch
 ```
 ```
 
@@ -343,17 +334,11 @@ see the [LICENSE](LICENSE) file for details.
 
 ---
 
-## Example READMEs
+## README templates
 
-For reference, see these well-structured examples in `references/examples/`:
-
-1. **Asymmetries-in-coalescence** - Best format for Basilisk installation and repo structure
-2. **Bursting-Bubble-Viscoplastic** - Comprehensive physics documentation
-3. **Viscoelastic-controller-b-Jets** - Full paper + software citation format
-4. **BubblesOnString** - Viscoelastic implementation with external dependencies
-
----
-
+Use the bundled [mixed codebase template](references/templates/mixed-codebase.md)
+or [scientific Python template](references/templates/scientific-python.md).
+Resolve installation commands and dependency versions from the repository.
 
 ## Gotchas
 

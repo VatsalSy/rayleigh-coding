@@ -1,72 +1,49 @@
 #!/usr/bin/env bash
-# Create git tag and GitHub release
-# Usage: create_release.sh <version> <notes-file>
-# Example: create_release.sh v2.0 /tmp/release-notes.md
-
+# Create and verify a draft on an existing, approved GitHub tag.
 set -euo pipefail
 
-if [[ $# -lt 2 ]]; then
-  echo "Usage: create_release.sh <version> <notes-file>"
-  echo "Example: create_release.sh v2.0 /tmp/release-notes.md"
-  exit 1
+if [[ $# -ne 4 ]]; then
+  echo "Usage: create_release.sh <owner/repo> <version> <notes-file> <commit-sha>" >&2
+  exit 2
 fi
 
-VERSION="$1"
-NOTES_FILE="$2"
-
-# Validate version format
-if [[ ! "$VERSION" =~ ^v[0-9]+\.[05]$ && ! "$VERSION" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-  echo "❌ Invalid version format: $VERSION"
-  echo "  Expected one of:"
-  echo "  - vMAJOR.MINOR where MINOR is 0 or 5 (examples: v1.0, v1.5)"
-  echo "  - vMAJOR.MINOR.PATCH (examples: v1.0.0, v1.2.3)"
-  exit 1
+repo=$1
+version=$2
+notes=$3
+commit=$(printf '%s' "$4" | tr 'ABCDEF' 'abcdef')
+if [[ ! "$repo" =~ ^[A-Za-z0-9][A-Za-z0-9-]*/[A-Za-z0-9_.-]+$ ||
+      ! "$version" =~ ^v?[0-9]+\.[0-9]+(\.[0-9]+)?([-+][A-Za-z0-9.+-]+)?$ ||
+      ! "$commit" =~ ^[0-9a-f]{40}$ || ! -f "$notes" ]]; then
+  echo "Expected a GitHub repository, version tag, notes file, and full commit SHA." >&2
+  exit 2
 fi
 
-# Check notes file exists
-if [[ ! -f "$NOTES_FILE" ]]; then
-  echo "❌ Notes file not found: $NOTES_FILE"
+verify_tag() {
+  local target
+  target=$(gh api graphql --hostname github.com \
+    -f owner="${repo%/*}" -f name="${repo#*/}" -f ref="refs/tags/$version" \
+    -f query='query($owner:String!,$name:String!,$ref:String!){
+      repository(owner:$owner,name:$name) {
+        ref(qualifiedName:$ref) { target {
+          ... on Commit { oid }
+          ... on Tag { target { ... on Commit { oid } } }
+        } }
+      }
+    }' --jq '.data.repository.ref.target | .oid // .target.oid // empty')
+  if [[ "$target" != "$commit" ]]; then
+    echo "The tag is missing or does not point to the requested commit." >&2
+    return 1
+  fi
+}
+
+verify_tag
+gh release create "$version" --repo "github.com/$repo" --draft --verify-tag \
+  --title "$version" --notes-file="$notes"
+readback=$(gh release view "$version" --repo "github.com/$repo" --json isDraft,tagName,url \
+  --jq 'if .isDraft then [.tagName, .url] | @tsv else empty end')
+if [[ "$readback" != "$version"$'\t'https://* ]]; then
+  echo "GitHub did not return the expected draft. Check the remote before retrying." >&2
   exit 1
 fi
-
-# Check if tag already exists
-if git tag --list | grep -q "^${VERSION}$"; then
-  echo "❌ Tag $VERSION already exists"
-  echo "  Existing tags:"
-  git tag --list 'v*' --sort=-version:refname | head -5
-  exit 1
-fi
-
-echo "=== Creating Release $VERSION ==="
-echo
-
-# Create annotated tag (use git commit wrapper for bot-authored identity)
-echo "📌 Creating annotated tag..."
-git tag -a "$VERSION" -m "Release $VERSION"
-echo "  ✅ Tag created: $VERSION"
-
-# Push tag to remote via git push
-echo "🚀 Pushing tag to origin..."
-if ! git push "$VERSION"; then
-  echo "❌ Failed to push tag"
-  echo "  Removing local tag..."
-  git tag -d "$VERSION"
-  exit 1
-fi
-echo "  ✅ Tag pushed"
-
-# Create GitHub release via gh
-echo "📦 Creating GitHub release..."
-if ! gh release create "$VERSION" \
-  --title "$VERSION" \
-  --notes-file "$NOTES_FILE"; then
-  echo "❌ Failed to create GitHub release"
-  echo "  Tag was pushed - you may need to create the release manually"
-  exit 1
-fi
-
-echo
-echo "✅ Release $VERSION published successfully!"
-echo
-gh release view "$VERSION" --web 2>/dev/null \
-  || echo "View at: $(gh repo view --json url -q .url)/releases/tag/$VERSION"
+verify_tag
+printf 'Verified draft %s\n' "$readback"

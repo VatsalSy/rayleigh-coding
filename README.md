@@ -1,21 +1,13 @@
 # rayleigh-coding
 
-Cursor marketplace for coding skills and **`/vatsal-mode`**.
-
-Built for Cursor Cloud Agents and local Cursor.
+Portable coding skills for Cursor Cloud Agents and local Cursor.
 
 ## Install (Import Marketplace)
 
 1. Cursor → **Settings → Plugins → Import Marketplace**
 2. Repository: `https://github.com/VatsalSy/rayleigh-coding`
 3. Enable the **rayleigh-coding** plugin
-4. Reload the window if needed, then run `/setup-rayleigh`, then `/vatsal-mode`
-
-`/setup-rayleigh` installs the plugin into your user-global local plugins path
-when needed, and writes always-applied model rules for three categories:
-**default** (Cursor Grok), **executor** (Composer), and **wise-owl** (Cursor Grok,
-high effort). Only Grok and Cursor first-party models are ever written. It uses slugs the Task tool accepts in that session. Say **stay on
-auto** in the same session to inherit the parent chat instead.
+4. Reload the window if needed and run `/coding-workflow`, or invoke an individual skill.
 
 ### Local install
 
@@ -53,18 +45,25 @@ THIRD_PARTY.md
 
 See `plugins/rayleigh-coding/docs/SKILLS.md`.
 
-Highlights: `/setup-rayleigh`, `/vatsal-mode`, `full-send` / `full-stop`
-delivery, planning and verification, git/PR workflows, security review
-helpers, frontend craft, and common deploy CLIs.
+Use `coding-workflow` to scope, verify and review a change. The bundle also
+includes GitHub delivery, security review, frontend, and deployment skills.
+
+Version 0.6 removes the installer that wrote global model rules. If you used
+it, review the model rules it created in
+`~/.cursor/rules/rayleigh-models.mdc` and `.cursor/rules/rayleigh-models.mdc`.
+Remove either file if you no longer want its rules. If you switched to a
+marketplace install, check for a redundant local plugin symlink before removal.
 
 ## Checks
+
+Install ripgrep and the Python test dependencies (`pytest` and `PyYAML`).
 
 ```bash
 bash scripts/check_no_private_leakage.sh
 bash scripts/check_executable_scripts.sh
 python3 scripts/validate_marketplace.py
 python3 scripts/validate_skills.py
-python3 -m pytest plugins/rayleigh-coding/skills/code-review/tests -q
+python3 -m pytest -q scripts/tests plugins/rayleigh-coding/skills
 bash scripts/check_history_hygiene.sh
 ```
 

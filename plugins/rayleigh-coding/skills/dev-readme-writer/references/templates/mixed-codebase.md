@@ -1,6 +1,6 @@
 # Mixed Codebase README Template
 
-This template is for projects combining Basilisk simulations with Python post-processing. Follows the modern CoMPhy Lab format.
+This template is for projects combining Basilisk simulations with Python post-processing.
 
 ---
 
@@ -158,11 +158,7 @@ The simulation takes N arguments: `[param1] [param2] ... [paramN]`
 
 For cluster environments:
 ```bash
-# Snellius
-sbatch runSweepSnellius.sbatch
-
-# Hamilton
-sbatch runSweepHamilton.sbatch
+sbatch run-sweep.sbatch
 ```
 
 ## Post-Processing
@@ -237,7 +233,7 @@ If you use this code in your research, please cite:
 
 - **[First Author]** ([Institution]), [[email]](mailto:[email])
 - **[Second Author]** ([Institution]), [[email]](mailto:[email])
-- **Your Name** (University of Twente), [AUTHOR_EMAIL](mailto:AUTHOR_EMAIL)
+- **Your Name** (Institution), [AUTHOR_EMAIL](mailto:AUTHOR_EMAIL)
 
 ## License
 
@@ -246,7 +242,7 @@ see the [LICENSE](LICENSE) file for details.
 
 ## Contact
 
-For questions or collaboration inquiries, please contact the [CoMPhy Lab](https://EXAMPLE_ORG.org).
+For questions or collaboration inquiries, please contact the [Project maintainers](https://example.org).
 ```
 
 ---

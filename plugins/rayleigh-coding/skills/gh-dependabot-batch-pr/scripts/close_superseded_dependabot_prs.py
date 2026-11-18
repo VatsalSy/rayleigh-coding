@@ -119,7 +119,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "--repo",
-        help="Optional owner/repo for gh -R, for example OWNER/jarvis.",
+        help="Optional owner/repo for gh -R, for example OWNER/REPO.",
     )
     parser.add_argument(
         "--dry-run",

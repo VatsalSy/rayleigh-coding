@@ -47,8 +47,7 @@ decision. Provide a linear text fallback for screen readers and printing.
 
 For research, organise the map as mechanism -> scaling or limiting argument ->
 observable -> discriminating evidence. Label numerical and experimental
-evidence by its actual owner; CoMPhy contributes theory, scaling, asymptotics
-and DNS, not collaborator-owned experiments.
+evidence by its actual owner.
 
 ## Timeline or settled plan
 
@@ -85,7 +84,7 @@ Give each item an explicit class:
 For competing explanations, align them against the same predicted signature
 and discriminating test. In simulation work, compare matched physical
 resolution and detector definitions rather than visually privileging raw grid
-level. Use `publication-plots` for actual plots; HTML may arrange and annotate
+level. Use the project's plotting tools for actual plots; HTML may arrange and annotate
 the verified figures but does not replace the plotting workflow.
 
 ## Annotated review
@@ -153,7 +152,7 @@ Prefer information hierarchy over decoration:
 
 Reuse a real project design system when one exists. Otherwise choose a modest,
 subject-specific direction and explain colour semantics in a legend. Do not
-use CoMPhy logos or publication branding unless the named target is approved
+use organisational logos or publication branding unless the named target is approved
 for that identity.
 
 ## Accessibility and resilience

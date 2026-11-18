@@ -310,14 +310,10 @@ Configuration guide: [references/configuration-guide.md](references/configuratio
 
 **IMPORTANT:** You must merge the `render.yaml` file into your repository before deploying.
 
-Use a focused branch and pull request by default. Run the repository-aware
-`code-review` guard once with `--uncommitted` (see `CONVENTIONS.md` "Code
-review before push and merge"), but only after proving every tracked staged and
-unstaged edit belongs to the intended `render.yaml` change and the diff contains
-no credentials. Stop and resolve any scope mismatch before transmitting it.
-Fix verified Critical/Warning findings. If
-the CLI or capacity is unavailable, record that and rely on the repository
-checks; do not retry an unchanged diff. Commit, push, open the PR through
+Use a focused branch and pull request by default. Review the exact
+`render.yaml` diff with `code-review` and follow repository-required checks.
+Keep credentials and unrelated edits out of the published diff.
+Commit, push, open the PR through
 `gh-pr-create`, satisfy its merge gate, and merge before opening the Blueprint
 deeplink. Only bypass the PR when the user explicitly authorises a direct push.
 

@@ -7,19 +7,11 @@ description: Use when adding or updating docstrings, file headers, or inline doc
 
 Write documentation that renders beautifully as web pages while remaining readable in source code. This style is used with Basilisk's `literate-c` tool and this repo's docs generator (`.github/scripts/generate_docs.py`).
 
-## Basilisk Tooling Hygiene
+## Source grounding
 
-- qcc-lsp may generate a `.comphy-basilisk` file when a local `basilisk/` folder exists in the workspace.
-- Add `.comphy-basilisk` to `.gitignore`; it is generated and should not be committed.
-
-## Basilisk Source Grounding
-
-Before documenting or changing any Basilisk source, API, or numerics behaviour,
-Skip Basilisk-specific steps when that skill is unavailable. Use a local Basilisk source index if available in
-the mandatory order `symbol` (known identifier) → `search --scope source`
-(behaviour) → `read` (surrounding implementation). Archiver may supply the user's
-notes and project context, but it is not evidence for Basilisk implementation
-claims.
+Check the actual source and dependency revision when documenting APIs or
+numerical behaviour. Verify generated documentation using the repository's
+documented build, including any referenced local tools.
 
 ## Core Principle
 

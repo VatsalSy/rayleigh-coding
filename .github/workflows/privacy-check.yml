@@ -24,7 +24,8 @@ jobs:
 
       - name: Full-tree privacy gate
         env:
-          # Optional extra PCRE alternation from repo secret
+          HISTORY_HYGIENE_BASE: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before }}
+          # Optional extra PCRE from a repository secret
           PRIVACY_EXTRA_PATTERN: ${{ secrets.PRIVACY_EXTRA_PATTERN }}
         run: bash scripts/check_no_private_leakage.sh
 
@@ -45,10 +46,14 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
-      - name: Install ripgrep + pytest
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install verification dependencies
         run: |
           sudo apt-get update -qq && sudo apt-get install -y -qq ripgrep
-          python3 -m pip install --user pytest
+          python -m pip install 'pytest>=8,<10' 'PyYAML>=6,<7'
 
       - name: Executable bits on skill scripts
         run: bash scripts/check_executable_scripts.sh
@@ -56,8 +61,8 @@ jobs:
       - name: Skill frontmatter validation
         run: python3 scripts/validate_skills.py
 
-      - name: Unit tests (code-review)
-        run: python3 -m pytest plugins/rayleigh-coding/skills/code-review/tests -q
+      - name: Unit tests
+        run: python3 -m pytest -q scripts/tests plugins/rayleigh-coding/skills
 
       - name: History hygiene scan
         env:

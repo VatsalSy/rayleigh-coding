@@ -7,13 +7,13 @@ description: "Use when the user says \"take a screenshot\", \"capture this windo
 
 ## Environment Detection
 
-> [!important] Cowork vs Local
-> - **Cowork (sandboxed):** Python helpers, `screencapture`, and `scrot` are NOT available. Use `mcp__computer-use__screenshot` directly (and `mcp__computer-use__zoom` for detail). See §Cowork section below.
-> - **Local terminal (Jarvis / controller-b / plain shell):** Use the Python helper scripts and OS commands as described below.
+> [!important] Hosted environment or local terminal
+> - **hosted environment (sandboxed):** Python helpers, `screencapture`, and `scrot` are NOT available. Use `mcp__computer-use__screenshot` directly (and `mcp__computer-use__zoom` for detail). See §hosted environment section below.
+> - **Local terminal:** Use the Python helper scripts and OS commands as described below.
 
-## Cowork (computer-use)
+## hosted environment (computer-use)
 
-In Cowork, the `mcp__computer-use__*` tools replace all local screenshot tooling.
+In a hosted environment, the `mcp__computer-use__*` tools replace all local screenshot tooling.
 
 **Full desktop screenshot:**
 ```
@@ -30,11 +30,11 @@ mcp__computer-use__zoom(x, y, width, height)
 2. `mcp__computer-use__open_application("<AppName>")`
 3. `mcp__computer-use__screenshot()`
 
-Screenshots taken in Cowork are returned inline — they do not save to disk unless you write the image data explicitly. For agent inspection, just view the returned screenshot directly.
+Screenshots taken in hosted environment are returned inline — they do not save to disk unless you write the image data explicitly. For agent inspection, just view the returned screenshot directly.
 
 ---
 
-## Local section (controller-b / macOS / Linux)
+## Local terminal (macOS / Linux)
 
 Follow these save-location rules every time:
 

@@ -21,9 +21,7 @@ that work, including full-send's testing permission, without a separate
 precedence. A bare closing "Full stop." is not enough.
 
 Independently adapted from [tstack](https://github.com/t3dotgg/tstack)
-(`NOTICE.txt`). Use only Cursor and Grok first-party models via
-`/vatsal-mode`. Do not use third-party model families or private agent home
-directories.
+(`NOTICE.txt`).
 
 ## No merging
 

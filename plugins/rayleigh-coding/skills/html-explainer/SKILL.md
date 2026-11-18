@@ -18,11 +18,10 @@ work materially easier to understand or decide. Treat HTML as a presentation
 and decision layer over grounded evidence, not as a prettier substitute for
 thinking or a default replacement for Markdown.
 
-This is a adaptation of the working pattern described in
+This is an adaptation of the working pattern described in
 <https://claude.com/blog/using-claude-code-the-unreasonable-effectiveness-of-html>
 and illustrated at <https://thariqs.github.io/html-effectiveness/>. It is
-independently written, uses no upstream template or runtime dependency, and
-keeps CoMPhy's evidence, publication, custody and security boundaries.
+independently written and uses no upstream template or runtime dependency.
 
 ## Entry contract
 
@@ -82,15 +81,11 @@ This skill presents work; it does not silently take ownership of it.
 - `create-plan` forms implementation plans. Render only a settled plan or an
   explicitly requested visual exploration; never bypass its read-only
   planning contract.
-- `deep-research` gathers and synthesises research evidence. HTML may explain
-  the completed synthesis, not replace its evidence workflow or canonical
-  record.
 - `code-review` owns repository review findings. HTML may present an existing
   review or explain a diff, but must not manufacture severity or coverage.
-- `publication-plots` remains mandatory for every scientific figure,
-  including figures embedded in HTML.
-- `comphy-scientific-slides` owns talks and staged scientific decks;
-  `jupyter-notebook` owns executable analysis and tutorials;
+- Generate scientific figures with the project's plotting tools and preserve
+  their source and provenance. Use `jupyter-notebook` for executable analysis
+  and tutorials;
   `dev-frontend-design` owns production pages, applications and reusable UI.
 
 ### 4. Set the content and custody boundary
@@ -103,8 +98,7 @@ Before writing, classify the artefact as **internal** or **public-candidate**.
 - Public-candidate artefacts must exclude private hostnames, absolute private
   paths, internal operations, collaborator confidences and personal data.
   Unpublished simulation-derived findings additionally require the owning
-  tracker receipt `promotion approved — <finding> -> <target>` before inclusion;
-  general approval to make an HTML page is not promotion approval.
+  maintainer's approval for the specific finding and publication target.
 - Creating an HTML file grants no authority to upload, host, publish, email,
   message, or deploy it.
 
@@ -144,7 +138,7 @@ Default to a single `.html` file that opens locally without a build step:
   fallback;
 - no emoji in filenames, headings, controls, diagrams, or free prose;
 - subject-specific visual language derived from the material or an existing
-  project design system, not a fixed CoMPhy skin or generic AI-card aesthetic.
+  project design system.
 
 JavaScript is optional. Add it only for filtering, toggling, parameter
 exploration, navigation, or export that materially improves the task. Keep the
@@ -169,11 +163,9 @@ text is the durable handoff; browser state is not project truth.
 ### 7. Verify the artefact
 
 Use the DOM/XSS construction guidance in `security-best-practices` and use
-`playwright` for real-browser validation. Generated or internal HTML does not
-go to CodeRabbit merely because that sibling skill mentions corroborating
-review. Run repository-aware CodeRabbit only when the artefact is shipping
-component code, the owning repository permits external review, and the diff
-contains no sensitive or unpublished content.
+`playwright` for real-browser validation. When shipping component code,
+follow the repository's review requirements via `code-review`. Keep internal
+HTML and sensitive or unpublished material within their authorised scope.
 
 At minimum:
 

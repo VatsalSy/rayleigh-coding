@@ -40,8 +40,7 @@ When committing:
 
 ## Exclusions
 
-Never stage `.comphy/`. Prefer pathspecs such as
-`git add --all -- ':!.comphy'`.
+Stage the intended paths explicitly and inspect the staged diff.
 
 ## Message standards
 

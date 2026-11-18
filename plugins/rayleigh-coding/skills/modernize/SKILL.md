@@ -13,9 +13,7 @@ Modernize the idea, not just the branch. A clean rebase does not prove that
 the PR still belongs in the product.
 
 Independently adapted from [tstack](https://github.com/t3dotgg/tstack)
-(`NOTICE.txt`). Use only Cursor and Grok first-party models via
-`/vatsal-mode`. Do not use third-party model families or private agent home
-directories.
+(`NOTICE.txt`).
 
 ## Guardrails
 

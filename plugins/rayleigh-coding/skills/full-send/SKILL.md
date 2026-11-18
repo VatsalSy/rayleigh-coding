@@ -19,9 +19,7 @@ silently. Without a clear "full send" request, none of the extra authority
 below applies.
 
 Independently adapted from [tstack](https://github.com/t3dotgg/tstack)
-(`NOTICE.txt`). Use only Cursor and Grok first-party models via
-`/vatsal-mode`. Do not use third-party model families or private agent home
-directories.
+(`NOTICE.txt`).
 
 ## Safety stops (never bypass)
 
@@ -67,8 +65,7 @@ GitHub is the workshop for these skills. Origin is out of scope here.
 1. **Finish the change.** Smallest change that meets the goal. Fix the case
    that happened, not every case that could.
 2. **Prove it.** See "Proof".
-3. **Review it.** Run `sol-loop` (CodeRabbit via `code-review`, plus at most
-   one read-only `wise-owl` consult when a finding is consequential).
+3. **Review it.** Run `sol-loop` for an evidence-led review of the exact candidate.
 4. **File the PR** with `gh-pr-create`. Rebase onto the latest default branch
    first. Add one short line in the body describing how you proved the change.
 5. **Babysit** with `gh-babysit-pr`. Fix real findings and CI failures. Prove

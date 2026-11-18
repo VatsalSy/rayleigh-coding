@@ -21,7 +21,7 @@ without checking the upstream terms.
 | `sentry/` | `LICENSE.txt` | Upstream skill licence |
 | `full-send/` | `LICENSE.txt`, `NOTICE.txt` | Adapted from [t3dotgg/tstack](https://github.com/t3dotgg/tstack) (MIT, Copyright (c) 2026 Theo Browne); reviewed upstream commit `7de017b3fc9d50c03cf3ecb98fb71e0ca65a78bd` |
 | `full-stop/` | `LICENSE.txt`, `NOTICE.txt` | Same tstack provenance as `full-send/` |
-| `sol-loop/` | `LICENSE.txt`, `NOTICE.txt` | Same tstack provenance as `full-send/`; this plugin uses CodeRabbit + wise-owl instead of upstream's Sol reviewer |
+| `sol-loop/` | `LICENSE.txt`, `NOTICE.txt` | Same tstack provenance as `full-send/` |
 | `takeover/` | `LICENSE.txt`, `NOTICE.txt` | Same tstack provenance as `full-send/` |
 | `modernize/` | `LICENSE.txt`, `NOTICE.txt` | Same tstack provenance as `full-send/` |
 

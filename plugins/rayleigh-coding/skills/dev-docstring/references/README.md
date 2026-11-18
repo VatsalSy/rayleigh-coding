@@ -1,6 +1,6 @@
 # Documentation Reference Templates
 
-Minimal, copy-paste-ready templates demonstrating literate programming patterns for the CoMPhy Lab documentation system.
+Minimal, copy-paste-ready templates demonstrating literate programming patterns for a literate documentation system.
 
 ## Templates
 

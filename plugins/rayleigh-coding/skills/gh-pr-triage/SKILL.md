@@ -21,14 +21,12 @@ Extract and analyze all PR comments to produce a prioritized action plan.
 ## Workflow
 
 1. **Trigger timing** → Run right after PR open/update (or on demand) so feedback is triaged before ad-hoc fixes.
-2. **Wait for CodeRabbit (repos with the App)** → CodeRabbit posts its review a
-   few minutes after push. Triaging before it lands produces an incomplete
-   comment set. If no CodeRabbit review is present yet, or a comment matches
-   "Come back again in a few minutes" (in-progress probe — see `autofix`
-   Step 3), wait and re-check before triaging. If nothing appears within ~10
-   minutes of the last push, the App isn't installed on this repo — note that
-   and continue.
-3. **Freshness check** → Only triage checks and comments newer than the latest push; a review of a superseded commit describes code that no longer exists (outdated threads are already filtered by the script). Also check base drift: if `main` has moved materially under the branch, recommend rebase/merge before acting on feedback. If an overlapping PR appears to make this one obsolete, stop, report, and ask before closing anything (unless closure was pre-authorized).
+2. **Check CodeRabbit status.** Inspect available reviews and configured
+   requirements. When the App is running, use the bounded window in
+   `autofix`. At the cap, report missing review evidence and route through
+   its fallback while preserving required gates. App installation cannot
+   be inferred from silence.
+3. **Freshness:** Reassess unresolved findings against current source, including those from before the latest push. A new head by itself gives no evidence the defect was fixed. Check material drift against the PR's actual base. Ask before closing an overlapping PR unless that closure was already authorised.
 4. **Extract comments** → Run `<skills-dir>/gh-pr-triage/scripts/extract_pr_comments.py <PR_URL_or_NUMBER>`
 5. **Verify before classifying** → For each bot finding you would mark P0/P1, read the flagged source lines first. CodeRabbit and other AI reviewers are helpful but not always right — a finding that doesn't survive inspection goes to "Decline with reason", not the fix queue.
 6. **Analyze** → Categorize and prioritize each actionable comment
@@ -123,16 +121,16 @@ Skill: <skills-dir>/gh-address-comment/SKILL.md
 Trigger: "address the open PR comments" or "fix the must-fix items"
 ```
 
-Ops workers: load `gh-address-comment` explicitly before starting code changes.
+Load `gh-address-comment` explicitly before starting code changes.
 Do NOT inline-implement git checkout + edit + commit logic — the skill handles it.
 
 
 ## Gotchas
 
 1. **Do not inline-implement fixes after triage** -- triage produces an action plan only. Applying fixes is the job of `gh-address-comment`. Re-implementing checkout+edit+commit logic here creates duplicate, divergent workflows (this exact issue was logged 2026-02-23).
-2. **Resolved threads are hidden by default** -- `extract_pr_comments.py` skips resolved threads unless explicitly requested. If a user asks 'why was X not addressed', re-run with resolved threads included before concluding the item was missed.
+2. **Resolved threads are hidden by default** -- `extract_pr_comments.py` skips resolved threads unless called with `--include-resolved`. If a user asks 'why was X not addressed', re-run with resolved threads included before concluding the item was missed.
 3. **Automated review bots inflate comment counts** -- tools like Copilot, Reviewdog, or custom bots can post dozens of nitpick comments. Triage these as P3 by default and group them into a single action item rather than one per comment. **Exception — CodeRabbit:** triage its findings by their stated severity, not as blanket P3 — its "Potential issue"/security findings are genuine P0/P1 candidates; only its nitpick/style class defaults to P3. Route CodeRabbit-authored threads to `autofix` (not `gh-address-comment`) in the handoff.
-4. **Silent empty triage is wrong** -- if the script returns zero actionable comments, confirm that the PR number/URL was resolved correctly before reporting 'nothing to do'. A wrong PR number returns an empty list, not an error.
+4. **Silent empty triage is wrong** -- if the script returns zero actionable comments, confirm that the PR number/URL was resolved correctly before reporting 'nothing to do'. A failed or partial read exits with an error.
 
 ## Invocation
 
@@ -141,9 +139,3 @@ Do NOT inline-implement git checkout + edit + commit logic — the skill handles
 ```bash
 <skills-dir>/gh-pr-triage/scripts/extract_pr_comments.py <PR_URL>
 ```
-
-## Changelog
-- **2026-02-23**: Added `gh-address-comment` handoff note — evidence:
-  agent:ops-4:main T20260223-2223-1 session re-implemented inline comment
-  addressing instead of loading gh-address-comment skill; UPDATES.md
-  improvement backlog item "gh-address-comment discoverability".

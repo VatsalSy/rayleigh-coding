@@ -46,11 +46,11 @@ def main() -> int:
     entry = plugins[0]
     if entry.get("name") != "rayleigh-coding":
         return fail(f"unexpected plugin name: {entry.get('name')!r}")
-    source = str(entry.get("source") or "").lstrip("./")
-    if source != EXPECTED_SOURCE:
+    source = entry.get("source")
+    if source != f"./{EXPECTED_SOURCE}":
         return fail(f"unexpected plugin source: {entry.get('source')!r}")
 
-    src = ROOT / source
+    src = ROOT / EXPECTED_SOURCE
     if not src.is_dir():
         return fail(f"plugin source missing: {src}")
     plugin_json = src / ".cursor-plugin" / "plugin.json"
@@ -64,6 +64,12 @@ def main() -> int:
     if plugin.get("name") != "rayleigh-coding":
         return fail(f"unexpected plugin.json name: {plugin.get('name')!r}")
 
+    if plugin.get("skills") != "./skills/":
+        return fail("plugin skills directory must match the shipped skills")
+    version = market.get("metadata", {}).get("version")
+    if not isinstance(version, str) or not version or plugin.get("version") != version:
+        return fail("marketplace and plugin versions differ or are missing")
+
     loaded = load_manifest()
     if isinstance(loaded, int):
         return loaded
@@ -73,6 +79,11 @@ def main() -> int:
     missing = allow - present
     if extra or missing:
         return fail(f"skills.manifest mismatch extra={sorted(extra)} missing={sorted(missing)}")
+
+    inventory = (PLUGIN / "docs" / "SKILLS.md").read_text(encoding="utf-8").splitlines()
+    rows = [line.split("`")[1] for line in inventory if line.startswith("| `") and line.endswith("` |")]
+    if rows != sorted(present) or f"{len(present)} skills in this plugin." not in inventory:
+        return fail("documented skill inventory does not match skills.manifest")
 
     print(f"marketplace ok; skills={len(present)}")
     return 0

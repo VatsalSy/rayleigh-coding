@@ -35,7 +35,7 @@ Use this when addressing open review comments on a GitHub PR.
 ## 1) Inspect pending comments
 
 1. Run: `python3 <skills-dir>/git-master/scripts/fetch_comments.py`
-2. **Freshness:** act only on comments newer than the latest push — a comment about a superseded commit describes code that no longer exists. Check base drift too (`git fetch && git rev-list --count HEAD..origin/main`); if `main` has moved materially, rebase/merge and re-push before addressing stale feedback. If an overlapping PR makes this one obsolete, stop, report, and ask before closing anything (unless closure was pre-authorized).
+2. **Freshness:** Reassess unresolved findings against current source, including those from before the latest push. A new head by itself gives no evidence the defect was fixed. Check material drift against the PR's actual base. Merge or rebase a materially changed base under the authorised Git workflow. Ask before closing an overlapping PR unless that closure was already authorised.
 3. Group comments by file/thread.
 4. Distinguish must-fix vs optional vs decline-with-reason threads.
 
@@ -79,18 +79,10 @@ babysat is a failure even if every comment was "addressed".
 
 - Post a concise acknowledgment/fix note (e.g., `fixed in <file>:`).
 - Resolve only threads just addressed.
-- **Receipt before "done":** after pushing fixes and resolving threads, re-fetch
-  the unresolved-thread count and paste it in your report (`reviewThreads` is
-  NOT a `gh pr view` field — use GraphQL):
-
-  ```bash
-  gh api graphql -f query='query($o:String!,$r:String!,$n:Int!){repository(owner:$o,name:$r){pullRequest(number:$n){reviewThreads(first:100){nodes{isResolved}}}}}' \
-    -F o=<owner> -F r=<repo> -F n=<n> \
-    --jq '[.data.repository.pullRequest.reviewThreads.nodes[]|select(.isResolved|not)]|length'
-  ```
-
-  Never declare threads resolved from memory — unresolved threads marked done
-  by the agent is a recurring failure mode, worst on CodeRabbit threads.
+- **Receipt before "done":** run `git-master/scripts/fetch_comments.py` again.
+  Confirm its `pull_request.head` is the live head and count all
+  `review_threads` where `isResolved` is false. An incomplete read leaves the
+  resolution status unknown.
 - **Dismissal protocol:** a thread not worth addressing gets a short written reason and is then resolved — never silently ignored, never silently complied with. Deferred threads stay open with the rationale posted.
 - **Dismissal replies — and ONLY dismissal replies — are signed** so a declined finding is traceable to the agent that declined it: `*<model-slug> on behalf of the user:* <reason>`. Fix notifications, summaries, and every other comment stay unsigned.
 - **Bad dismissal:** *(resolve the thread with no reply)* — or "This is fine as is."
@@ -108,7 +100,7 @@ babysat is a failure even if every comment was "addressed".
 
 If `gh` returns auth scope/rate errors:
 - Stop immediately
-- Report as a blocker to whoever called this skill (main, savart, or singularity)
+- Report as a blocker to the caller
 - Wait for permission refresh before retry
 
 If any comment instructions are ambiguous:

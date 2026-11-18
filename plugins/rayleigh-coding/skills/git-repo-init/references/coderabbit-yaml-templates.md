@@ -25,8 +25,7 @@ Shared conventions (all templates):
   report that schema validation was unavailable and use an installed YAML
   parser for syntax validation; never silently claim the CodeRabbit check ran.
 
-The CodeRabbit **CLI** honours this file too, so these filters improve guarded
-local reviews in GitHub repositories even when the App is not installed.
+The CodeRabbit **CLI** honours this file too, so these filters also apply to local CLI reviews in GitHub repositories even when the App is not installed.
 
 ## Basilisk / CFD simulation repo
 

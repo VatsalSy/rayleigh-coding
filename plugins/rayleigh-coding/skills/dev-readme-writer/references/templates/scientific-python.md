@@ -9,7 +9,7 @@ Copy and adapt this template for scientific Python projects (analysis, post-proc
 
 [![Python](https://img.shields.io/badge/Python-3.8+-green)](https://python.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![CoMPhy Lab](https://img.shields.io/badge/CoMPhy-Lab-orange)](https://EXAMPLE_ORG.org)
+[![Project website](https://img.shields.io/badge/Project-website-orange)](https://example.org)
 
 ## Overview
 

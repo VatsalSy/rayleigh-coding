@@ -84,14 +84,9 @@ P0 or P1 findings → request changes. P2/P3 only → comment. No findings → a
 1. **Scope identification**: read PR title, description, linked issues. What is this change trying to do?
 2. **Diff inspection**: set `BASE_BRANCH` from the PR's actual base, then run
    `git diff "origin/${BASE_BRANCH}"...HEAD` to understand the change.
-3. **CodeRabbit seed pass (optional but recommended)**: if the `coderabbit` CLI
-   is available, run the repository-aware `code-review` guard with
-   `--switch-org -- --base "${BASE_BRANCH}"` and hold its structured findings as a
-   cross-check. CodeRabbit does **not** replace any of the six layers — use it
-   to catch what the manual pass missed, reconcile its severities against the
-   P0–P3 scale, and fold surviving findings into the report with attribution.
-   Inspect only: report meaningful issues and leave any fix/follow-up cycle to
-   the implementation owner. Discard findings that the manual pass proves false.
+3. **Independent evidence**: If repository policy allows it, compare an
+   independent exact-diff review against your manual assessment. Keep only
+   findings you can verify in the source.
 4. **High-risk file prioritization**: auth, config, migrations, serialization, network, parsing — inspect these first regardless of size.
 5. **Apply all six layers** — do not skip layers even for small PRs.
 6. **JS/UI runtime checklist** (when JS/UI is touched):

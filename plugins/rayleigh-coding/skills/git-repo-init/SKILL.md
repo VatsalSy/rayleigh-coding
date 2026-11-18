@@ -157,7 +157,7 @@ Output:
 3. **Visibility is not guessed** — always confirm public vs private with the user before creating; a private repo accidentally made public exposes draft code.
 4. **`CLAUDE.md` must contain only `@AGENTS.md`** — do not put actual content in CLAUDE.md; it is an include pointer. Adding content directly breaks the standard agent-discovery path for sub-agents.
 5. **Owner is whatever the user named** — do not silently substitute another account; that changes the repository's security and recovery owner.
-6. **In GitHub repositories, `.coderabbit.yaml` is a tracked file, not local config** — never add it to `.gitignore`. Both the GitHub App and the guarded local CLI read it from the repo root, so it only works when committed.
+6. **In GitHub repositories, `.coderabbit.yaml` is a tracked file, not local config** — never add it to `.gitignore`. Keep the GitHub App configuration at the repository root.
 
 ## Error Handling
 
