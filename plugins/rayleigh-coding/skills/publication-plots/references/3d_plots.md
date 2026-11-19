@@ -56,12 +56,10 @@ x = np.random.randn(500)
 y = np.random.randn(500)
 z = x**2 + y**2
 
-# Color by value
-colors = z / z.max()
-
+# Colour by the plotted quantity, so the colourbar reads in its units
 scatter = ax.scatter(
     x, y, z,
-    c=colors,               # Color values
+    c=z,                    # Colour values: f(x, y) = z
     cmap='plasma',
     s=50,                   # Marker size
     alpha=0.8,
@@ -123,10 +121,13 @@ X = np.cos(U) * np.sin(V)
 Y = np.sin(U) * np.sin(V)
 Z = np.cos(V)
 
-# Color by height
+# Colour by height: map Z (-1 to 1) into the colormap's 0-1 input first
+from matplotlib.colors import Normalize
+
+norm = Normalize(vmin=-1, vmax=1)
 surf = ax.plot_surface(
     X, Y, Z,
-    facecolors=plt.cm.viridis(Z),
+    facecolors=plt.cm.viridis(norm(Z)),
     linewidth=0,
     antialiased=True
 )
@@ -205,22 +206,29 @@ ax.set_zlabel(r'$z$', fontsize=30)
 ## Filled Contours in 3D
 
 ```python
-# Multiple z-levels
-z_levels = [0, 1, 2, 3, 4]
+# Multiple z-levels, with one set of levels and one normalisation for all
+# slices, so equal colours mean equal values across heights
+from matplotlib.colors import Normalize
 
-for zl in z_levels:
-    Z_slice = zl * np.ones_like(X)
-    # Compute values at this height
-    values = np.sin(X) * np.cos(Y) * np.exp(-0.1 * zl)
-    
-    ax.contourf(
+z_levels = [0, 1, 2, 3, 4]
+slices = [np.sin(X) * np.cos(Y) * np.exp(-0.1 * zl) for zl in z_levels]
+vmin = min(s.min() for s in slices)
+vmax = max(s.max() for s in slices)
+levels = np.linspace(vmin, vmax, 11)
+norm = Normalize(vmin=vmin, vmax=vmax)
+
+for zl, values in zip(z_levels, slices):
+    cs = ax.contourf(
         X, Y, values,
         zdir='z',           # Project onto z
         offset=zl,          # Z position
-        levels=10,
+        levels=levels,
+        norm=norm,
         cmap='viridis',
         alpha=0.7
     )
+ax.set_zlim(min(z_levels), max(z_levels))  # height axis spans the slice offsets, not field values
+fig.colorbar(cs, ax=ax, shrink=0.5)
 ```
 
 ## Line Plot in 3D
@@ -248,14 +256,22 @@ for i in range(5):
 ## 2D Contours on 3D Axes
 
 ```python
-# XY plane projection
+# Pass X, Y, Z in their original order every time: zdir chooses the wall
+# and rotates the coordinates itself, as in Matplotlib's projection example.
+
+# XY plane projection (floor)
 ax.contour(X, Y, Z, levels=10, offset=Z.min(), cmap='viridis', zdir='z')
 
-# XZ plane projection
-ax.contour(X, Z, Y, levels=10, offset=Y.max(), cmap='plasma', zdir='y')
+# XZ plane projection (back wall)
+ax.contour(X, Y, Z, levels=10, offset=Y.max(), cmap='plasma', zdir='y')
 
-# YZ plane projection
-ax.contour(Z, Y, X, levels=10, offset=X.min(), cmap='coolwarm', zdir='x')
+# YZ plane projection (side wall)
+ax.contour(X, Y, Z, levels=10, offset=X.min(), cmap='coolwarm', zdir='x')
+
+# Fix the limits so each offset lies on the wall that is drawn
+ax.set_xlim(X.min(), X.max())
+ax.set_ylim(Y.min(), Y.max())
+ax.set_zlim(Z.min(), Z.max())
 ```
 
 ## Colormap Normalization in 3D

@@ -19,8 +19,28 @@ import matplotlib.pyplot as plt
 # JFM configuration
 matplotlib.rcParams['font.family'] = 'serif'
 matplotlib.rcParams['font.serif'] = ['Computer Modern Roman']
-matplotlib.rcParams['text.usetex'] = True
-matplotlib.rcParams['text.latex.preamble'] = r'\usepackage{amsmath}'
+# Mathtext by default: it needs no external programs. Turn TeX on only after a
+# probe render with the same preamble and backend succeeds.
+def tex_works(preamble=r'\usepackage{amsmath}'):
+    import io
+    from matplotlib.figure import Figure  # not registered with pyplot
+    try:
+        with matplotlib.rc_context({'text.usetex': True, 'text.latex.preamble': preamble}):
+            fig = Figure()
+            fig.text(0.5, 0.5, r'$\alpha_{\mathrm{test}}$')
+            fig.savefig(io.BytesIO(), format='pdf')
+        return True
+    except Exception:
+        return False                          # the probe figure is simply discarded
+
+if tex_works():
+    matplotlib.rcParams['text.usetex'] = True
+    matplotlib.rcParams['text.latex.preamble'] = r'\usepackage{amsmath}'
+else:
+    matplotlib.rcParams['text.usetex'] = False
+    matplotlib.rcParams['font.serif'] = ['DejaVu Serif']   # bundled with matplotlib
+    matplotlib.rcParams['mathtext.fontset'] = 'cm'          # Computer Modern maths
+    matplotlib.rcParams['pdf.fonttype'] = 42                 # embed TrueType, as journals ask
 
 # JFM dimensions
 JFM_WIDTH_MM = 135
@@ -89,8 +109,10 @@ ax.plot(x, y, linewidth=jfm_line['linewidth'], color='#1A64B3')
 ax.scatter(x, y, s=jfm_line['markersize']**2, edgecolors='k',
            linewidth=jfm_line['markeredgewidth'])
 
-plt.tight_layout()
-plt.savefig('figure_jfm.pdf', bbox_inches='tight', dpi=300)
+plt.tight_layout()  # fits the content inside the fixed-size canvas
+# No bbox_inches='tight': it would crop the page and break the 135 mm width.
+with matplotlib.rc_context({'savefig.bbox': None}):   # a style cannot crop it either
+    plt.savefig('figure_jfm.pdf', dpi=300)
 ```
 
 ### JFM Quick Reference
@@ -120,8 +142,28 @@ import matplotlib.pyplot as plt
 # APS configuration
 matplotlib.rcParams['font.family'] = 'serif'
 matplotlib.rcParams['font.serif'] = ['Computer Modern Roman']
-matplotlib.rcParams['text.usetex'] = True
-matplotlib.rcParams['text.latex.preamble'] = r'\usepackage{amsmath}'
+# Mathtext by default: it needs no external programs. Turn TeX on only after a
+# probe render with the same preamble and backend succeeds.
+def tex_works(preamble=r'\usepackage{amsmath}'):
+    import io
+    from matplotlib.figure import Figure  # not registered with pyplot
+    try:
+        with matplotlib.rc_context({'text.usetex': True, 'text.latex.preamble': preamble}):
+            fig = Figure()
+            fig.text(0.5, 0.5, r'$\alpha_{\mathrm{test}}$')
+            fig.savefig(io.BytesIO(), format='pdf')
+        return True
+    except Exception:
+        return False                          # the probe figure is simply discarded
+
+if tex_works():
+    matplotlib.rcParams['text.usetex'] = True
+    matplotlib.rcParams['text.latex.preamble'] = r'\usepackage{amsmath}'
+else:
+    matplotlib.rcParams['text.usetex'] = False
+    matplotlib.rcParams['font.serif'] = ['DejaVu Serif']   # bundled with matplotlib
+    matplotlib.rcParams['mathtext.fontset'] = 'cm'          # Computer Modern maths
+    matplotlib.rcParams['pdf.fonttype'] = 42                 # embed TrueType, as journals ask
 
 # APS dimensions
 APS_SINGLE_COL = 3.375  # inches (8.6 cm)
@@ -213,8 +255,10 @@ ax.plot(x, y, linewidth=aps_single_line['linewidth'])
 ax.scatter(x, y, s=aps_single_line['markersize']**2,
            edgecolors='k', linewidth=aps_single_line['markeredgewidth'])
 
-plt.tight_layout()
-plt.savefig('figure_prl.pdf', bbox_inches='tight', dpi=300)
+plt.tight_layout()  # fits the content inside the fixed-size canvas
+# No bbox_inches='tight': it would crop the page and change the column width.
+with matplotlib.rc_context({'savefig.bbox': None}):   # a style cannot crop it either
+    plt.savefig('figure_prl.pdf', dpi=300)
 ```
 
 ### APS Quick Reference

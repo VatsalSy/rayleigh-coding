@@ -191,13 +191,20 @@ cmap='BrBG'       # Brown-blue-green diverging
 Layer multiple fields with alpha transparency:
 
 ```python
-extent = [rmin, rmax, zmin, zmax]
+# r, z: uniformly spaced cell-centre coordinates of the fields. imshow's extent
+# is the outer edges of the cells, so extend each end by half a spacing; the
+# contour uses the centres themselves.
+dr, dz = r[1] - r[0], z[1] - z[0]
+extent = [r[0] - dr / 2, r[-1] + dr / 2, z[0] - dz / 2, z[-1] + dz / 2]
+R, Z = np.meshgrid(r, z)
 
+# Fields indexed from low to high z: origin='lower' puts row 0 at zmin, as the
+# contour's Z coordinates do, so images, overlay and interface line up.
 # Base layer (opaque)
-im1 = ax.imshow(velocity_field, cmap='Purples', alpha=1.0, extent=extent)
+im1 = ax.imshow(velocity_field, cmap='Purples', alpha=1.0, extent=extent, origin='lower')
 
 # Overlay layer (semi-transparent)
-im2 = ax.imshow(pressure_field, cmap='RdBu_r', alpha=0.5, extent=extent)
+im2 = ax.imshow(pressure_field, cmap='RdBu_r', alpha=0.5, extent=extent, origin='lower')
 
 # Add interface contour on top
 ax.contour(R, Z, phase_field, levels=[0.5], colors='black', linewidths=3)

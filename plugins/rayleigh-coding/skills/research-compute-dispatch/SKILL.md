@@ -106,14 +106,22 @@ reason: <one line of purpose>
 - Never overlap the `cpuset` of any claim that is not `released`; a
   `planned` claim occupies its CPUs just as an `active` one does.
 - Make the check-and-claim step atomic, or two people can each see free CPUs
-  and both launch. Hold one lock for the whole sequence: re-read the ledger,
+  (or free memory or disk) and both launch. Disjoint CPU sets are not enough:
+  two claims can still overcommit memory or storage together. Hold one lock for the whole sequence: re-read the ledger,
   repeat the live audit, write the claim, then release.
 
   ```bash
   (
     flock -x 9 || exit 1             # one claimant at a time (Linux)
-    # re-read reservations/, repeat the live audit, check for overlap,
-    # then write reservations/<project>--<simulation-id>.yaml
+    # re-read reservations/ and repeat the live audit, then check every
+    # claimed resource against that fresh state: no CPU overlap; and, per
+    # host and per volume, this request plus each non-released claim's
+    # remaining commitment (its claim minus its current use, never below
+    # zero) within the live free memory or space less a system headroom.
+    # Measure every claim's use first and the free figure last: anything
+    # written in between then counts twice, which errs safe. A run already
+    # above its estimate is charged at its real use; then write
+    # reservations/<project>--<simulation-id>.yaml
   ) 9> reservations/.lock
   ```
 
@@ -185,7 +193,29 @@ A retry or resume is reconciliation, not a second launch. Before it, compare
 scheduler or process state, the reservation, the run directory and checkpoints,
 and your run record for the same run ID. If the job is alive, resume monitoring.
 If it ended with a valid checkpoint and the runner supports restart, restart
-under the existing reservation into a new run directory. If the views conflict
+into a new run directory, and treat the restart as a new launch:
+
+- **One attempt, one launcher.** Under the ledger lock, record a restart
+  attempt with a unique ID against the run, unless one is already pending.
+  Only the caller that recorded it may launch or submit it. A pending attempt
+  is cleared only when its launcher reports the outcome, or when you can
+  prove it will never launch (its process is gone and nothing ran, or the
+  scheduler has no job for that attempt). Until then, nobody retries and
+  cleanup leaves the claim alone.
+- **Capacity as at first launch.** On a shared workstation, under the same
+  lock, confirm the claim is still yours (not `released`, no overlapping
+  claim, live state idle) and repeat step 4's check for the restart's peak
+  memory and its extra storage (the new directory, while the earlier output
+  stays), counting the retained claim once. Enlarge the claim if it is short.
+  If cleanup already released it, make a new atomic claim; the old CPUs may
+  belong to someone else.
+- **Scheduler restarts.** Submit a new job with explicit restart arguments
+  (the verified checkpoint and the attempt's directory), and record the
+  returned job ID against the attempt at once. If a submission's outcome is
+  uncertain, look for that attempt in the scheduler's records before any
+  retry. Requeue the old job only if its batch script itself selects the
+  checkpoint and a fresh directory: a requeued job reruns its script from
+  the top, with the arguments it was first given. If the views conflict
 or ownership is unclear, stop and resolve that first. Re-running an unchanged
 failed command without new evidence is not recovery; before another repair or
 variant, name the new evidence or hypothesis that makes it informative.

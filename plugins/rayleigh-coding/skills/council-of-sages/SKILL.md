@@ -23,8 +23,10 @@ MIT; see `NOTICE.txt` and `LICENSE.txt`).
 
 ## Members
 
-- **Two core reviewers** from two different model providers, each the
-  strongest available model at high reasoning effort. Both must approve. Use
+- **Two core reviewers** from two different model families (not only two
+  providers: one provider can resell another's models), each the strongest
+  available model at high reasoning effort. Check both the provider and the
+  model family before seating them. Both must approve. Use
   fresh reviewers even if the lead runs on one of those providers' models.
 - **Optional extra reviewers** from further providers, for a wider first look
   or when the user asks. A failed or timed-out optional reviewer is recorded

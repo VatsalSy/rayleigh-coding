@@ -23,9 +23,12 @@ ownership from an earlier observation.
      scheduler job ID, ancestry from the runner's own process, or a PID file
      written by the runner. If no marker exists, do not signal.
 4. Never use `pkill -f`, `killall`, a `ps | grep | kill` pipeline, or a bare
-   solver or interpreter name. Signal only verified PIDs. A process group is
-   eligible only after every member has been enumerated and proved. If one
-   PID cannot be attributed, leave it alone.
+   solver or interpreter name. Signal only verified PIDs, one by one through
+   their own handles (step 5). Never signal a whole process group after
+   checking its members: a process can join the group between the check and
+   the signal. To stop a run as a unit, use a supervisor that owns the whole
+   scope (a systemd unit or scope, a scheduler job, the runner's own stop
+   command). If one PID cannot be attributed, leave it alone.
 5. Guard against PID reuse. On Linux, open a pidfd for the candidate before
    checking its identity, keep it open while checking, and signal through it
    (for example Python's `os.pidfd_open` with `signal.pidfd_send_signal`).

@@ -70,10 +70,13 @@ ax.set_yscale('log')
 ```
 
 ### Square Aspect Ratio
-For phase diagrams or scatter plots where axes should be equal:
+When one unit on x must equal one unit on y (geometry, phase diagrams in the
+same units), use equal data scaling:
 ```python
-ax.set_box_aspect(1)  # Enforce square aspect ratio
+ax.set_aspect('equal', adjustable='box')  # equal data scales; the box follows the ranges
 ```
+When only the plotting box should be square and the axes keep different
+scales, use `ax.set_box_aspect(1)` instead.
 
 ### Hiding Spines
 For cleaner plots (rarely needed for publication):

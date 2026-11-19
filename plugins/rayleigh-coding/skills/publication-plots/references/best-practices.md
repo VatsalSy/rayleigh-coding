@@ -114,9 +114,9 @@ Guidelines for publication-quality figures.
 **Solutions**:
 - Use mathtext instead of usetex for parallel work:
   ```python
+  matplotlib.rcParams['text.usetex'] = False   # also undoes an earlier usetex=True
   matplotlib.rcParams['font.family'] = 'serif'
   matplotlib.rcParams['mathtext.fontset'] = 'cm'
-  # Do NOT set text.usetex = True
   ```
 - Reserve `usetex=True` for single publication plots (PDF output)
 - Mathtext supports most LaTeX math notation and is fully parallel-safe

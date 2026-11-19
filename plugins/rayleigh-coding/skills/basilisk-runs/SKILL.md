@@ -74,7 +74,20 @@ Write a small manifest into each run directory before compiling, for example
 A run without a valid manifest, or with a null executable hash, should not
 feed a figure; a `-dirty` commit, or a non-empty `extra_inputs` that the
 commit does not reproduce, should not feed a published one. The pinned
-Basilisk tree is covered by `basilisk_ref`, not by `extra_inputs`. Generate
+Basilisk tree is covered by `basilisk_ref`, not by `extra_inputs`, but only
+while the installed tree is unmodified: before recording the ref, check it
+(for a Git checkout, `git -C <basilisk> status --porcelain --ignored` must
+list nothing outside build products, and `git -C <basilisk> ls-files -v` must
+mark no file as assume-unchanged or skip-worktree, since Git does not report
+changes to those; otherwise compare file hashes with a pristine copy). A locally modified Basilisk file is a compiler input the ref
+cannot reproduce: list it in `extra_inputs` with its hash, or reinstall the
+pinned tree. A clean tree is not enough on its own: the `qcc` you resolve must
+have been built from it, and build products are exempt from the status check.
+Record the resolved `qcc` path and hash with the verified source identity and
+build configuration. When that evidence is missing, make a clean build from
+the verified tree (remove its build products first, so that `qcc` and the
+libraries it links, such as the AST archive, are all rebuilt), then record the
+new hash. Generate
 hashes from the files; never transcribe a digest by hand. Reuse provenance
 that still matches source, executable and environment; rebuild only when that
 binding is missing or changed.
