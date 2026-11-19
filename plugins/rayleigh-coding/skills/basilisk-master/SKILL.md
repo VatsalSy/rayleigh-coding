@@ -146,7 +146,7 @@ Use one pinned Basilisk per project, not an ambient install on `PATH`:
   `basilisk-<os>.tar.gz.sha256`. A tag or a release asset can be replaced
   later; the digest you recorded cannot.
 - The mirror's installer (`--ref=<tag>`) downloads that tarball by tag and
-  does not check its digest. For a verified install, download the tarball
+  does not check its digest. To install, download the tarball
   yourself and check its SHA-256 against the recorded digest (stop on a
   mismatch, or if you cannot check it). Then do with that file what the
   installer does. Remove or move aside any existing `<repo>/basilisk`
@@ -161,19 +161,20 @@ Use one pinned Basilisk per project, not an ambient install on `PATH`:
   and `os=darwin` or `os=linux` lines and a `sha256=<verified digest>`
   line. Fetch nothing else by tag at install time; the optional bview patch
   flags do.
-- An install made with the installer alone is attributed to the tag, not
-  verified. If you use it, read it first, save it in the project root and
-  run it from there: it installs next to the script, whatever the working
-  directory, and `--hard` deletes that `basilisk/` first. Never pipe a
-  download straight into a shell.
+- Do not run the mirror's installer on its own: it verifies neither itself
+  nor the tarball it downloads. Use it only as the description of the steps
+  above. If you cannot verify the tarball, do not install; stop and report.
 - Before a campaign, put the pin first in the campaign's environment: set
-  `BASILISK` to `<repo>/basilisk/src` and prepend that directory to `PATH`
-  (the installer writes these into `.project_config`). Then confirm that
-  `command -v qcc` resolves inside the pinned install, that the installed ref matches the recorded one and, for a
-  verified install, that the stamp's `sha256` equals the pinned digest for
-  this operating system. A compiler found elsewhere on `PATH` means the run
-  is not using the pin; a missing or different digest means the install is
-  not the verified one.
+  `BASILISK` to `<repo>/basilisk/src` and prepend that directory to `PATH` (as
+  the mirror's installer does in `.project_config`). Then confirm that
+  `command -v qcc` resolves inside the pinned install and that the install
+  matches its pin. For a mirror-tarball install, the stamp's ref must match
+  the recorded tag and its `sha256` the pinned digest for this operating
+  system. For a Git checkout or a digest-pinned container, check the
+  recorded commit or image digest and that `qcc` was built from it, as
+  basilisk-runs describes. A compiler found elsewhere on `PATH` means the run
+  is not using the pin; a missing or different digest or commit means the
+  install is not verified, and the campaign does not start.
 - Results that cannot be attributed to a recorded Basilisk ref and code commit
   are not reproducible.
 

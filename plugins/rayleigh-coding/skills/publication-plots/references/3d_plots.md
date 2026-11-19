@@ -305,6 +305,9 @@ ax.set_zlim(Zt.min(), Zt.max())
 ```python
 from matplotlib.colors import Normalize
 
+fig = plt.figure(figsize=(10, 8))      # its own figure: limits stay local
+ax = fig.add_subplot(projection='3d')
+
 # Custom normalization
 norm = Normalize(vmin=-1, vmax=1)
 
@@ -325,6 +328,9 @@ cbar = fig.colorbar(m, ax=ax, shrink=0.5)
 
 ```python
 from matplotlib.colors import LightSource
+
+fig = plt.figure(figsize=(10, 8))      # its own figure: limits stay local
+ax = fig.add_subplot(projection='3d')
 
 # Create light source
 ls = LightSource(azdeg=315, altdeg=45)  # Light direction
