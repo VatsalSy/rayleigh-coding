@@ -1,0 +1,13 @@
+This skill is partly adapted from the `council` skill in Theo Browne's tstack
+(MIT).
+
+Upstream: https://github.com/t3dotgg/tstack/tree/main/skills/council
+Reviewed upstream commit: 11e37a74d0a6868c121cd0910ab2b3bd9873b92a
+
+The upstream MIT license text is retained in LICENSE.txt in this directory.
+This adaptation is not a verbatim copy. It keeps the upstream ideas of
+independent reviewers from different providers, a score out of 10 per round,
+a fresh review after fixes, a results table in the pull request description,
+and resisting scope creep. It adds a decision packet frozen before review, a
+required approval from every core reviewer, a fixed round limit, and a handback
+to a human at that limit.

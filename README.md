@@ -48,6 +48,13 @@ See `plugins/rayleigh-coding/docs/SKILLS.md`.
 Use `coding-workflow` to scope, verify and review a change. The bundle also
 includes GitHub delivery, security review, frontend, and deployment skills.
 
+For computational research, `basilisk-master` and `basilisk-runs` cover the
+[Basilisk](http://basilisk.fr) solver and its production runs,
+`research-compute-dispatch` reserves shared compute without disturbing other
+runs, `publication-plots` keeps figures and videos consistent, and
+`council-of-sages` asks independent reviewers from different model families to
+approve a decision before it proceeds.
+
 Version 0.6 removes the installer that wrote global model rules. If you used
 it, review the model rules it created in
 `~/.cursor/rules/rayleigh-models.mdc` and `.cursor/rules/rayleigh-models.mdc`.

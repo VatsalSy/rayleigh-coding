@@ -1,15 +1,18 @@
 # Skill inventory
 
-55 skills in this plugin.
+60 skills in this plugin.
 
 | Skill |
 |---|
 | `autofix` |
+| `basilisk-master` |
+| `basilisk-runs` |
 | `change-impact-analysis` |
 | `cloudflare` |
 | `code-review` |
 | `coderabbit-config` |
 | `coding-workflow` |
+| `council-of-sages` |
 | `create-plan` |
 | `dev-commit-message` |
 | `dev-docstring` |
@@ -44,8 +47,10 @@
 | `parallel-task` |
 | `pdf` |
 | `playwright` |
+| `publication-plots` |
 | `python-env` |
 | `render-deploy` |
+| `research-compute-dispatch` |
 | `screenshot` |
 | `security-best-practices` |
 | `security-gitleaks` |

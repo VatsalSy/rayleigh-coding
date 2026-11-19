@@ -32,6 +32,7 @@ full-stop
 sol-loop
 takeover
 modernize
+council-of-sages
 dev-commit-message
 dev-docstring
 dev-frontend-design
@@ -53,6 +54,10 @@ openai-docs
 pdf
 jupyter-notebook
 python-env
+basilisk-master
+basilisk-runs
+research-compute-dispatch
+publication-plots
 docs-claude
 skill-creator
 find-skills
