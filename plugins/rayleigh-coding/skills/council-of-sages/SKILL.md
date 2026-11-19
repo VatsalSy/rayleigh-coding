@@ -23,17 +23,20 @@ MIT; see `NOTICE.txt` and `LICENSE.txt`).
 
 ## Members
 
-- **Two core reviewers** from two different model families (not only two
-  providers: one provider can resell another's models), each the strongest
-  available model at high reasoning effort. Check both the provider and the
-  model family before seating them. Both must approve. Use
+- **Two core reviewers** from two different providers and two different
+  model families (one provider can resell another's models, so a different
+  provider alone is not enough), each the strongest available model at high
+  reasoning effort. Check both the provider and the model family before
+  seating them. Both must approve. Use
   fresh reviewers even if the lead runs on one of those providers' models.
 - **Optional extra reviewers** from further providers, for a wider first look
   or when the user asks. A failed or timed-out optional reviewer is recorded
   as skipped; a failed core reviewer leaves the decision pending.
-- If the user names members, use them. If a named or core member is
-  unavailable, report it rather than silently substituting a weaker or
-  same-family model.
+- If the user names members, use them, but named core reviewers must pass
+  the same provider and family checks. If a named pair fails them, keep the
+  decision pending and say so, unless the user explicitly waives that
+  requirement. If a named or core member is unavailable, report it rather
+  than silently substituting a weaker or same-family model.
 
 Start each reviewer through the harness's subagent or delegation tool with
 only the frozen packet, not the lead's conversation history. A reviewer that

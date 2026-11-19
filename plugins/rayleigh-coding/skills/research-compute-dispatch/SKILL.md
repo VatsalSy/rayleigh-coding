@@ -115,12 +115,14 @@ reason: <one line of purpose>
     flock -x 9 || exit 1             # one claimant at a time (Linux)
     # re-read reservations/ and repeat the live audit, then check every
     # claimed resource against that fresh state: no CPU overlap; and, per
-    # host and per volume, this request plus each non-released claim's
-    # remaining commitment (its claim minus its current use, never below
-    # zero) within the live free memory or space less a system headroom.
-    # Measure every claim's use first and the free figure last: anything
-    # written in between then counts twice, which errs safe. A run already
-    # above its estimate is charged at its real use; then write
+    # host and per volume, this request plus every non-released claim at
+    # its full size (or its real use, if larger), plus the use outside any
+    # claim and a system headroom, within the ceiling: total memory, or for
+    # storage the space you can write (Used plus Avail from one `df`
+    # reading, which leaves out blocks reserved for root). The readings are
+    # snapshots of running jobs, so size the headroom to absorb what they
+    # can change between readings; if the margin is thin, or you cannot
+    # tell claimed from unclaimed use, wait rather than launch; then write
     # reservations/<project>--<simulation-id>.yaml
   ) 9> reservations/.lock
   ```

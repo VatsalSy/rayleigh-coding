@@ -141,10 +141,23 @@ publishes dated release tags and a ref-locked installer.
 Use one pinned Basilisk per project, not an ambient install on `PATH`:
 
 - Choose a release tag and record it in the repository (for example a
-  committed `basilisk.ref` file). Install exactly that tag into the project
-  (for example `<repo>/basilisk`, gitignored). Download and read the installer
-  from the same tag before running it; do not pipe a mutable branch into a
-  shell while calling the install reproducible.
+  committed `basilisk.ref` file) together with the SHA-256 of the release
+  tarball for each operating system you use; each release publishes it as
+  `basilisk-<os>.tar.gz.sha256`. A tag or a release asset can be replaced
+  later; the digest you recorded cannot.
+- The mirror's installer (`--ref=<tag>`) downloads that tarball by tag and
+  does not check its digest. For a verified install, download the tarball
+  yourself, check its SHA-256 against the recorded digest (stop on a
+  mismatch, or if you cannot check it), and install from that file by the
+  steps the installer performs: extract it into the project (for example
+  `<repo>/basilisk`, gitignored), apply the patches it bundles, build.
+  Fetch nothing else by tag at install time; the optional bview patch flags
+  do.
+- An install made with the installer alone is attributed to the tag, not
+  verified. If you use it, read it first, save it in the project root and
+  run it from there: it installs next to the script, whatever the working
+  directory, and `--hard` deletes that `basilisk/` first. Never pipe a
+  download straight into a shell.
 - Before a campaign, confirm that `command -v qcc` resolves inside the pinned
   install and that the installed ref matches the recorded one. A compiler found
   elsewhere on `PATH` means the run is not using the pin.

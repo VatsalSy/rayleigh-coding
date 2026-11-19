@@ -206,12 +206,19 @@ ax.set_zlabel(r'$z$', fontsize=30)
 ## Filled Contours in 3D
 
 ```python
+fig = plt.figure(figsize=(10, 8))      # its own figure: limits stay local
+ax = fig.add_subplot(projection='3d')
+
 # Multiple z-levels, with one set of levels and one normalisation for all
 # slices, so equal colours mean equal values across heights
 from matplotlib.colors import Normalize
 
+x = np.linspace(-np.pi, np.pi, 100)   # a 2D grid under its own names, so
+y = np.linspace(-np.pi, np.pi, 100)   # other examples keep their X, Y
+Xc, Yc = np.meshgrid(x, y)
+
 z_levels = [0, 1, 2, 3, 4]
-slices = [np.sin(X) * np.cos(Y) * np.exp(-0.1 * zl) for zl in z_levels]
+slices = [np.sin(Xc) * np.cos(Yc) * np.exp(-0.1 * zl) for zl in z_levels]
 vmin = min(s.min() for s in slices)
 vmax = max(s.max() for s in slices)
 levels = np.linspace(vmin, vmax, 11)
@@ -219,7 +226,7 @@ norm = Normalize(vmin=vmin, vmax=vmax)
 
 for zl, values in zip(z_levels, slices):
     cs = ax.contourf(
-        X, Y, values,
+        Xc, Yc, values,
         zdir='z',           # Project onto z
         offset=zl,          # Z position
         levels=levels,
@@ -256,22 +263,31 @@ for i in range(5):
 ## 2D Contours on 3D Axes
 
 ```python
-# Pass X, Y, Z in their original order every time: zdir chooses the wall
+fig = plt.figure(figsize=(10, 8))      # its own figure: limits stay local
+ax = fig.add_subplot(projection='3d')
+
+# A 2D surface under its own names, so the examples before and after keep
+# their X, Y, Z. It is Matplotlib's own test surface: not symmetric, so the
+# contour levels on each wall stay distinct instead of drawing over one another.
+from mpl_toolkits.mplot3d import axes3d
+Xt, Yt, Zt = axes3d.get_test_data(0.05)
+
+# Pass Xt, Yt, Zt in their original order every time: zdir chooses the wall
 # and rotates the coordinates itself, as in Matplotlib's projection example.
 
 # XY plane projection (floor)
-ax.contour(X, Y, Z, levels=10, offset=Z.min(), cmap='viridis', zdir='z')
+ax.contour(Xt, Yt, Zt, levels=10, offset=Zt.min(), cmap='viridis', zdir='z')
 
 # XZ plane projection (back wall)
-ax.contour(X, Y, Z, levels=10, offset=Y.max(), cmap='plasma', zdir='y')
+ax.contour(Xt, Yt, Zt, levels=10, offset=Yt.max(), cmap='plasma', zdir='y')
 
 # YZ plane projection (side wall)
-ax.contour(X, Y, Z, levels=10, offset=X.min(), cmap='coolwarm', zdir='x')
+ax.contour(Xt, Yt, Zt, levels=10, offset=Xt.min(), cmap='coolwarm', zdir='x')
 
 # Fix the limits so each offset lies on the wall that is drawn
-ax.set_xlim(X.min(), X.max())
-ax.set_ylim(Y.min(), Y.max())
-ax.set_zlim(Z.min(), Z.max())
+ax.set_xlim(Xt.min(), Xt.max())
+ax.set_ylim(Yt.min(), Yt.max())
+ax.set_zlim(Zt.min(), Zt.max())
 ```
 
 ## Colormap Normalization in 3D
