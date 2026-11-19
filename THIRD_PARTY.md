@@ -24,6 +24,7 @@ without checking the upstream terms.
 | `sol-loop/` | `LICENSE.txt`, `NOTICE.txt` | Same tstack provenance as `full-send/` |
 | `takeover/` | `LICENSE.txt`, `NOTICE.txt` | Same tstack provenance as `full-send/` |
 | `modernize/` | `LICENSE.txt`, `NOTICE.txt` | Same tstack provenance as `full-send/` |
+| `council-of-sages/` | `LICENSE.txt`, `NOTICE.txt` | Partly adapted from the [tstack `council` skill](https://github.com/t3dotgg/tstack/tree/main/skills/council) (MIT, Copyright (c) 2026 Theo Browne); reviewed upstream commit `11e37a74d0a6868c121cd0910ab2b3bd9873b92a` |
 
 When adding a vendored skill, commit its upstream `LICENSE*` / `NOTICE*` next to
 the skill and extend this table in the same PR.
