@@ -60,6 +60,20 @@ df -h <candidate-volume>
 Busy-but-unreserved is someone's unattributed work, not room to squeeze in. An
 empty reservation file does not mean the computer is free.
 
+Then establish the storage quotas before any claim. First resolve who the
+output files will be charged to: the user the job runs as, and the group new
+files will get in the output directory (a setgid directory passes on its own
+group). Then query each of them by name on the target mount with the site's
+supported quota tool (for example `quota -v -u <user>` and
+`quota -v -g <group>`, reading the row for the target mount;
+`lfs quota -u <user> <mount>` and `lfs quota -g <group> <mount>` on Lustre;
+or the documented project quota command), plus any project quota covering the
+path. Record each quota's soft and hard limits, grace state and current usage,
+in bytes and, where one is set, in files. A limit of zero means none is set.
+Record them in the claim. If you cannot establish which quotas
+cover the path, or their remaining capacity, do not launch: report what is
+missing instead.
+
 On a **shared cluster**, audit only through your own account's scheduler and
 allocation views (`squeue --me`, `sacct`, the site's budget tool). Read
 [shared-HPC conduct](references/shared-hpc.md) before the first command.
@@ -95,8 +109,14 @@ host: <host>
 cpuset: "8-15,40-47"      # logical CPUs covering whole physical cores
 memory_gib: 64
 storage:                  # one entry per output directory
-  - { volume: /data, output: /data/<project>/<simulation-id>,
-      quotas: [user:<your-name>], estimated_peak_gib: 200 }
+  - volume: /data
+    output: /data/<project>/<simulation-id>
+    estimated_peak_gib: 200
+    estimated_files: 5000    # needed when a file-count quota applies
+    quotas:                  # from the quota audit, as observed
+      - { id: "user:<your-name>", soft_gib: 2000, hard_gib: 2200,
+          used_gib: 850, soft_files: 1000000, hard_files: 1100000,
+          used_files: 120000, grace: none }
 state: planned            # planned -> active -> released
 review_at: 2026-12-01T09:00Z
 reason: <one line of purpose>
@@ -122,12 +142,18 @@ reason: <one line of purpose>
     # claim and a system headroom, within the ceiling: total memory, or for
     # storage the space you can write (Used plus Avail from one `df`
     # reading, which leaves out blocks reserved for root). Check each quota
-    # that applies to the output path the same way, per output directory:
+    # found for the output path in the audit (and no claim without that
+    # audit) the same way, per output directory:
     # every directory of a non-released claim charged to it (by its
     # `quotas`) at its full reserved size, or its real use if larger, plus
     # the quota's usage outside those directories (which includes files
     # kept from released claims) and this request, within that quota's
-    # limit. A claim's directories under other quotas don't count here. If
+    # hard limit, and within its soft limit too unless usage will fall back
+    # below it before the grace period ends (an unset limit is skipped).
+    # Where a quota also caps the number of files, check files
+    # the same way, with each directory's `estimated_files`; if a directory
+    # under that quota has no file estimate, wait until it has one. A claim's
+    # directories under other quotas don't count here. If
     # a directory on the volume has no recorded quotas and could share one,
     # wait until it is recorded. The readings are
     # snapshots of running jobs, so size the headroom to absorb what they
