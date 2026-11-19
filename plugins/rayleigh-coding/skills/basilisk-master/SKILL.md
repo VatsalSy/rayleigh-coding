@@ -165,8 +165,10 @@ Use one pinned Basilisk per project, not an ambient install on `PATH`:
   nor the tarball it downloads. Use it only as the description of the steps
   above. If you cannot verify the tarball, do not install; stop and report.
 - Before a campaign, put the pin first in the campaign's environment: set
-  `BASILISK` to `<repo>/basilisk/src` and prepend that directory to `PATH` (as
-  the mirror's installer does in `.project_config`). Then confirm that
+  `BASILISK` to the pinned install's `src` directory (`<repo>/basilisk/src`
+  for a mirror-tarball install, as the mirror's installer writes in
+  `.project_config`; the checkout's or the container's own `src` otherwise)
+  and prepend that directory to `PATH`. Then confirm that
   `command -v qcc` resolves inside the pinned install and that the install
   matches its pin. For a mirror-tarball install, the stamp's ref must match
   the recorded tag and its `sha256` the pinned digest for this operating
