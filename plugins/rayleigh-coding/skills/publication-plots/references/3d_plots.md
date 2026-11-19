@@ -407,7 +407,7 @@ surf = ax.plot_surface(
 )
 
 # Contour projection on bottom
-zmin = -0.5
+zmin = Z.min() - 0.1 * (Z.max() - Z.min())  # from the data, with a margin
 ax.contour(X, Y, Z, levels=10, offset=zmin, cmap='viridis', linewidths=2)
 
 # Colorbar

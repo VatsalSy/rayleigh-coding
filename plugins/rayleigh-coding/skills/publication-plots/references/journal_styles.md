@@ -205,7 +205,7 @@ aps_double_line = {
 
 def create_aps_figure(double_column=False, height_inches=None, square=False):
     """Create figure with APS-compliant width.
-    
+
     Args:
         double_column: If True, use full page width (6.75 in)
         height_inches: Custom height (default: width * 0.75)
@@ -218,14 +218,14 @@ def create_aps_figure(double_column=False, height_inches=None, square=False):
         height = height_inches
     else:
         height = width * 0.75  # Default aspect ratio
-    
+
     fig, ax = plt.subplots(figsize=(width, height))
     return fig, ax
 
 def style_aps_axes(ax, double_column=False):
     """Apply APS styling to an axes object."""
     line = aps_double_line if double_column else aps_single_line
-    
+
     ax.tick_params(
         axis='both', which='major',
         labelsize=aps_settings['AxesFont'],

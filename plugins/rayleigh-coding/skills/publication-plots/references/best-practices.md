@@ -93,7 +93,7 @@ Guidelines for publication-quality figures.
 
 **Solutions**:
 - Filter data: `data[data > 0]`
-- Use `ax.set_xlim([1e-6, ...])` to exclude zero
+- Use `ax.set_xlim(x_min, x_max)` with `0 < x_min < x_max` chosen from the data (for example the smallest positive value) to exclude zero
 - Consider `symlog` scale for data crossing zero
 
 ### Memory Issues with Many Figures

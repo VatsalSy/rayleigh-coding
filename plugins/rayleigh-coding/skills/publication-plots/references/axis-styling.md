@@ -50,10 +50,9 @@ For multi-panel figures, apply consistent styling:
 
 ```python
 for ax in [ax1, ax2, ax3]:
-    ax.tick_params(which='both', direction='out', width=3,
-                   labelsize=40, pad=10)
-    ax.tick_params(which='major', length=12)
-    ax.tick_params(which='minor', length=6)
+    ax.tick_params(which='both', direction='out', labelsize=40, pad=10)
+    ax.tick_params(which='major', width=3, length=12)
+    ax.tick_params(which='minor', width=2, length=6)
     for spine in ax.spines.values():
         spine.set_linewidth(3)
     ax.minorticks_on()

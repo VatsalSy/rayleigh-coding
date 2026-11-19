@@ -69,15 +69,18 @@ im_right = ax.imshow(
     vmax=1.0
 )
 
-# Negative r side (left): a second field, reflected about r = 0
+# Negative r side (left): a second field, reflected about r = 0.
+# D:D is never negative; take the upper limit from its finite cells only.
+finite = strain_rate_field[np.isfinite(strain_rate_field)]
+dd_max = finite.max() if finite.size and finite.max() > 0 else 1.0
 im_left = ax.imshow(
     np.fliplr(strain_rate_field),
     cmap='hot_r',
     interpolation='bilinear',
     origin='lower',
     extent=[-rmax, 0, zmin, zmax],  # r from -rmax to 0
-    vmin=-4.0,
-    vmax=0.0
+    vmin=0.0,
+    vmax=dd_max
 )
 
 # Add colorbars for both sides
