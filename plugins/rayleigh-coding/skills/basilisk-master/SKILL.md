@@ -147,20 +147,33 @@ Use one pinned Basilisk per project, not an ambient install on `PATH`:
   later; the digest you recorded cannot.
 - The mirror's installer (`--ref=<tag>`) downloads that tarball by tag and
   does not check its digest. For a verified install, download the tarball
-  yourself, check its SHA-256 against the recorded digest (stop on a
-  mismatch, or if you cannot check it), and install from that file by the
-  steps the installer performs: extract it into the project (for example
-  `<repo>/basilisk`, gitignored), apply the patches it bundles, build.
-  Fetch nothing else by tag at install time; the optional bview patch flags
-  do.
+  yourself and check its SHA-256 against the recorded digest (stop on a
+  mismatch, or if you cannot check it). Then do with that file what the
+  installer does. Remove or move aside any existing `<repo>/basilisk`
+  first, so nothing older survives. Extract the tarball into a temporary
+  directory, move its `basilisk/` to `<repo>/basilisk` (gitignored) and its
+  `patches/` to `<repo>/basilisk/.comphy-patches` as a record; the
+  release's sources already include those patches, so do not apply them
+  again. Build in `basilisk/src`: link `config` to `config.osx` or
+  `config.gcc`, run `make -k` once so generated prerequisites exist, then
+  `make`, which must succeed. Only then write the record the pre-campaign
+  check reads, `basilisk/.comphy-lock`, with the installer's `ref=<tag>`
+  and `os=darwin` or `os=linux` lines and a `sha256=<verified digest>`
+  line. Fetch nothing else by tag at install time; the optional bview patch
+  flags do.
 - An install made with the installer alone is attributed to the tag, not
   verified. If you use it, read it first, save it in the project root and
   run it from there: it installs next to the script, whatever the working
   directory, and `--hard` deletes that `basilisk/` first. Never pipe a
   download straight into a shell.
-- Before a campaign, confirm that `command -v qcc` resolves inside the pinned
-  install and that the installed ref matches the recorded one. A compiler found
-  elsewhere on `PATH` means the run is not using the pin.
+- Before a campaign, put the pin first in the campaign's environment: set
+  `BASILISK` to `<repo>/basilisk/src` and prepend that directory to `PATH`
+  (the installer writes these into `.project_config`). Then confirm that
+  `command -v qcc` resolves inside the pinned install, that the installed ref matches the recorded one and, for a
+  verified install, that the stamp's `sha256` equals the pinned digest for
+  this operating system. A compiler found elsewhere on `PATH` means the run
+  is not using the pin; a missing or different digest means the install is
+  not the verified one.
 - Results that cannot be attributed to a recorded Basilisk ref and code commit
   are not reproducible.
 

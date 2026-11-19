@@ -136,11 +136,20 @@ surf = ax.plot_surface(
 ## Multiple Surfaces
 
 ```python
+fig = plt.figure(figsize=(10, 8))      # its own figure: limits follow its data
+ax = fig.add_subplot(projection='3d')
+
+# Two surfaces on a Cartesian grid of their own (the sphere example
+# above replaces X and Y)
+Xm, Ym = np.meshgrid(np.linspace(-5, 5, 100), np.linspace(-5, 5, 100))
+Z1 = np.sin(np.sqrt(Xm**2 + Ym**2))
+Z2 = Z1 + 0.5
+
 # First surface
-surf1 = ax.plot_surface(X, Y, Z1, cmap='Blues', alpha=0.7)
+surf1 = ax.plot_surface(Xm, Ym, Z1, cmap='Blues', alpha=0.7)
 
 # Second surface
-surf2 = ax.plot_surface(X, Y, Z2, cmap='Reds', alpha=0.7)
+surf2 = ax.plot_surface(Xm, Ym, Z2, cmap='Reds', alpha=0.7)
 
 # Legend (requires proxy artists)
 from matplotlib.patches import Rectangle
@@ -177,20 +186,21 @@ ax.zaxis.pane.set_alpha(0.1)
 ## Quiver 3D (Vector Field)
 
 ```python
-# Vector field data
+# Vector field data on a 3D grid, under its own names, so the 2D surface
+# X, Y, Z used by the other examples stay as they are
 x = np.arange(-2, 2, 0.5)
 y = np.arange(-2, 2, 0.5)
 z = np.arange(-2, 2, 0.5)
-X, Y, Z = np.meshgrid(x, y, z)
+Xq, Yq, Zq = np.meshgrid(x, y, z)
 
 # Vector components
-U = -X
-V = -Y
-W = np.ones_like(Z) * 0.5
+U = -Xq
+V = -Yq
+W = np.ones_like(Zq) * 0.5
 
 # Quiver plot
 quiver = ax.quiver(
-    X, Y, Z, U, V, W,
+    Xq, Yq, Zq, U, V, W,
     length=0.3,             # Arrow length
     normalize=True,         # Normalize to same length
     arrow_length_ratio=0.3,

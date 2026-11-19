@@ -94,7 +94,8 @@ owner: <your-name>
 host: <host>
 cpuset: "8-15,40-47"      # logical CPUs covering whole physical cores
 memory_gib: 64
-storage: { volume: /data, estimated_peak_gib: 200 }
+storage: { volume: /data, output: /data/<project>/<simulation-id>,
+           quotas: [user:<your-name>], estimated_peak_gib: 200 }
 state: planned            # planned -> active -> released
 review_at: 2026-12-01T09:00Z
 reason: <one line of purpose>
@@ -119,7 +120,12 @@ reason: <one line of purpose>
     # its full size (or its real use, if larger), plus the use outside any
     # claim and a system headroom, within the ceiling: total memory, or for
     # storage the space you can write (Used plus Avail from one `df`
-    # reading, which leaves out blocks reserved for root). The readings are
+    # reading, which leaves out blocks reserved for root). Check each quota
+    # that applies to the output path separately: its charged usage plus
+    # the remaining growth of the claims charged to it (by their recorded
+    # `quotas`), and this request, within that quota's limit. If a claim
+    # on the volume has no recorded quotas and could share one, wait until
+    # it is recorded. The readings are
     # snapshots of running jobs, so size the headroom to absorb what they
     # can change between readings; if the margin is thin, or you cannot
     # tell claimed from unclaimed use, wait rather than launch; then write
@@ -208,7 +214,9 @@ into a new run directory, and treat the restart as a new launch:
   lock, confirm the claim is still yours (not `released`, no overlapping
   claim, live state idle) and repeat step 4's check for the restart's peak
   memory and its extra storage (the new directory, while the earlier output
-  stays), counting the retained claim once. Enlarge the claim if it is short.
+  stays), counting the retained claim once. Enlarge the claim if it is short,
+  and record the restart directory, its volume and quotas, and its expected
+  growth in the claim before launch, so later checks charge the right quota.
   If cleanup already released it, make a new atomic claim; the old CPUs may
   belong to someone else.
 - **Scheduler restarts.** Submit a new job with explicit restart arguments
